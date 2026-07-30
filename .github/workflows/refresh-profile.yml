@@ -1,4 +1,4 @@
-name: Refresh editorial profile
+name: Refresh continuum profile
 
 on:
   schedule:
@@ -9,14 +9,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: thothfnd-profile-v11
+  group: thothfnd-profile-v12
   cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -36,7 +35,7 @@ jobs:
       - name: Compile renderer
         run: python -m py_compile scripts/generate_profile.py scripts/cleanup_repo.py
 
-      - name: Generate V11 editorial profile
+      - name: Generate V12 continuum profile
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,7 +43,7 @@ jobs:
 
       - name: Remove migration note after successful generation
         shell: bash
-        run: rm -f START-HERE-V11.txt
+        run: rm -f START-HERE-V12.txt
 
       - name: Commit meaningful changes and cleanup
         shell: bash
@@ -57,5 +56,5 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "profile: refresh V11 editorial interface"
+          git commit -m "profile: refresh V12 continuum interface"
           git push
