@@ -1,5 +1,5 @@
 {
-  "tagline": "privacy engineering // security architecture // browser systems",
+  "tagline": "privacy engineering // browser systems // security architecture",
   "about": [
     "I build systems where privacy, compartmentalization and deterministic security are architectural constraints — not optional features.",
     "Current focus: browser isolation, anti-fingerprinting, evidence-driven certification and high-assurance automation."
