@@ -27,10 +27,10 @@ text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
 <rect x="310" y="228" width="122" height="52" rx="10" fill="#111723" stroke="#2b3340"/>
 <rect x="448" y="228" width="122" height="52" rx="10" fill="#111723" stroke="#2b3340"/>
 <rect x="586" y="228" width="260" height="52" rx="10" fill="#111723" stroke="#2b3340"/>
-<text x="50" y="250" class="muted tiny">REPOS</text><text x="50" y="270" class="fg" font-size="20" font-weight="700">3</text>
-<text x="188" y="250" class="muted tiny">FOLLOWERS</text><text x="188" y="270" class="fg" font-size="20" font-weight="700">12</text>
-<text x="326" y="250" class="muted tiny">FOLLOWING</text><text x="326" y="270" class="fg" font-size="20" font-weight="700">3</text>
-<text x="464" y="250" class="muted tiny">JOINED</text><text x="464" y="270" class="fg" font-size="20" font-weight="700">2024</text>
+<text x="50" y="250" class="muted tiny">REPOS</text><text x="50" y="270" class="fg" font-size="20" font-weight="700">1</text>
+<text x="188" y="250" class="muted tiny">FOLLOWERS</text><text x="188" y="270" class="fg" font-size="20" font-weight="700">0</text>
+<text x="326" y="250" class="muted tiny">FOLLOWING</text><text x="326" y="270" class="fg" font-size="20" font-weight="700">0</text>
+<text x="464" y="250" class="muted tiny">JOINED</text><text x="464" y="270" class="fg" font-size="20" font-weight="700">2026</text>
 <text x="602" y="250" class="muted tiny">LOCATION / STATUS</text><text x="602" y="270" class="fg small">NETWORK // PRIVATE</text>
 <text x="788" y="270" text-anchor="end" class="good small">ONLINE</text>
 <rect x="-220" y="294" width="220" height="2" fill="url(#scan)"><animate attributeName="x" values="-220;880" dur="4.8s" repeatCount="indefinite"/></rect>

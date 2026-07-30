@@ -5,5 +5,5 @@ text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation M
 .small{font-size:10px} .tiny{font-size:8px} .label{font-size:9px;letter-spacing:.18em}
 
 </style>
-<line x1="8" y1="14" x2="872" y2="14" stroke="#2b3340"/><text x="8" y="48" class="fg" font-size="12">BUILD QUIETLY. VERIFY EVERYTHING.</text><text x="8" y="72" class="muted" font-size="9">GENERATED LOCALLY // NO THIRD-PARTY BADGE SERVICE // 2026-07-30 03:35 UTC</text><rect x="846" y="38" width="8" height="14" fill="#6aa8ff"><animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/></rect>
+<line x1="8" y1="14" x2="872" y2="14" stroke="#2b3340"/><text x="8" y="48" class="fg" font-size="12">BUILD QUIETLY. VERIFY EVERYTHING.</text><text x="8" y="72" class="muted" font-size="9">GENERATED LOCALLY // NO THIRD-PARTY BADGE SERVICE // 2026-07-30 03:40 UTC</text><rect x="846" y="38" width="8" height="14" fill="#6aa8ff"><animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/></rect>
 </svg>
