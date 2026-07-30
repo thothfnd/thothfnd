@@ -1,17 +1,609 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="160" viewBox="0 0 880 160">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="426" viewBox="0 0 880 426">
 <style>
 text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
 .fg{fill:#e6edf3}.muted{fill:#7d8590}.accent{fill:#58a6ff}.good{fill:#3fb950}
 </style>
-<rect x="1" y="1" width="878" height="158" rx="12" fill="#0d1117" stroke="#30363d"/>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.00s" fill="freeze"/><rect x="28" y="23" width="82" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="42" y="45" class="fg" font-size="11">PYTHON</text><rect x="33" y="54" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="72" dur=".7s" begin="0.10s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.07s" fill="freeze"/><rect x="122" y="23" width="118" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="136" y="45" class="fg" font-size="11">JAVASCRIPT</text><rect x="127" y="54" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="108" dur=".7s" begin="0.17s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.14s" fill="freeze"/><rect x="252" y="23" width="76" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="266" y="45" class="fg" font-size="11">C++</text><rect x="257" y="54" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="66" dur=".7s" begin="0.24s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.21s" fill="freeze"/><rect x="340" y="23" width="76" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="354" y="45" class="fg" font-size="11">GECKO</text><rect x="345" y="54" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="66" dur=".7s" begin="0.31s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.28s" fill="freeze"/><rect x="428" y="23" width="118" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="442" y="45" class="fg" font-size="11">POWERSHELL</text><rect x="433" y="54" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="108" dur=".7s" begin="0.38s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.35s" fill="freeze"/><rect x="558" y="23" width="118" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="572" y="45" class="fg" font-size="11">POSTGRESQL</text><rect x="563" y="54" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="108" dur=".7s" begin="0.45s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.42s" fill="freeze"/><rect x="688" y="23" width="82" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="702" y="45" class="fg" font-size="11">DOCKER</text><rect x="693" y="54" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="72" dur=".7s" begin="0.52s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.49s" fill="freeze"/><rect x="28" y="75" width="76" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="42" y="97" class="fg" font-size="11">GIT</text><rect x="33" y="106" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="66" dur=".7s" begin="0.59s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.56s" fill="freeze"/><rect x="116" y="75" width="76" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="130" y="97" class="fg" font-size="11">LINUX</text><rect x="121" y="106" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="66" dur=".7s" begin="0.66s" fill="freeze"/></rect></g>
-<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.63s" fill="freeze"/><rect x="204" y="75" width="91" height="34" rx="6" fill="#111820" stroke="#30363d"/><text x="218" y="97" class="fg" font-size="11">WINDOWS</text><rect x="209" y="106" width="0" height="1.5" fill="#58a6ff"><animate attributeName="width" from="0" to="81" dur=".7s" begin="0.73s" fill="freeze"/></rect></g>
+
+<defs>
+  <linearGradient id="stack-scan" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#58a6ff" stop-opacity="0"/>
+    <stop offset=".5" stop-color="#58a6ff" stop-opacity=".8"/>
+    <stop offset="1" stop-color="#58a6ff" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="stack-glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="2.4" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<rect x="1" y="1" width="878" height="424" rx="14" fill="#0d1117" stroke="#30363d"/>
+<text x="28" y="24" class="muted" font-size="9">CAPABILITY MATRIX // CURATED SIGNAL</text>
+<text x="852" y="24" text-anchor="end" class="muted" font-size="9">FAMILIAR → SPECIALIZED</text>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.10s" fill="freeze"/>
+  <rect x="28" y="38" width="106" height="36" rx="6" fill="#111820" stroke="#30363d"/>
+  <rect x="28" y="38" width="3" height="36" rx="1.5" fill="#58a6ff" opacity="0.95"/>
+  <text x="42" y="60" class="muted" font-size="9" font-weight="700">CORE</text>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.180s" fill="freeze"/>
+  <rect x="143.0" y="38" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.32s" repeatCount="indefinite"/>
+  </rect>
+  <text x="189.8" y="60" text-anchor="middle" class="fg" font-size="9.3">PYTHON</text>
+  <rect x="149.0" y="69" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.250s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.225s" fill="freeze"/>
+  <rect x="245.6" y="38" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.44s" repeatCount="indefinite"/>
+  </rect>
+  <text x="292.4" y="60" text-anchor="middle" class="fg" font-size="9.3">C++</text>
+  <rect x="251.6" y="69" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.295s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.270s" fill="freeze"/>
+  <rect x="348.1" y="38" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.56s" repeatCount="indefinite"/>
+  </rect>
+  <text x="394.9" y="60" text-anchor="middle" class="fg" font-size="9.3">TYPESCRIPT</text>
+  <rect x="354.1" y="69" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.340s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.315s" fill="freeze"/>
+  <rect x="450.7" y="38" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.68s" repeatCount="indefinite"/>
+  </rect>
+  <text x="497.5" y="60" text-anchor="middle" class="fg" font-size="9.3">JAVASCRIPT</text>
+  <rect x="456.7" y="69" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.385s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.360s" fill="freeze"/>
+  <rect x="553.3" y="38" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.80s" repeatCount="indefinite"/>
+  </rect>
+  <text x="600.1" y="60" text-anchor="middle" class="fg" font-size="9.3">RUST</text>
+  <rect x="559.3" y="69" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.430s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.405s" fill="freeze"/>
+  <rect x="655.9" y="38" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.92s" repeatCount="indefinite"/>
+  </rect>
+  <text x="702.6" y="60" text-anchor="middle" class="fg" font-size="9.3">GO</text>
+  <rect x="661.9" y="69" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.475s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.450s" fill="freeze"/>
+  <rect x="758.4" y="38" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.04s" repeatCount="indefinite"/>
+  </rect>
+  <text x="805.2" y="60" text-anchor="middle" class="fg" font-size="9.3">SQL</text>
+  <rect x="764.4" y="69" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.520s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.22s" fill="freeze"/>
+  <rect x="28" y="102" width="106" height="36" rx="6" fill="#111820" stroke="#30363d"/>
+  <rect x="28" y="102" width="3" height="36" rx="1.5" fill="#58a6ff" opacity="0.85"/>
+  <text x="42" y="124" class="muted" font-size="9" font-weight="700">SYSTEMS</text>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.495s" fill="freeze"/>
+  <rect x="143.0" y="102" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.16s" repeatCount="indefinite"/>
+  </rect>
+  <text x="189.8" y="124" text-anchor="middle" class="fg" font-size="9.3">LINUX</text>
+  <rect x="149.0" y="133" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.565s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.540s" fill="freeze"/>
+  <rect x="245.6" y="102" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.28s" repeatCount="indefinite"/>
+  </rect>
+  <text x="292.4" y="124" text-anchor="middle" class="fg" font-size="9.3">WINDOWS</text>
+  <rect x="251.6" y="133" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.610s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.585s" fill="freeze"/>
+  <rect x="348.1" y="102" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.40s" repeatCount="indefinite"/>
+  </rect>
+  <text x="394.9" y="124" text-anchor="middle" class="fg" font-size="9.3">POWERSHELL</text>
+  <rect x="354.1" y="133" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.655s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.630s" fill="freeze"/>
+  <rect x="450.7" y="102" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.52s" repeatCount="indefinite"/>
+  </rect>
+  <text x="497.5" y="124" text-anchor="middle" class="fg" font-size="9.3">BASH</text>
+  <rect x="456.7" y="133" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.700s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.675s" fill="freeze"/>
+  <rect x="553.3" y="102" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.20s" repeatCount="indefinite"/>
+  </rect>
+  <text x="600.1" y="124" text-anchor="middle" class="fg" font-size="9.3">GECKO</text>
+  <rect x="559.3" y="133" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.745s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.720s" fill="freeze"/>
+  <rect x="655.9" y="102" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.32s" repeatCount="indefinite"/>
+  </rect>
+  <text x="702.6" y="124" text-anchor="middle" class="fg" font-size="9.3">POSTGRESQL</text>
+  <rect x="661.9" y="133" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.790s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.765s" fill="freeze"/>
+  <rect x="758.4" y="102" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.44s" repeatCount="indefinite"/>
+  </rect>
+  <text x="805.2" y="124" text-anchor="middle" class="fg" font-size="9.3">GIT</text>
+  <rect x="764.4" y="133" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.835s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.34s" fill="freeze"/>
+  <rect x="28" y="166" width="106" height="36" rx="6" fill="#111820" stroke="#30363d"/>
+  <rect x="28" y="166" width="3" height="36" rx="1.5" fill="#58a6ff" opacity="0.75"/>
+  <text x="42" y="188" class="muted" font-size="9" font-weight="700">INFRA</text>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.810s" fill="freeze"/>
+  <rect x="143.0" y="166" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.56s" repeatCount="indefinite"/>
+  </rect>
+  <text x="189.8" y="188" text-anchor="middle" class="fg" font-size="9.3">DOCKER</text>
+  <rect x="149.0" y="197" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.880s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.855s" fill="freeze"/>
+  <rect x="245.6" y="166" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.68s" repeatCount="indefinite"/>
+  </rect>
+  <text x="292.4" y="188" text-anchor="middle" class="fg" font-size="9.3">GITHUB ACTIONS</text>
+  <rect x="251.6" y="197" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.925s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.900s" fill="freeze"/>
+  <rect x="348.1" y="166" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.80s" repeatCount="indefinite"/>
+  </rect>
+  <text x="394.9" y="188" text-anchor="middle" class="fg" font-size="9.3">KUBERNETES</text>
+  <rect x="354.1" y="197" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="0.970s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.945s" fill="freeze"/>
+  <rect x="450.7" y="166" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.92s" repeatCount="indefinite"/>
+  </rect>
+  <text x="497.5" y="188" text-anchor="middle" class="fg" font-size="9.3">TERRAFORM</text>
+  <rect x="456.7" y="197" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.015s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="0.990s" fill="freeze"/>
+  <rect x="553.3" y="166" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.04s" repeatCount="indefinite"/>
+  </rect>
+  <text x="600.1" y="188" text-anchor="middle" class="fg" font-size="9.3">NGINX</text>
+  <rect x="559.3" y="197" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.060s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.035s" fill="freeze"/>
+  <rect x="655.9" y="166" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.16s" repeatCount="indefinite"/>
+  </rect>
+  <text x="702.6" y="188" text-anchor="middle" class="fg" font-size="9.3">REDIS</text>
+  <rect x="661.9" y="197" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.105s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.080s" fill="freeze"/>
+  <rect x="758.4" y="166" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.28s" repeatCount="indefinite"/>
+  </rect>
+  <text x="805.2" y="188" text-anchor="middle" class="fg" font-size="9.3">GRPC</text>
+  <rect x="764.4" y="197" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.150s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.46s" fill="freeze"/>
+  <rect x="28" y="230" width="106" height="36" rx="6" fill="#111820" stroke="#30363d"/>
+  <rect x="28" y="230" width="3" height="36" rx="1.5" fill="#58a6ff" opacity="0.65"/>
+  <text x="42" y="252" class="muted" font-size="9" font-weight="700">SPECIALIZED</text>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.125s" fill="freeze"/>
+  <rect x="143.0" y="230" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.40s" repeatCount="indefinite"/>
+  </rect>
+  <text x="189.8" y="252" text-anchor="middle" class="fg" font-size="9.3">LLVM</text>
+  <rect x="149.0" y="261" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.195s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.170s" fill="freeze"/>
+  <rect x="245.6" y="230" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.52s" repeatCount="indefinite"/>
+  </rect>
+  <text x="292.4" y="252" text-anchor="middle" class="fg" font-size="9.3">X86-64</text>
+  <rect x="251.6" y="261" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.240s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.215s" fill="freeze"/>
+  <rect x="348.1" y="230" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.20s" repeatCount="indefinite"/>
+  </rect>
+  <text x="394.9" y="252" text-anchor="middle" class="fg" font-size="9.3">ARM64</text>
+  <rect x="354.1" y="261" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.285s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.260s" fill="freeze"/>
+  <rect x="450.7" y="230" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.32s" repeatCount="indefinite"/>
+  </rect>
+  <text x="497.5" y="252" text-anchor="middle" class="fg" font-size="9.3">WEBASSEMBLY</text>
+  <rect x="456.7" y="261" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.330s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.305s" fill="freeze"/>
+  <rect x="553.3" y="230" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.44s" repeatCount="indefinite"/>
+  </rect>
+  <text x="600.1" y="252" text-anchor="middle" class="fg" font-size="9.3">OPENGL</text>
+  <rect x="559.3" y="261" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.375s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.350s" fill="freeze"/>
+  <rect x="655.9" y="230" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.56s" repeatCount="indefinite"/>
+  </rect>
+  <text x="702.6" y="252" text-anchor="middle" class="fg" font-size="9.3">SOLIDITY</text>
+  <rect x="661.9" y="261" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.420s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.395s" fill="freeze"/>
+  <rect x="758.4" y="230" width="93.6" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.68s" repeatCount="indefinite"/>
+  </rect>
+  <text x="805.2" y="252" text-anchor="middle" class="fg" font-size="9.3">OPENTELEMETRY</text>
+  <rect x="764.4" y="261" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="81.6" dur=".55s"
+             begin="1.465s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".35s" begin="0.58s" fill="freeze"/>
+  <rect x="28" y="294" width="106" height="36" rx="6" fill="#111820" stroke="#30363d"/>
+  <rect x="28" y="294" width="3" height="36" rx="1.5" fill="#58a6ff" opacity="0.55"/>
+  <text x="42" y="316" class="muted" font-size="9" font-weight="700">DEEP CUTS</text>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.440s" fill="freeze"/>
+  <rect x="143.0" y="294" width="68.1" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.80s" repeatCount="indefinite"/>
+  </rect>
+  <text x="177.1" y="316" text-anchor="middle" class="fg" font-size="9.3">HASKELL</text>
+  <rect x="149.0" y="325" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="56.1" dur=".55s"
+             begin="1.510s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.485s" fill="freeze"/>
+  <rect x="220.1" y="294" width="68.1" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="2.92s" repeatCount="indefinite"/>
+  </rect>
+  <text x="254.2" y="316" text-anchor="middle" class="fg" font-size="9.3">ERLANG</text>
+  <rect x="226.1" y="325" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="56.1" dur=".55s"
+             begin="1.555s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.530s" fill="freeze"/>
+  <rect x="297.3" y="294" width="68.1" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.04s" repeatCount="indefinite"/>
+  </rect>
+  <text x="331.4" y="316" text-anchor="middle" class="fg" font-size="9.3">OCAML</text>
+  <rect x="303.3" y="325" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="56.1" dur=".55s"
+             begin="1.600s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.575s" fill="freeze"/>
+  <rect x="374.4" y="294" width="68.1" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.16s" repeatCount="indefinite"/>
+  </rect>
+  <text x="408.5" y="316" text-anchor="middle" class="fg" font-size="9.3">VYPER</text>
+  <rect x="380.4" y="325" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="56.1" dur=".55s"
+             begin="1.645s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.620s" fill="freeze"/>
+  <rect x="451.6" y="294" width="68.1" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.28s" repeatCount="indefinite"/>
+  </rect>
+  <text x="485.6" y="316" text-anchor="middle" class="fg" font-size="9.3">ASN.1</text>
+  <rect x="457.6" y="325" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="56.1" dur=".55s"
+             begin="1.690s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.665s" fill="freeze"/>
+  <rect x="528.7" y="294" width="68.1" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.40s" repeatCount="indefinite"/>
+  </rect>
+  <text x="562.8" y="316" text-anchor="middle" class="fg" font-size="9.3">RISC-V</text>
+  <rect x="534.7" y="325" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="56.1" dur=".55s"
+             begin="1.735s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="1.710s" fill="freeze"/>
+  <rect x="605.9" y="294" width="68.1" height="36" rx="6"
+        fill="#111820" stroke="#30363d" stroke-width="1">
+    <animate attributeName="stroke" values="#30363d;#58a6ff;#30363d" dur="3.8s"
+             begin="3.52s" repeatCount="indefinite"/>
+  </rect>
+  <text x="639.9" y="316" text-anchor="middle" class="fg" font-size="9.3">EBPF</text>
+  <rect x="611.9" y="325" width="0" height="1.4" rx=".7" fill="#79c0ff" opacity=".72">
+    <animate attributeName="width" from="0" to="56.1" dur=".55s"
+             begin="1.780s" fill="freeze"/>
+  </rect>
+</g>
+
+
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".45s" begin="1.925s" fill="freeze"/>
+  <rect x="686" y="294" width="166" height="36" rx="7"
+        fill="#111820" stroke="#58a6ff" stroke-opacity=".65"/>
+  <text x="702" y="316" class="accent" font-size="16" font-weight="700">200+</text>
+  <text x="753" y="314" class="fg" font-size="8.5">TECH</text>
+  <text x="753" y="326" class="muted" font-size="7.5">A–Z COVERAGE</text>
+  <circle cx="836" cy="311" r="3.2" fill="#3fb950" filter="url(#stack-glow)">
+    <animate attributeName="opacity" values="1;.22;1" dur="1.6s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.6;4;2.6" dur="1.6s" repeatCount="indefinite"/>
+  </circle>
+</g>
+
+
+<line x1="28" y1="396" x2="852" y2="396" stroke="#30363d"/>
+<text x="28" y="415" class="muted" font-size="8.5">LANGUAGES · FRAMEWORKS · SYSTEMS · NETWORK · SECURITY · CLOUD · DATA · LOW-LEVEL</text>
+<text x="852" y="415" text-anchor="end" class="muted" font-size="8.5">EXPAND // ON DEMAND</text>
+<rect x="-210" y="395" width="210" height="2" fill="url(#stack-scan)" filter="url(#stack-glow)">
+  <animate attributeName="x" values="-210;880" dur="4.2s" repeatCount="indefinite"/>
+</rect>
+
 </svg>

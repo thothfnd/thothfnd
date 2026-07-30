@@ -274,14 +274,116 @@ def about(g: dict,cfg: dict) -> str:
 
 
 def stack(cfg: dict) -> str:
-    items=cfg.get("stack",[]); parts=[f'<rect x="1" y="1" width="878" height="158" rx="12" fill="{BG}" stroke="{DIM}"/>']; x=28; y=48
-    for i,item in enumerate(items):
-        w=max(76,len(item)*9+28)
-        if x+w>850: x=28; y+=52
-        d=i*.07
-        parts.append(f'<g opacity="1"><animate attributeName="opacity" from="0" to="1" dur=".35s" begin="{d:.2f}s" fill="freeze"/><rect x="{x}" y="{y-25}" width="{w}" height="34" rx="6" fill="{PANEL}" stroke="{DIM}"/><text x="{x+14}" y="{y-3}" class="fg" font-size="11">{esc(item.upper())}</text><rect x="{x+5}" y="{y+6}" width="0" height="1.5" fill="{ACCENT}"><animate attributeName="width" from="0" to="{w-10}" dur=".7s" begin="{d+.1:.2f}s" fill="freeze"/></rect></g>')
-        x+=w+12
-    return shell(880,max(160,y+30),"\n".join(parts))
+    groups = cfg.get("stack_groups") or [{"label": "STACK", "items": cfg.get("stack", [])}]
+    total = str(cfg.get("stack_total", "200+"))
+
+    width = 880
+    left = 28
+    top = 28
+    row_h = 64
+    gap = 9
+    label_w = 106
+    tile_h = 36
+    counter_w = 166
+    height = top + len(groups) * row_h + 78
+
+    parts = [f"""
+<defs>
+  <linearGradient id="stack-scan" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="{ACCENT}" stop-opacity="0"/>
+    <stop offset=".5" stop-color="{ACCENT}" stop-opacity=".8"/>
+    <stop offset="1" stop-color="{ACCENT}" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="stack-glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="2.4" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<rect x="1" y="1" width="878" height="{height-2}" rx="14" fill="{BG}" stroke="{DIM}"/>
+<text x="28" y="24" class="muted" font-size="9">CAPABILITY MATRIX // CURATED SIGNAL</text>
+<text x="852" y="24" text-anchor="end" class="muted" font-size="9">FAMILIAR → SPECIALIZED</text>
+"""]
+
+    seq = 0
+    y = top + 35
+
+    for gi, group in enumerate(groups):
+        label = str(group.get("label", f"L{gi+1}"))
+        items = [str(x) for x in group.get("items", [])]
+        parts.append(f"""
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".35s" begin="{0.10 + gi*0.12:.2f}s" fill="freeze"/>
+  <rect x="{left}" y="{y-25}" width="{label_w}" height="{tile_h}" rx="6" fill="{PANEL}" stroke="{DIM}"/>
+  <rect x="{left}" y="{y-25}" width="3" height="{tile_h}" rx="1.5" fill="{ACCENT}" opacity="{0.95 - gi*0.1:.2f}"/>
+  <text x="{left+14}" y="{y-3}" class="muted" font-size="9" font-weight="700">{esc(label)}</text>
+</g>
+""")
+
+        x = left + label_w + gap
+        usable_right = 852
+        if gi == len(groups) - 1:
+            usable_right -= counter_w + 12
+
+        remaining = max(1, len(items))
+        available = usable_right - x - gap * (remaining - 1)
+        base_w = available / remaining
+
+        for item in items:
+            delay = 0.18 + seq * 0.045
+            seq += 1
+            w = base_w
+            tx = x + w / 2
+            pulse_begin = 2.2 + (seq % 12) * 0.12
+            parts.append(f"""
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".32s" begin="{delay:.3f}s" fill="freeze"/>
+  <rect x="{x:.1f}" y="{y-25}" width="{w:.1f}" height="{tile_h}" rx="6"
+        fill="{PANEL}" stroke="{DIM}" stroke-width="1">
+    <animate attributeName="stroke" values="{DIM};{ACCENT};{DIM}" dur="3.8s"
+             begin="{pulse_begin:.2f}s" repeatCount="indefinite"/>
+  </rect>
+  <text x="{tx:.1f}" y="{y-3}" text-anchor="middle" class="fg" font-size="9.3">{esc(item.upper())}</text>
+  <rect x="{x+6:.1f}" y="{y+6}" width="0" height="1.4" rx=".7" fill="{ACCENT2}" opacity=".72">
+    <animate attributeName="width" from="0" to="{max(0,w-12):.1f}" dur=".55s"
+             begin="{delay+0.07:.3f}s" fill="freeze"/>
+  </rect>
+</g>
+""")
+            x += w + gap
+
+        y += row_h
+
+    cy = top + (len(groups)-1)*row_h + 35
+    cx = 852 - counter_w
+    number = re.sub(r"[^0-9]", "", total) or "200"
+    plus = "+" if "+" in total else ""
+
+    parts.append(f"""
+<g opacity="0">
+  <animate attributeName="opacity" from="0" to="1" dur=".45s" begin="{0.35 + seq*0.045:.3f}s" fill="freeze"/>
+  <rect x="{cx}" y="{cy-25}" width="{counter_w}" height="{tile_h}" rx="7"
+        fill="{PANEL}" stroke="{ACCENT}" stroke-opacity=".65"/>
+  <text x="{cx+16}" y="{cy-3}" class="accent" font-size="16" font-weight="700">{esc(number)}{esc(plus)}</text>
+  <text x="{cx+67}" y="{cy-5}" class="fg" font-size="8.5">TECH</text>
+  <text x="{cx+67}" y="{cy+7}" class="muted" font-size="7.5">A–Z COVERAGE</text>
+  <circle cx="{cx+counter_w-16}" cy="{cy-8}" r="3.2" fill="{GOOD}" filter="url(#stack-glow)">
+    <animate attributeName="opacity" values="1;.22;1" dur="1.6s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.6;4;2.6" dur="1.6s" repeatCount="indefinite"/>
+  </circle>
+</g>
+""")
+
+    rail_y = height - 30
+    parts.append(f"""
+<line x1="28" y1="{rail_y}" x2="852" y2="{rail_y}" stroke="{DIM}"/>
+<text x="28" y="{rail_y+19}" class="muted" font-size="8.5">LANGUAGES · FRAMEWORKS · SYSTEMS · NETWORK · SECURITY · CLOUD · DATA · LOW-LEVEL</text>
+<text x="852" y="{rail_y+19}" text-anchor="end" class="muted" font-size="8.5">EXPAND // ON DEMAND</text>
+<rect x="-210" y="{rail_y-1}" width="210" height="2" fill="url(#stack-scan)" filter="url(#stack-glow)">
+  <animate attributeName="x" values="-210;880" dur="4.2s" repeatCount="indefinite"/>
+</rect>
+""")
+
+    return shell(width, height, "\n".join(parts))
 
 
 def project_card(p:dict,i:int)->str:

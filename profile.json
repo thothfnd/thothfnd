@@ -4,7 +4,16 @@
     "I build systems where privacy, compartmentalization and deterministic security are architectural constraints — not optional features.",
     "Current focus: browser isolation, anti-fingerprinting, evidence-driven certification and high-assurance automation."
   ],
-  "stack": ["Python", "JavaScript", "C++", "Gecko", "PowerShell", "PostgreSQL", "Docker", "Git", "Linux", "Windows"],
+  "stack": [
+    "Python",
+    "C++",
+    "TypeScript",
+    "Rust",
+    "Go",
+    "Gecko",
+    "Docker",
+    "Linux"
+  ],
   "projects": [
     {
       "name": "THOTH BROWSER",
@@ -28,5 +37,68 @@
       "url": ""
     }
   ],
-  "footer": "BUILD QUIETLY. VERIFY EVERYTHING."
+  "footer": "BUILD QUIETLY. VERIFY EVERYTHING.",
+  "stack_groups": [
+    {
+      "label": "CORE",
+      "items": [
+        "Python",
+        "C++",
+        "TypeScript",
+        "JavaScript",
+        "Rust",
+        "Go",
+        "SQL"
+      ]
+    },
+    {
+      "label": "SYSTEMS",
+      "items": [
+        "Linux",
+        "Windows",
+        "PowerShell",
+        "Bash",
+        "Gecko",
+        "PostgreSQL",
+        "Git"
+      ]
+    },
+    {
+      "label": "INFRA",
+      "items": [
+        "Docker",
+        "GitHub Actions",
+        "Kubernetes",
+        "Terraform",
+        "Nginx",
+        "Redis",
+        "gRPC"
+      ]
+    },
+    {
+      "label": "SPECIALIZED",
+      "items": [
+        "LLVM",
+        "x86-64",
+        "ARM64",
+        "WebAssembly",
+        "OpenGL",
+        "Solidity",
+        "OpenTelemetry"
+      ]
+    },
+    {
+      "label": "DEEP CUTS",
+      "items": [
+        "Haskell",
+        "Erlang",
+        "OCaml",
+        "Vyper",
+        "ASN.1",
+        "RISC-V",
+        "eBPF"
+      ]
+    }
+  ],
+  "stack_total": "200+"
 }
