@@ -1,13 +1,9 @@
 {
   "identity": {
     "mark": "THOTH /FND",
-    "handle": "thothfnd",
-    "eyebrow": "PRIVACY · SECURITY · ANONYMITY · SYSTEMS · AUTOMATION",
-    "lines": [
-      "I’m drawn to privacy, security, anonymity, systems, automation and the difficult parts most people never look at.",
-      "I like understanding how things actually behave under the surface, finding where assumptions fail, and turning that understanding into cleaner, stronger systems.",
-      "I tend to go deep: browsers, networks, cryptography, low-level behavior, infrastructure and anything that rewards obsessive curiosity."
-    ],
+    "lead": "Privacy, security, anonymity, systems and automation are the things I keep coming back to.",
+    "sublead": "I like understanding what happens underneath the interface — especially where assumptions, identity and trust begin to break.",
+    "profile_line": "Browsers, networks, cryptography, infrastructure, low-level behavior and automation are where that curiosity usually takes me.",
     "interests": [
       "privacy",
       "security",
@@ -26,8 +22,7 @@
       "name": "THOTH BROWSER",
       "repo_names": ["THOTH-Browser", "Thoth-Browser", "thoth-browser"],
       "status": "IN DEVELOPMENT",
-      "subtitle": "Privacy-first browser project",
-      "description": "A browser project built around compartmentalization, isolation, anti-correlation design and stronger privacy boundaries.",
+      "subtitle": "privacy browser · isolation · anti-correlation",
       "url": ""
     },
     {
@@ -35,8 +30,7 @@
       "name": "RELAYX",
       "repo_names": ["RelayX", "relayx"],
       "status": "IN DEVELOPMENT",
-      "subtitle": "Second public project",
-      "description": "A second project on this account. Its public description and repository link can evolve directly from this configuration as the project becomes public.",
+      "subtitle": "public details sync from the repository",
       "url": ""
     }
   ],
