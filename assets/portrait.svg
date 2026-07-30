@@ -1,33 +1,101 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="165" viewBox="0 0 880 165">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="464" viewBox="0 0 880 464">
 <style>
 text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
 .fg{fill:#e6edf3}.muted{fill:#7d8590}.accent{fill:#58a6ff}.good{fill:#3fb950}
 </style>
-<rect x="1" y="1" width="878" height="163" rx="10" fill="#0d1117" stroke="#30363d"/>
-<text x="18" y="18" class="muted" font-size="9">ASCII IDENTITY // @YOUR-GITHUB</text>
+<rect x="1" y="1" width="878" height="462" rx="10" fill="#0d1117" stroke="#30363d"/>
+<text x="18" y="18" class="muted" font-size="9">ASCII IDENTITY // @thothfnd</text>
 <clipPath id="cp0"><rect x="35" y="23.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.000s" fill="freeze"/></rect></clipPath>
-<text x="440" y="30.0" text-anchor="middle" clip-path="url(#cp0)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                         .........</text>
+<text x="440" y="30.0" text-anchor="middle" clip-path="url(#cp0)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve"></text>
 <clipPath id="cp1"><rect x="35" y="31.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.035s" fill="freeze"/></rect></clipPath>
-<text x="440" y="38.8" text-anchor="middle" clip-path="url(#cp1)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                    ..::+++++++++::..</text>
+<text x="440" y="38.8" text-anchor="middle" clip-path="url(#cp1)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                      .. ...................................................</text>
 <clipPath id="cp2"><rect x="35" y="40.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.070s" fill="freeze"/></rect></clipPath>
-<text x="440" y="47.6" text-anchor="middle" clip-path="url(#cp2)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                 .:+###############+:.</text>
+<text x="440" y="47.6" text-anchor="middle" clip-path="url(#cp2)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************=</text>
 <clipPath id="cp3"><rect x="35" y="49.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.105s" fill="freeze"/></rect></clipPath>
-<text x="440" y="56.4" text-anchor="middle" clip-path="url(#cp3)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">               .+#####++++++++++#####+.</text>
+<text x="440" y="56.4" text-anchor="middle" clip-path="url(#cp3)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************=</text>
 <clipPath id="cp4"><rect x="35" y="58.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.140s" fill="freeze"/></rect></clipPath>
-<text x="440" y="65.2" text-anchor="middle" clip-path="url(#cp4)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">              :####+:            :+####:</text>
+<text x="440" y="65.2" text-anchor="middle" clip-path="url(#cp4)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************=</text>
 <clipPath id="cp5"><rect x="35" y="67.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.175s" fill="freeze"/></rect></clipPath>
-<text x="440" y="74.0" text-anchor="middle" clip-path="url(#cp5)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">             +###:      PROFILE      :###+</text>
+<text x="440" y="74.0" text-anchor="middle" clip-path="url(#cp5)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************=</text>
 <clipPath id="cp6"><rect x="35" y="75.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.210s" fill="freeze"/></rect></clipPath>
-<text x="440" y="82.8" text-anchor="middle" clip-path="url(#cp6)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">             ###         AVATAR         ###</text>
+<text x="440" y="82.8" text-anchor="middle" clip-path="url(#cp6)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************-</text>
 <clipPath id="cp7"><rect x="35" y="84.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.245s" fill="freeze"/></rect></clipPath>
-<text x="440" y="91.6" text-anchor="middle" clip-path="url(#cp7)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">             +###:       SYNC         :###+</text>
+<text x="440" y="91.6" text-anchor="middle" clip-path="url(#cp7)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************-</text>
 <clipPath id="cp8"><rect x="35" y="93.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.280s" fill="freeze"/></rect></clipPath>
-<text x="440" y="100.4" text-anchor="middle" clip-path="url(#cp8)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">              :####+:            :+####:</text>
+<text x="440" y="100.4" text-anchor="middle" clip-path="url(#cp8)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `********+++++*****************************************-</text>
 <clipPath id="cp9"><rect x="35" y="102.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.315s" fill="freeze"/></rect></clipPath>
-<text x="440" y="109.2" text-anchor="middle" clip-path="url(#cp9)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">               .+#####++++++++++#####+.</text>
+<text x="440" y="109.2" text-anchor="middle" clip-path="url(#cp9)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .*******++++++++++++***********************************-</text>
 <clipPath id="cp10"><rect x="35" y="111.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.350s" fill="freeze"/></rect></clipPath>
-<text x="440" y="118.0" text-anchor="middle" clip-path="url(#cp10)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                 .:+###############+:.</text>
+<text x="440" y="118.0" text-anchor="middle" clip-path="url(#cp10)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .******+++++++++++++++++++++++++++++++++++++++*********-</text>
 <clipPath id="cp11"><rect x="35" y="119.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.385s" fill="freeze"/></rect></clipPath>
-<text x="440" y="126.8" text-anchor="middle" clip-path="url(#cp11)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                    ..::+++++++++::..</text>
-<rect x="35" y="150" width="6" height="10" fill="#58a6ff"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
+<text x="440" y="126.8" text-anchor="middle" clip-path="url(#cp11)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .******++++++++++++++++++++++++++++++++++++++++********-</text>
+<clipPath id="cp12"><rect x="35" y="128.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.420s" fill="freeze"/></rect></clipPath>
+<text x="440" y="135.6" text-anchor="middle" clip-path="url(#cp12)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .********+++++++++++++++++++++++++++++++++++***********-</text>
+<clipPath id="cp13"><rect x="35" y="137.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.455s" fill="freeze"/></rect></clipPath>
+<text x="440" y="144.4" text-anchor="middle" clip-path="url(#cp13)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .**********++++++++++++++++++++++++++******************-</text>
+<clipPath id="cp14"><rect x="35" y="146.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.490s" fill="freeze"/></rect></clipPath>
+<text x="440" y="153.2" text-anchor="middle" clip-path="url(#cp14)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .************++++++++++++++++++++++********************-</text>
+<clipPath id="cp15"><rect x="35" y="155.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.525s" fill="freeze"/></rect></clipPath>
+<text x="440" y="162.0" text-anchor="middle" clip-path="url(#cp15)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .****************+++++++++++***************************=</text>
+<clipPath id="cp16"><rect x="35" y="163.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.560s" fill="freeze"/></rect></clipPath>
+<text x="440" y="170.8" text-anchor="middle" clip-path="url(#cp16)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `****************++++++++******************************=</text>
+<clipPath id="cp17"><rect x="35" y="172.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.595s" fill="freeze"/></rect></clipPath>
+<text x="440" y="179.6" text-anchor="middle" clip-path="url(#cp17)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `ccc************++++++++******************************c=</text>
+<clipPath id="cp18"><rect x="35" y="181.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.630s" fill="freeze"/></rect></clipPath>
+<text x="440" y="188.4" text-anchor="middle" clip-path="url(#cp18)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">    .````````````....-c******+++++++++++++++***************++**************c=</text>
+<clipPath id="cp19"><rect x="35" y="190.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.665s" fill="freeze"/></rect></clipPath>
+<text x="440" y="197.2" text-anchor="middle" clip-path="url(#cp19)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .-+ccsscccc*****++c:.................*+++**************:...........`````:-.............```.</text>
+<clipPath id="cp20"><rect x="35" y="199.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.700s" fill="freeze"/></rect></clipPath>
+<text x="440" y="206.0" text-anchor="middle" clip-path="url(#cp20)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .=*ccccc**+***c**+c:.................**+***************:.``.......``````-=.:-:`````:::-==-`</text>
+<clipPath id="cp21"><rect x="35" y="207.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.735s" fill="freeze"/></rect></clipPath>
+<text x="440" y="214.8" text-anchor="middle" clip-path="url(#cp21)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .=ccccc*+++++***+=*:.................******************:.``````````````:-=.:-:::::::---==-`</text>
+<clipPath id="cp22"><rect x="35" y="216.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.770s" fill="freeze"/></rect></clipPath>
+<text x="440" y="223.6" text-anchor="middle" clip-path="url(#cp22)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .=cscc**++=++**++=*:.................******************:``:````````:::::-=.:::::-::---===:`</text>
+<clipPath id="cp23"><rect x="35" y="225.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.805s" fill="freeze"/></rect></clipPath>
+<text x="440" y="232.4" text-anchor="middle" clip-path="url(#cp23)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .=cccc**+++++++++=*:.................******************:.`:````````:::::-=.`:::---::--===:.</text>
+<clipPath id="cp24"><rect x="35" y="234.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.840s" fill="freeze"/></rect></clipPath>
+<text x="440" y="241.2" text-anchor="middle" clip-path="url(#cp24)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .=*cc***++++++**++c:.................******************:.````````````:::-=.`::::::::::-==:`</text>
+<clipPath id="cp25"><rect x="35" y="243.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.875s" fill="freeze"/></rect></clipPath>
+<text x="440" y="250.0" text-anchor="middle" clip-path="url(#cp25)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .=*ccccc*****ccc**c:.................******************:````......``````-- .:::::::::----:`</text>
+<clipPath id="cp26"><rect x="35" y="251.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.910s" fill="freeze"/></rect></clipPath>
+<text x="440" y="258.8" text-anchor="middle" clip-path="url(#cp26)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .=cssssssscccsscc*c:.................******************:``````.....`````-- .::-----::::::`.</text>
+<clipPath id="cp27"><rect x="35" y="260.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.945s" fill="freeze"/></rect></clipPath>
+<text x="440" y="267.6" text-anchor="middle" clip-path="url(#cp27)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">    `:::::::`````````-***+++++++++++++++******************++++++++++++++****=      ..</text>
+<clipPath id="cp28"><rect x="35" y="269.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="0.980s" fill="freeze"/></rect></clipPath>
+<text x="440" y="276.4" text-anchor="middle" clip-path="url(#cp28)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `cccc**********************************************cccc=</text>
+<clipPath id="cp29"><rect x="35" y="278.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.015s" fill="freeze"/></rect></clipPath>
+<text x="440" y="285.2" text-anchor="middle" clip-path="url(#cp29)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `cc***************************************************c=</text>
+<clipPath id="cp30"><rect x="35" y="287.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.050s" fill="freeze"/></rect></clipPath>
+<text x="440" y="294.0" text-anchor="middle" clip-path="url(#cp30)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************=</text>
+<clipPath id="cp31"><rect x="35" y="295.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.085s" fill="freeze"/></rect></clipPath>
+<text x="440" y="302.8" text-anchor="middle" clip-path="url(#cp31)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .********+++++++++++++++++*******************+*********=</text>
+<clipPath id="cp32"><rect x="35" y="304.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.120s" fill="freeze"/></rect></clipPath>
+<text x="440" y="311.6" text-anchor="middle" clip-path="url(#cp32)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     .******+++++++++++++++++++++++********++++++++++*******-</text>
+<clipPath id="cp33"><rect x="35" y="313.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.155s" fill="freeze"/></rect></clipPath>
+<text x="440" y="320.4" text-anchor="middle" clip-path="url(#cp33)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `********+++++++++++++*********************+++*********=</text>
+<clipPath id="cp34"><rect x="35" y="322.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.190s" fill="freeze"/></rect></clipPath>
+<text x="440" y="329.2" text-anchor="middle" clip-path="url(#cp34)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `******************************************************-</text>
+<clipPath id="cp35"><rect x="35" y="331.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.225s" fill="freeze"/></rect></clipPath>
+<text x="440" y="338.0" text-anchor="middle" clip-path="url(#cp35)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">                     `+++++++==========+******************+=============++++-</text>
+<clipPath id="cp36"><rect x="35" y="339.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.260s" fill="freeze"/></rect></clipPath>
+<text x="440" y="346.8" text-anchor="middle" clip-path="url(#cp36)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">     .`````:::::::::`.                 .******************-                    ... ...........</text>
+<clipPath id="cp37"><rect x="35" y="348.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.295s" fill="freeze"/></rect></clipPath>
+<text x="440" y="355.6" text-anchor="middle" clip-path="url(#cp37)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">    ..:-::::::------:`                 .******************-                   .``......```::`.</text>
+<clipPath id="cp38"><rect x="35" y="357.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.330s" fill="freeze"/></rect></clipPath>
+<text x="440" y="364.4" text-anchor="middle" clip-path="url(#cp38)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">    .`=-:::::-------:`                 .******************-                   `::``.`````:-:`.</text>
+<clipPath id="cp39"><rect x="35" y="366.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.365s" fill="freeze"/></rect></clipPath>
+<text x="440" y="373.2" text-anchor="middle" clip-path="url(#cp39)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">    `-++=-----------:.                 .******************-                  .:--:``````::-:`.</text>
+<clipPath id="cp40"><rect x="35" y="375.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.400s" fill="freeze"/></rect></clipPath>
+<text x="440" y="382.0" text-anchor="middle" clip-path="url(#cp40)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">    `-**++====------:`                 .******************-                  .:--::``````:-:`.</text>
+<clipPath id="cp41"><rect x="35" y="383.8" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.435s" fill="freeze"/></rect></clipPath>
+<text x="440" y="390.8" text-anchor="middle" clip-path="url(#cp41)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">    `-*c*+====---===:`                 .******************-                  .`--::``````:-:`.</text>
+<clipPath id="cp42"><rect x="35" y="392.6" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.470s" fill="freeze"/></rect></clipPath>
+<text x="440" y="399.6" text-anchor="middle" clip-path="url(#cp42)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .`-*c**+++++++++=-`                 .******************-                  .`:-::``````:::`.</text>
+<clipPath id="cp43"><rect x="35" y="401.4" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.505s" fill="freeze"/></rect></clipPath>
+<text x="440" y="408.4" text-anchor="middle" clip-path="url(#cp43)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">   .:-+*+=========--:`                 `c*cc**************-                  .``````````````..</text>
+<clipPath id="cp44"><rect x="35" y="410.2" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.540s" fill="freeze"/></rect></clipPath>
+<text x="440" y="417.2" text-anchor="middle" clip-path="url(#cp44)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve">      ...                               ``````````````````.</text>
+<clipPath id="cp45"><rect x="35" y="419.0" width="810" height="10"><animate attributeName="width" from="0" to="810" dur=".55s" begin="1.575s" fill="freeze"/></rect></clipPath>
+<text x="440" y="426.0" text-anchor="middle" clip-path="url(#cp45)" fill="#e6edf3" fill-opacity=".88" font-size="7.8" xml:space="preserve"></text>
+<rect x="35" y="449" width="6" height="10" fill="#58a6ff"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
 </svg>
