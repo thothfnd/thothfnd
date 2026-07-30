@@ -1,48 +1,37 @@
 {
-  "tagline": "Browser systems. Identity isolation. Evidence-driven security.",
-  "focus": [
+  "identity": {
+    "mark": "THOTH /FND",
+    "handle": "thothfnd",
+    "lines": [
+      "Privacy, security, anonymity, systems, automation and the edges where all of them meet are what keep me interested.",
+      "I like taking complicated ideas apart, understanding what really leaks or breaks, then rebuilding them into tools that are cleaner, harder to correlate and easier to verify.",
+      "Most of what I build starts from curiosity: browsers, networks, cryptography, low-level behavior, infrastructure and anything that can be pushed far beyond its default design."
+    ]
+  },
+  "projects": [
     {
-      "label": "DISCIPLINE",
-      "value": "Browser systems"
-    },
-    {
-      "label": "PRINCIPLE",
-      "value": "Privacy architecture"
-    },
-    {
-      "label": "METHOD",
-      "value": "Evidence-driven"
-    },
-    {
-      "label": "MODE",
-      "value": "Private R&D"
-    }
-  ],
-  "works": [
-    {
-      "index": "01",
+      "id": "thoth-browser",
       "name": "THOTH BROWSER",
-      "status": "PRIVATE R&D",
-      "discipline": "Browser architecture / privacy engineering",
-      "description": "Identity compartmentalization, routing boundaries, fingerprint resistance and deterministic certification.",
+      "repo_names": ["THOTH-Browser", "Thoth-Browser", "thoth-browser"],
+      "status": "IN DEVELOPMENT",
+      "subtitle": "Privacy-first browser architecture",
+      "description": "Compartmentalization, anti-correlation design, routing boundaries, fingerprint resistance and verifiable behavior.",
       "url": ""
     },
     {
-      "index": "02",
-      "name": "CERTIFICATION SYSTEMS",
-      "status": "INTERNAL",
-      "discipline": "Verification / release engineering",
-      "description": "Reproducible gates, evidence chains, failure closure and machine-readable GO / NO-GO decisions.",
-      "url": ""
-    },
-    {
-      "index": "03",
-      "name": "SECURITY ARCHITECTURE",
-      "status": "ONGOING",
-      "discipline": "Isolation / authorization / automation",
-      "description": "Compartmentalized systems designed around explicit trust boundaries, least privilege and low operator friction.",
+      "id": "relayx",
+      "name": "RELAYX",
+      "repo_names": ["RelayX", "relayx"],
+      "status": "IN DEVELOPMENT",
+      "subtitle": "Second public project",
+      "description": "Repository details and source become directly accessible here as soon as RelayX is public on this account.",
       "url": ""
     }
   ],
-  "footer": "BUILD QUIETLY. VERIFY EVERYTHING."
+  "links": [
+    {"id": "github", "label": "GITHUB", "url": "AUTO"},
+    {"id": "telegram", "label": "TELEGRAM", "url": ""},
+    {"id": "channel", "label": "CHANNEL", "url": ""},
+    {"id": "website", "label": "WEBSITE", "url": ""}
+  ]
 }

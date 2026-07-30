@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="360" viewBox="0 0 880 360">
+<style>
+.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f6f7f8}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f6f7f8}
+.serif{font-family:Georgia,"Times New Roman",serif;fill:#f6f7f8}
+.soft{fill:#b6bbc3}.faint{fill:#777d87}
+</style>
+
+<defs><linearGradient id="aboutBeam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity=".30"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+<rect width="880" height="360" fill="#050506"/>
+<circle cx="760" cy="180" r="118" fill="none" stroke="#22252b"/>
+<circle cx="760" cy="180" r="76" fill="none" stroke="#1a1d22"/>
+<path d="M640,180 H880 M760,60 V300" stroke="#17191e"/>
+<circle cx="760" cy="180" r="4" fill="#e9ebee" opacity=".7"><animate attributeName="r" values="3;6;3" dur="3s" repeatCount="indefinite"/></circle>
+<text x="40" y="36" class="mono faint" font-size="12">ABOUT</text>
+
+<text x="40" y="80" class="sans" font-size="22" font-weight="680" opacity="0">Privacy, security, anonymity, systems, automation and the edges where<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="0.18s" fill="freeze"/></text>
+<text x="40" y="111" class="sans" font-size="22" font-weight="680" opacity="0">all of them meet are what keep me interested.<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="0.28s" fill="freeze"/></text>
+<text x="40" y="160" class="sans" font-size="18" font-weight="500" opacity="0">I like taking complicated ideas apart, understanding what really leaks<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="0.73s" fill="freeze"/></text>
+<text x="40" y="187" class="sans" font-size="18" font-weight="500" opacity="0">or breaks, then rebuilding them into tools that are cleaner, harder to<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="0.83s" fill="freeze"/></text>
+<text x="40" y="214" class="sans" font-size="18" font-weight="500" opacity="0">correlate and easier to verify.<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="0.93s" fill="freeze"/></text>
+<text x="40" y="259" class="sans" font-size="18" font-weight="500" opacity="0">Most of what I build starts from curiosity: browsers, networks,<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="1.28s" fill="freeze"/></text>
+<text x="40" y="286" class="sans" font-size="18" font-weight="500" opacity="0">cryptography, low-level behavior, infrastructure and anything that can<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="1.38s" fill="freeze"/></text>
+<text x="40" y="313" class="sans" font-size="18" font-weight="500" opacity="0">be pushed far beyond its default design.<animate attributeName="opacity" from="0" to="1" dur=".5s" begin="1.48s" fill="freeze"/></text>
+<rect x="-180" y="338" width="180" height="2" fill="url(#aboutBeam)"><animate attributeName="x" values="-180;900" dur="6s" repeatCount="indefinite"/></rect>
+</svg>
