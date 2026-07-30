@@ -1,36 +1,35 @@
 {
-  "identity": {
-    "mark": "THOTH /FND",
-    "lead": "Privacy, security, anonymity, systems and automation are the things I keep coming back to.",
-    "sublead": "I like understanding what happens underneath the interface — especially where assumptions, identity and trust begin to break.",
-    "profile_line": "Browsers, networks, cryptography, infrastructure, low-level behavior and automation are where that curiosity usually takes me.",
-    "interests": [
-      "privacy",
-      "security",
-      "anonymity",
-      "browser architecture",
-      "networks",
-      "cryptography",
-      "low-level systems",
-      "automation",
-      "infrastructure"
-    ]
-  },
+  "display_name": "THOTH /FND",
+  "title_line": "privacy · security · anonymity · systems · automation",
+  "about": [
+    "Privacy, security, anonymity, systems and automation are the things I keep coming back to.",
+    "I like understanding what actually happens underneath the interface — especially where identity, trust and assumptions begin to leak.",
+    "Browsers, networks, cryptography, low-level behavior, infrastructure and obsessive experimentation are usually where that curiosity takes me."
+  ],
+  "interests": [
+    "privacy",
+    "security",
+    "anonymity",
+    "browser architecture",
+    "networks",
+    "cryptography",
+    "low-level systems",
+    "automation",
+    "infrastructure"
+  ],
   "projects": [
     {
-      "id": "thoth-browser",
-      "name": "THOTH BROWSER",
+      "name": "THOTH Browser",
+      "status": "private development",
+      "summary": "Browser architecture focused on isolation, anti-correlation thinking and a much higher privacy standard.",
       "repo_names": ["THOTH-Browser", "Thoth-Browser", "thoth-browser"],
-      "status": "IN DEVELOPMENT",
-      "subtitle": "privacy browser · isolation · anti-correlation",
       "url": ""
     },
     {
-      "id": "relayx",
-      "name": "RELAYX",
+      "name": "RelayX",
+      "status": "private development",
+      "summary": "A relay-oriented project built around stronger separation, cleaner routing logic and privacy-minded design.",
       "repo_names": ["RelayX", "relayx"],
-      "status": "IN DEVELOPMENT",
-      "subtitle": "public details sync from the repository",
       "url": ""
     }
   ],

@@ -26,6 +26,7 @@ LEGACY_EXACT = [
     "WORKFLOW-PASTE.txt",
     "START-HERE-V8.txt",
     "START-HERE-V9.txt",
+    "START-HERE-V10.txt",
     "V8.0.1-HOTFIX.txt",
     "V8.0.2-HOTFIX.txt",
     "data/capabilities.json",
@@ -49,7 +50,7 @@ LEGACY_ROOT_ASSETS = {
 def verify() -> None:
     missing = [item for item in REQUIRED if not (ROOT / item).exists()]
     if missing:
-        print("V10 CLEANUP ABORTED — required V10 files are missing:")
+        print("V11 CLEANUP ABORTED — required V11 files are missing:")
         for item in missing:
             print(f"  - {item}")
         print("Nothing was deleted.")
@@ -99,11 +100,11 @@ def main() -> int:
     verify()
     found = candidates()
     if not found:
-        print("V10 CLEANUP: repository already clean.")
+        print("V11 CLEANUP: repository already clean.")
         return 0
 
     if args.audit or not args.apply:
-        print("V10 CLEANUP candidates:")
+        print("V11 CLEANUP candidates:")
         for path in found:
             print(f"  - {path.relative_to(ROOT)}")
 
@@ -113,7 +114,7 @@ def main() -> int:
 
     for path in found:
         remove(path)
-    print(f"V10 CLEANUP: removed {len(found)} legacy item(s).")
+    print(f"V11 CLEANUP: removed {len(found)} legacy item(s).")
     return 0
 
 
