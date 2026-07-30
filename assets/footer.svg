@@ -1,10 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="90" viewBox="0 0 880 90">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="84" viewBox="0 0 880 84">
 <style>
-.title{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
-.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f5f7fa}
-.muted{fill:#a1a8b3}.subtle{fill:#7b828d}.light{fill:#d4d7dc}
-
+.display{font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;fill:#f4f4f5}
+.sans{font-family:"Helvetica Neue",Arial,system-ui,sans-serif;fill:#f4f4f5}
+.serif{font-family:Georgia,"Times New Roman",serif;fill:#b7bac0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f4f4f5}
+.soft{fill:#b7bac0}.faint{fill:#7f838b}.chrome{fill:#dfe2e6}
 </style>
-<line x1="8" y1="14" x2="872" y2="14" stroke="#2a2d33"/><text x="8" y="48" class="title" font-size="12" font-weight="700">BUILT FOR SIGNAL, NOT NOISE.</text><text x="8" y="72" class="mono subtle" font-size="8.5">GENERATED LOCALLY // NO THIRD-PARTY BADGE SERVICE // 2026-07-30 03:53 UTC</text><rect x="846" y="38" width="8" height="14" fill="#b8bec6"><animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/></rect>
+
+<rect width="880" height="84" fill="#090909"/>
+<line x1="36" y1="18" x2="844" y2="18" stroke="#303034"/>
+<text x="36" y="51" class="display" font-size="12" font-weight="800">BUILT FOR SIGNAL, NOT NOISE.</text>
+<text x="36" y="70" class="mono faint" font-size="8">LOCAL GENERATION / NO THIRD-PARTY BADGE SERVICE / 2026-07-30 04:09 UTC</text>
+<rect x="832" y="38" width="8" height="13" fill="#dfe2e6"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
+
 </svg>

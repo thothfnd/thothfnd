@@ -1,48 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="300" viewBox="0 0 880 300">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="318" viewBox="0 0 880 318">
 <style>
-.title{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
-.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f5f7fa}
-.muted{fill:#a1a8b3}.subtle{fill:#7b828d}.light{fill:#d4d7dc}
-
+.display{font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;fill:#f4f4f5}
+.sans{font-family:"Helvetica Neue",Arial,system-ui,sans-serif;fill:#f4f4f5}
+.serif{font-family:Georgia,"Times New Roman",serif;fill:#b7bac0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f4f4f5}
+.soft{fill:#b7bac0}.faint{fill:#7f838b}.chrome{fill:#dfe2e6}
 </style>
 
 <defs>
-  <linearGradient id="heroBorder" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#d4d7dc" stop-opacity=".32"/>
-    <stop offset="1" stop-color="#d4d7dc" stop-opacity=".08"/>
-  </linearGradient>
-  <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#d4d7dc" stop-opacity="0"/>
-    <stop offset=".5" stop-color="#d4d7dc" stop-opacity=".7"/>
-    <stop offset="1" stop-color="#d4d7dc" stop-opacity="0"/>
-  </linearGradient>
+ <linearGradient id="chromeText" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#8c9198"/><stop offset=".28" stop-color="#f3f4f5"/><stop offset=".53" stop-color="#a0a5ac"/><stop offset=".78" stop-color="#ffffff"/><stop offset="1" stop-color="#858a91"/>
+ </linearGradient>
+ <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dfe2e6" stop-opacity="0"/><stop offset=".48" stop-color="#dfe2e6" stop-opacity=".8"/><stop offset="1" stop-color="#dfe2e6" stop-opacity="0"/></linearGradient>
+ <clipPath id="tag"><rect x="36" y="0" width="0" height="240"><animate attributeName="width" from="0" to="810" dur="1.25s" begin=".25s" fill="freeze"/></rect></clipPath>
 </defs>
-<rect x="1" y="1" width="878" height="298" rx="18" fill="#0a0a0b" stroke="url(#heroBorder)"/>
-<rect x="22" y="22" width="836" height="38" rx="10" fill="#16181c" stroke="#2a2d33"/>
-<circle cx="42" cy="41" r="4" fill="#d4d7dc"><animate attributeName="opacity" values="1;.26;1" dur="2.1s" repeatCount="indefinite"/></circle>
-<text x="56" y="45" class="mono muted" font-size="10">PROFILE // CHROME INTERFACE</text>
-<text x="840" y="45" text-anchor="end" class="mono muted" font-size="9">SYNCED FROM GITHUB</text>
-
-<text x="34" y="110" class="title" font-size="42" font-weight="800">THOTHFND</text>
-<text x="34" y="139" class="mono subtle" font-size="13">@thothfnd</text>
-<text x="34" y="177" class="sans muted" font-size="15">privacy engineering // browser systems // security architecture</text>
-<line x1="34" y1="196" x2="846" y2="196" stroke="#2a2d33"/>
-<rect x="34" y="195" width="0" height="2" fill="#b8bec6"><animate attributeName="width" from="0" to="300" dur="1.1s" begin=".15s" fill="freeze"/></rect>
-
-<rect x="34" y="222" width="122" height="50" rx="12" fill="#111214" stroke="#2a2d33"/>
-<rect x="172" y="222" width="122" height="50" rx="12" fill="#111214" stroke="#2a2d33"/>
-<rect x="310" y="222" width="122" height="50" rx="12" fill="#111214" stroke="#2a2d33"/>
-<rect x="448" y="222" width="122" height="50" rx="12" fill="#111214" stroke="#2a2d33"/>
-<rect x="586" y="222" width="260" height="50" rx="12" fill="#111214" stroke="#2a2d33"/>
-
-<text x="50" y="243" class="mono subtle" font-size="8">REPOS</text><text x="50" y="262" class="title" font-size="20" font-weight="700">1</text>
-<text x="188" y="243" class="mono subtle" font-size="8">FOLLOWERS</text><text x="188" y="262" class="title" font-size="20" font-weight="700">0</text>
-<text x="326" y="243" class="mono subtle" font-size="8">FOLLOWING</text><text x="326" y="262" class="title" font-size="20" font-weight="700">0</text>
-<text x="464" y="243" class="mono subtle" font-size="8">JOINED</text><text x="464" y="262" class="title" font-size="20" font-weight="700">2026</text>
-<text x="602" y="243" class="mono subtle" font-size="8">LOCATION / STATUS</text><text x="602" y="262" class="sans" font-size="11">NETWORK // PRIVATE</text>
-<text x="814" y="262" text-anchor="end" class="mono muted" font-size="10">ONLINE</text>
-
-<rect x="-220" y="286" width="220" height="2" fill="url(#scan)"><animate attributeName="x" values="-220;900" dur="5.2s" repeatCount="indefinite"/></rect>
+<rect width="880" height="318" fill="#090909"/>
+<line x1="36" y1="34" x2="844" y2="34" stroke="#303034"/>
+<text x="36" y="24" class="mono faint" font-size="9">THOTHFND / PROFILE INDEX</text>
+<text x="844" y="24" text-anchor="end" class="mono faint" font-size="9">LIVE DATA / GENERATED</text>
+<text x="34" y="128" class="display" font-size="72" font-weight="900" fill="url(#chromeText)">THOTHFND</text>
+<text x="38" y="159" class="mono soft" font-size="12">@thothfnd</text>
+<g clip-path="url(#tag)"><text x="38" y="205" class="serif" font-size="21" font-style="italic">privacy engineering // browser systems // security architecture</text></g>
+<line x1="36" y1="232" x2="844" y2="232" stroke="#303034"/>
+<text x="36" y="262" class="mono faint" font-size="8">REPOS</text><text x="36" y="290" class="display" font-size="25" font-weight="800">3</text>
+<text x="170" y="262" class="mono faint" font-size="8">FOLLOWERS</text><text x="170" y="290" class="display" font-size="25" font-weight="800">12</text>
+<text x="326" y="262" class="mono faint" font-size="8">FOLLOWING</text><text x="326" y="290" class="display" font-size="25" font-weight="800">3</text>
+<text x="482" y="262" class="mono faint" font-size="8">JOINED</text><text x="482" y="290" class="display" font-size="25" font-weight="800">2024</text>
+<text x="638" y="262" class="mono faint" font-size="8">LOCATION</text><text x="638" y="290" class="sans" font-size="12">NETWORK / PRIVATE</text>
+<rect x="-240" y="307" width="240" height="1.5" fill="url(#scan)"><animate attributeName="x" values="-240;920" dur="5.6s" repeatCount="indefinite"/></rect>
 
 </svg>

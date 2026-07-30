@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="245" viewBox="0 0 880 245">
+<style>
+.display{font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;fill:#f4f4f5}
+.sans{font-family:"Helvetica Neue",Arial,system-ui,sans-serif;fill:#f4f4f5}
+.serif{font-family:Georgia,"Times New Roman",serif;fill:#b7bac0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f4f4f5}
+.soft{fill:#b7bac0}.faint{fill:#7f838b}.chrome{fill:#dfe2e6}
+</style>
+
+<defs><linearGradient id="idscan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dfe2e6" stop-opacity="0"/><stop offset=".5" stop-color="#dfe2e6" stop-opacity=".78"/><stop offset="1" stop-color="#dfe2e6" stop-opacity="0"/></linearGradient></defs>
+<rect width="880" height="245" fill="#090909"/>
+<line x1="36" y1="30" x2="844" y2="30" stroke="#303034"/>
+<text x="36" y="21" class="mono faint" font-size="9">IDENTITY / ASCII RENDER</text>
+<text x="844" y="21" text-anchor="end" class="mono faint" font-size="9">@thothfnd</text>
+<text x="36" y="61" class="mono soft" font-size="10">01 FETCH</text><line x1="104" y1="57" x2="182" y2="57" stroke="#303034"/>
+<text x="202" y="61" class="mono soft" font-size="10">02 MASK</text><line x1="266" y1="57" x2="344" y2="57" stroke="#303034"/>
+<text x="364" y="61" class="mono soft" font-size="10">03 MAP</text><line x1="424" y1="57" x2="502" y2="57" stroke="#303034"/>
+<text x="522" y="61" class="mono soft" font-size="10">04 REVEAL</text>
+<rect x="36" y="70" width="0" height="1.4" fill="#dfe2e6"><animate attributeName="width" from="0" to="626" dur="1.45s" begin=".08s" fill="freeze"/></rect>
+
+<clipPath id="c0"><rect x="44" y="87.0" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.650s" fill="freeze"/></rect></clipPath>
+<text x="440" y="94.0" text-anchor="middle" clip-path="url(#c0)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                           .,:iillllii,:.</text>
+<clipPath id="c1"><rect x="44" y="95.6" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.676s" fill="freeze"/></rect></clipPath>
+<text x="440" y="102.6" text-anchor="middle" clip-path="url(#c1)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                      .:iIttfffjjjrrxxnnuuI;.</text>
+<clipPath id="c2"><rect x="44" y="104.2" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.702s" fill="freeze"/></rect></clipPath>
+<text x="440" y="111.2" text-anchor="middle" clip-path="url(#c2)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                  .;tXXUUUUUUUUUUUUUUUUUUXXf,</text>
+<clipPath id="c3"><rect x="44" y="112.8" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.728s" fill="freeze"/></rect></clipPath>
+<text x="440" y="119.8" text-anchor="middle" clip-path="url(#c3)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                :fXUUUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<clipPath id="c4"><rect x="44" y="121.4" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.754s" fill="freeze"/></rect></clipPath>
+<text x="440" y="128.4" text-anchor="middle" clip-path="url(#c4)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">              .nXUUUUU.      PROFILE      .UUXj</text>
+<clipPath id="c5"><rect x="44" y="130.0" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.780s" fill="freeze"/></rect></clipPath>
+<text x="440" y="137.0" text-anchor="middle" clip-path="url(#c5)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">              ;XUUUUUU       AVATAR        UUXt</text>
+<clipPath id="c6"><rect x="44" y="138.6" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.806s" fill="freeze"/></rect></clipPath>
+<text x="440" y="145.6" text-anchor="middle" clip-path="url(#c6)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">              ;XUUUUUU        READY        UUXt</text>
+<clipPath id="c7"><rect x="44" y="147.2" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.832s" fill="freeze"/></rect></clipPath>
+<text x="440" y="154.2" text-anchor="middle" clip-path="url(#c7)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">              .nXUUUUU.       SYNC        .UUXj</text>
+<clipPath id="c8"><rect x="44" y="155.8" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.858s" fill="freeze"/></rect></clipPath>
+<text x="440" y="162.8" text-anchor="middle" clip-path="url(#c8)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                :fXUUUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<clipPath id="c9"><rect x="44" y="164.4" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.884s" fill="freeze"/></rect></clipPath>
+<text x="440" y="171.4" text-anchor="middle" clip-path="url(#c9)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                  .;tXXUUUUUUUUUUUUUUUUUUXXf,</text>
+<clipPath id="c10"><rect x="44" y="173.0" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.910s" fill="freeze"/></rect></clipPath>
+<text x="440" y="180.0" text-anchor="middle" clip-path="url(#c10)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                      .:iIttfffjjjrrxxnnuuI;.</text>
+<clipPath id="c11"><rect x="44" y="181.6" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="0.936s" fill="freeze"/></rect></clipPath>
+<text x="440" y="188.6" text-anchor="middle" clip-path="url(#c11)" class="mono" style="font-size:7.35px;fill:#f4f4f5;opacity:.94" xml:space="preserve">                           .,:iillllii,:.</text>
+<rect x="44" y="227" width="8" height="11" fill="#dfe2e6"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
+<rect x="-220" y="217" width="220" height="1.4" fill="url(#idscan)"><animate attributeName="x" values="-220;920" dur="5.2s" begin="1.1s" repeatCount="indefinite"/></rect>
+</svg>
