@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="48" viewBox="0 0 880 48">
+<style>
+text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
+.fg{fill:#e6edf3}.muted{fill:#7d8590}.accent{fill:#58a6ff}.good{fill:#3fb950}
+</style>
+<text x="8" y="30" class="fg" font-size="19" font-weight="700">stack</text>
+<line x1="150" y1="24" x2="870" y2="24" stroke="#30363d" stroke-width="1">
+ <animate attributeName="x2" from="150" to="870" dur=".85s" begin=".15s" fill="freeze"/>
+</line>
+<rect x="8" y="39" width="0" height="2" fill="#58a6ff">
+ <animate attributeName="width" values="0;56;0" dur="2.8s" repeatCount="indefinite"/>
+</rect>
+</svg>

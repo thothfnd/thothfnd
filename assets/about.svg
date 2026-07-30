@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="216" viewBox="0 0 880 216">
+<style>
+text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
+.fg{fill:#e6edf3}.muted{fill:#7d8590}.accent{fill:#58a6ff}.good{fill:#3fb950}
+</style>
+<rect x="1" y="1" width="878" height="214" rx="12" fill="#0d1117" stroke="#30363d"/>
+<rect x="28" y="30" width="2" height="96" fill="#58a6ff" opacity=".75"/>
+<text x="48" y="52" class="fg" font-size="13">I build systems where privacy, compartmentalization and deterministic security are</text>
+<text x="48" y="76" class="fg" font-size="13">architectural constraints — not optional features.</text>
+<text x="48" y="100" class="fg" font-size="13">Current focus: browser isolation, anti-fingerprinting, evidence-driven certification and</text>
+<text x="48" y="124" class="fg" font-size="13">high-assurance automation.</text>
+<text x="48" y="192" class="muted" font-size="10">FOCUS // PRIVACY • SECURITY • SYSTEMS</text>
+</svg>

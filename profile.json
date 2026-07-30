@@ -1,0 +1,32 @@
+{
+  "tagline": "privacy engineering // security architecture // browser systems",
+  "about": [
+    "I build systems where privacy, compartmentalization and deterministic security are architectural constraints — not optional features.",
+    "Current focus: browser isolation, anti-fingerprinting, evidence-driven certification and high-assurance automation."
+  ],
+  "stack": ["Python", "JavaScript", "C++", "Gecko", "PowerShell", "PostgreSQL", "Docker", "Git", "Linux", "Windows"],
+  "projects": [
+    {
+      "name": "THOTH BROWSER",
+      "status": "ACTIVE DEVELOPMENT",
+      "tech": "Gecko · C++ · JavaScript · Python",
+      "description": "Privacy-first browser research: identity compartmentalization, routing boundaries, fingerprint resistance and deterministic certification.",
+      "url": ""
+    },
+    {
+      "name": "SECURITY LAB",
+      "status": "ACTIVE",
+      "tech": "Python · PowerShell · CI",
+      "description": "Reproducible security gates, evidence chains, failure-closure workflows and automated GO / NO-GO certification.",
+      "url": ""
+    },
+    {
+      "name": "SYSTEMS",
+      "status": "ONGOING",
+      "tech": "Automation · Backend · Security",
+      "description": "Private tooling and infrastructure experiments focused on speed, isolation, reliability and minimal operator friction.",
+      "url": ""
+    }
+  ],
+  "footer": "BUILD QUIETLY. VERIFY EVERYTHING."
+}
