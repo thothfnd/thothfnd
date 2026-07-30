@@ -1,0 +1,79 @@
+name: Refresh profile visuals
+
+on:
+  schedule:
+    - cron: "23 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-profile-visuals
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Cache background-removal model
+        uses: actions/cache@v4
+        with:
+          path: ~/.u2net
+          key: rembg-u2net-v1
+
+      - name: Install renderer dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Fetch current GitHub avatar
+        id: avatar
+        env:
+          GH_LOGIN: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/sync_avatar.py \
+            --login "$GH_LOGIN" \
+            --image "/tmp/github-avatar.png" \
+            --hash-file ".avatar.sha256" \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Rebuild ASCII portrait
+        if: steps.avatar.outputs.changed == 'true'
+        run: |
+          python scripts/render_ascii.py \
+            "/tmp/github-avatar.png" \
+            "assets/avatar-ascii.svg"
+
+      - name: Refresh profile metadata
+        env:
+          GH_LOGIN: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/render_meta.py \
+            --login "$GH_LOGIN" \
+            --output "assets/profile-meta.svg"
+
+      - name: Commit generated changes
+        run: |
+          FILES=".avatar.sha256 assets/avatar-ascii.svg assets/profile-meta.svg"
+          if [ -z "$(git status --porcelain -- $FILES)" ]; then
+            echo "Profile visuals are already current."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- $FILES
+          git commit -m "profile: refresh generated visuals"
+          git push
