@@ -1,4 +1,4 @@
-name: Refresh nocturne profile
+name: Refresh editorial profile
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: thothfnd-profile-v10
+  group: thothfnd-profile-v11
   cancel-in-progress: true
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
       - name: Compile renderer
         run: python -m py_compile scripts/generate_profile.py scripts/cleanup_repo.py
 
-      - name: Generate V10 nocturne profile
+      - name: Generate V11 editorial profile
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
 
       - name: Remove migration note after successful generation
         shell: bash
-        run: rm -f START-HERE-V10.txt
+        run: rm -f START-HERE-V11.txt
 
       - name: Commit meaningful changes and cleanup
         shell: bash
@@ -57,5 +57,5 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "profile: refresh V10 nocturne interface"
+          git commit -m "profile: refresh V11 editorial interface"
           git push
