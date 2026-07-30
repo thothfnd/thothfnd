@@ -1,15 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="222" viewBox="0 0 880 222">
 <style>
-text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
-.fg{fill:#edf2f8}.muted{fill:#7d8796}.accent{fill:#6aa8ff}.good{fill:#3fb950}
-.small{font-size:10px} .tiny{font-size:8px} .label{font-size:9px;letter-spacing:.18em}
+.title{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
+.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f5f7fa}
+.muted{fill:#a1a8b3}.subtle{fill:#7b828d}.light{fill:#d4d7dc}
 
 </style>
-<rect x="1" y="1" width="878" height="220" rx="14" fill="#0b0f16" stroke="#2b3340"/>
-<rect x="28" y="32" width="2" height="96" fill="#6aa8ff" opacity=".85"/>
-<text x="48" y="52" class="fg" font-size="13">I build systems where privacy, compartmentalization and deterministic security are</text>
-<text x="48" y="76" class="fg" font-size="13">architectural constraints — not optional features.</text>
-<text x="48" y="100" class="fg" font-size="13">Current focus: browser isolation, anti-fingerprinting, evidence-driven certification and</text>
-<text x="48" y="124" class="fg" font-size="13">high-assurance automation.</text>
-<text x="48" y="198" class="muted" font-size="10">FOCUS // PRIVACY • SECURITY • SYSTEMS</text>
+<rect x="1" y="1" width="878" height="220" rx="18" fill="#0a0a0b" stroke="#2a2d33"/>
+<rect x="28" y="32" width="2" height="96" fill="#b8bec6" opacity=".9"/>
+<text x="48" y="52" class="sans" font-size="13">I build systems where privacy, compartmentalization and deterministic security are</text>
+<text x="48" y="76" class="sans" font-size="13">architectural constraints — not optional features.</text>
+<text x="48" y="100" class="sans" font-size="13">Current focus: browser isolation, anti-fingerprinting, evidence-driven certification and</text>
+<text x="48" y="124" class="sans" font-size="13">high-assurance automation.</text>
+<text x="48" y="198" class="mono subtle" font-size="9">FOCUS // PRIVACY • SECURITY • SYSTEMS</text>
 </svg>

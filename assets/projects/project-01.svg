@@ -1,20 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="176" viewBox="0 0 880 176">
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="190" viewBox="0 0 880 190">
 <style>
-text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
-.fg{fill:#edf2f8}.muted{fill:#7d8796}.accent{fill:#6aa8ff}.good{fill:#3fb950}
-.small{font-size:10px} .tiny{font-size:8px} .label{font-size:9px;letter-spacing:.18em}
+.title{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
+.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f7fa}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f5f7fa}
+.muted{fill:#a1a8b3}.subtle{fill:#7b828d}.light{fill:#d4d7dc}
 
 </style>
 
 <defs>
- <linearGradient id="projScan1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6aa8ff" stop-opacity="0"/><stop offset=".5" stop-color="#6aa8ff" stop-opacity=".22"/><stop offset="1" stop-color="#6aa8ff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="projScan1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d4d7dc" stop-opacity="0"/><stop offset=".5" stop-color="#d4d7dc" stop-opacity=".38"/><stop offset="1" stop-color="#d4d7dc" stop-opacity="0"/></linearGradient>
 </defs>
-<rect x="1" y="1" width="878" height="174" rx="14" fill="#0b0f16" stroke="#2b3340"/>
-<rect x="24" y="24" width="830" height="126" rx="10" fill="#0f1520" stroke="#2b3340"/>
-<text x="40" y="48" class="muted" font-size="9">PROJECT // 01</text>
-<text x="40" y="84" class="fg" font-size="24" font-weight="700">THOTH BROWSER</text>
-<text x="40" y="111" class="accent" font-size="10">Gecko · C++ · JavaScript · Python</text>
-<circle cx="820" cy="41" r="4" fill="#3fb950"><animate attributeName="opacity" values="1;.24;1" dur="2s" begin="0.18s" repeatCount="indefinite"/></circle>
-<text x="808" y="45" text-anchor="end" class="muted" font-size="9">ACTIVE DEVELOPMENT</text>
-<text x="40" y="134" class="muted" font-size="11">Privacy-first browser research: identity compartmentalization, routing boundaries, fingerprint</text><text x="40" y="152" class="muted" font-size="11">resistance and deterministic certification.</text><rect x="-220" y="162" width="220" height="2" fill="url(#projScan1)"><animate attributeName="x" values="-220;900" dur="4.3s" repeatCount="indefinite"/></rect>
+<rect x="1" y="1" width="878" height="188" rx="18" fill="#0a0a0b" stroke="#2a2d33"/>
+<rect x="24" y="22" width="832" height="144" rx="14" fill="#16181c" stroke="#2a2d33"/>
+<text x="40" y="46" class="mono subtle" font-size="9">PROJECT // 01</text>
+<rect x="748" y="31" width="86" height="22" rx="11" fill="#111214" stroke="#2a2d33"/>
+<text x="791" y="45" text-anchor="middle" class="mono muted" font-size="8">ACTIVE DEVELOPMENT</text>
+<text x="40" y="82" class="title" font-size="24" font-weight="800">THOTH BROWSER</text>
+<text x="40" y="107" class="mono subtle" font-size="9">Gecko · C++ · JavaScript · Python</text>
+<text x="40" y="132" class="sans muted" font-size="11.5">Privacy-first browser research: identity compartmentalization, routing boundaries,</text><text x="40" y="150" class="sans muted" font-size="11.5">fingerprint resistance and deterministic certification.</text><rect x="-220" y="176" width="220" height="2" fill="url(#projScan1)"><animate attributeName="x" values="-220;900" dur="4.5s" repeatCount="indefinite"/></rect>
 </svg>
