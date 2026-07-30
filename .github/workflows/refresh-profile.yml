@@ -1,4 +1,4 @@
-name: Refresh profile interface
+name: Refresh immersive profile
 
 on:
   schedule:
@@ -9,13 +9,14 @@ permissions:
   contents: write
 
 concurrency:
-  group: profile-interface-refresh
+  group: thothfnd-profile-v8
   cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -26,29 +27,34 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Clean legacy profile artifacts
+        run: python scripts/cleanup_repo.py --apply --audit
+
       - name: Cache portrait segmentation model
         uses: actions/cache@v5
         with:
           path: ~/.u2net
-          key: rembg-u2net-v3
+          key: thothfnd-rembg-u2net-v8
 
       - name: Install renderer
         run: python -m pip install -r requirements.txt
 
-      - name: Generate profile
+      - name: Generate V8 interface
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/generate_profile.py
 
-      - name: Commit only meaningful changes
+      - name: Commit meaningful changes and cleanup
+        shell: bash
         run: |
-          git add assets/generated/
+          set -euo pipefail
+          git add -A
           if git diff --cached --quiet; then
-            echo "No public profile data changed. Nothing to commit."
+            echo "No profile data or cleanup changes. Nothing to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "profile: refresh generated interface"
+          git commit -m "profile: refresh V8 immersive interface"
           git push
