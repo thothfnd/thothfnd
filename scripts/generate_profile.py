@@ -21,18 +21,19 @@ OUT = ROOT / "assets" / "generated"
 README = ROOT / "README.md"
 
 W = 880
-SCENE1_H = 620
-SCENE2_H = 460
-SCENE3_H = 520
-BTN_W = 260
-BTN_H = 52
-BG = (7, 8, 10)
-PANEL = (13, 15, 19)
-INK = (242, 244, 247)
-SOFT = (182, 187, 196)
-MUTED = (121, 127, 138)
-LINE = (48, 52, 60)
-ACCENT = (211, 216, 224)
+HERO_H = 560
+BUILDS_H = 420
+PROFILE_H = 520
+BG = (13, 17, 23)          # GitHub-dark family
+BG2 = (9, 12, 17)
+INK = (240, 246, 252)
+SOFT = (177, 186, 196)
+MUTED = (125, 133, 144)
+LINE = (48, 54, 61)
+BUTTON = (33, 38, 45)
+BUTTON_BORDER = (48, 54, 61)
+BUTTON_HOVER = (43, 49, 57)
+ACCENT = (210, 216, 224)
 
 FONT_CANDIDATES = {
     "display": [
@@ -53,22 +54,21 @@ def font(kind: str, size: int):
 
 
 def req_bytes(url: str, token: str = "") -> bytes:
-    headers = {"User-Agent": "thothfnd-v11-editorial", "Accept": "application/vnd.github+json"}
+    headers = {"User-Agent": "thothfnd-v12-continuum", "Accept": "application/vnd.github+json"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    request = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(request, timeout=30) as response:
-        return response.read()
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()
 
 
 def github_user(login: str, token: str) -> dict:
-    return json.loads(req_bytes(f"https://api.github.com/users/{login}", token).decode("utf-8"))
+    return json.loads(req_bytes(f"https://api.github.com/users/{login}", token).decode())
 
 
 def github_repos(login: str, token: str) -> list[dict]:
-    payload = req_bytes(f"https://api.github.com/users/{login}/repos?per_page=100&type=owner&sort=updated", token)
-    data = json.loads(payload.decode("utf-8"))
-    return [repo for repo in data if not repo.get("fork")]
+    data = json.loads(req_bytes(f"https://api.github.com/users/{login}/repos?per_page=100&type=owner&sort=updated", token).decode())
+    return [r for r in data if not r.get("fork")]
 
 
 def download_avatar(url: str, token: str) -> tuple[Image.Image | None, bytes]:
@@ -83,18 +83,16 @@ def download_avatar(url: str, token: str) -> tuple[Image.Image | None, bytes]:
 
 def demo_data(login: str):
     user = {"login": login, "name": login, "html_url": f"https://github.com/{login}", "avatar_url": ""}
-    repos = [
-        {"name": "THOTH-Browser", "html_url": f"https://github.com/{login}/THOTH-Browser", "description": "Privacy browser project"},
-        {"name": "RelayX", "html_url": f"https://github.com/{login}/RelayX", "description": "RelayX public repository"},
-    ]
-    return user, repos, None, b"demo-avatar-v11"
+    # Preview/demo never invents repository links. Live runs detect real public repos.
+    repos = []
+    return user, repos, None, b"v12-demo-avatar"
 
 
 def find_repo(project: dict, repos: list[dict]) -> dict | None:
     direct = str(project.get("url") or "").strip()
     if direct:
-        return {"name": project.get("name", "PROJECT"), "html_url": direct, "description": project.get("summary", "")}
-    candidates = {str(name).lower() for name in project.get("repo_names", [])}
+        return {"html_url": direct, "name": project.get("name", "PROJECT")}
+    candidates = {str(x).lower() for x in project.get("repo_names", [])}
     for repo in repos:
         if str(repo.get("name", "")).lower() in candidates:
             return repo
@@ -102,90 +100,96 @@ def find_repo(project: dict, repos: list[dict]) -> dict | None:
 
 
 def active_links(config: dict, login: str) -> list[dict]:
-    result = []
+    out = []
     for item in config.get("links", []):
         url = str(item.get("url") or "").strip()
         if item.get("id") == "github" and url == "AUTO":
             url = f"https://github.com/{login}"
         if url:
-            result.append({**item, "url": url})
-    return result
+            out.append({**item, "url": url})
+    return out
 
 
-def save_gif(frames: list[Image.Image], path: Path, duration: int, loop: int = 0):
-    frames[0].save(path, save_all=True, append_images=frames[1:], optimize=False, duration=duration, loop=loop, disposal=2)
-
-
-def clean_generated():
+def clean_generated() -> None:
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True, exist_ok=True)
 
 
-def rounded_panel(size, radius=28, fill=PANEL, outline=(55,60,70), width=1):
-    img = Image.new("RGBA", size, (0,0,0,0))
-    dr = ImageDraw.Draw(img)
-    dr.rounded_rectangle((1,1,size[0]-2,size[1]-2), radius=radius, fill=fill+(255,), outline=outline+(180,), width=width)
+def save_gif(frames: list[Image.Image], path: Path, duration: int = 100) -> None:
+    frames[0].save(path, save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=2, optimize=False)
+
+
+def gradient(size: tuple[int, int], top=BG, bottom=BG2) -> Image.Image:
+    w, h = size
+    strip = Image.new("RGB", (1, h))
+    d = ImageDraw.Draw(strip)
+    for y in range(h):
+        t = y / max(1, h - 1)
+        c = tuple(int(top[i] * (1 - t) + bottom[i] * t) for i in range(3))
+        d.point((0, y), fill=c)
+    return strip.resize((w, h)).convert("RGBA")
+
+
+def glow(size: tuple[int, int], center: tuple[int, int], radius: int, color=(255, 255, 255), alpha=32) -> Image.Image:
+    layer = Image.new("RGBA", size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    cx, cy = center
+    for i in range(16, 0, -1):
+        r = radius * i / 16
+        a = int(alpha * ((17 - i) / 16) ** 2)
+        d.ellipse((cx-r, cy-r, cx+r, cy+r), fill=(*color, a))
+    return layer.filter(ImageFilter.GaussianBlur(max(10, radius // 7)))
+
+
+def background(size: tuple[int, int], phase: float, seed: str, section: int) -> Image.Image:
+    img = gradient(size)
+    w, h = size
+    # One coherent studio light source, not a noisy "cinematic" wallpaper.
+    light_x = int(w * (0.70 + 0.04 * math.sin(phase * math.tau)))
+    img.alpha_composite(glow(size, (light_x, int(h * 0.22)), int(min(w, h) * 0.44), (221, 225, 231), 35))
+    img.alpha_composite(glow(size, (int(w * 0.12), int(h * 0.82)), int(min(w, h) * 0.28), (112, 118, 128), 12))
+    d = ImageDraw.Draw(img)
+    # editorial chrome rails / very large geometry
+    if section == 1:
+        d.arc((390, -170, 930, 370), 120, 260, fill=(83, 89, 98, 90), width=1)
+        d.line((52, 74, 828, 74), fill=(48, 54, 61, 130), width=1)
+        d.line((52, h-36, 828, h-36), fill=(48, 54, 61, 110), width=1)
+    elif section == 2:
+        d.line((52, 36, 828, 36), fill=(48, 54, 61, 110), width=1)
+        d.line((440, 84, 440, h-50), fill=(48, 54, 61, 115), width=1)
+    else:
+        d.line((52, 36, 828, 36), fill=(48, 54, 61, 110), width=1)
+        d.arc((-140, 150, 420, 710), 285, 72, fill=(83, 89, 98, 70), width=1)
+    # sparse dust: subtle, deterministic and subordinate
+    rng = random.Random(f"{seed}-{section}")
+    for i in range(15):
+        x = (rng.randrange(w) + int(phase * (8 + i % 4))) % w
+        y = rng.randrange(20, h - 20)
+        a = 34 + int(20 * (0.5 + 0.5 * math.sin(phase * math.tau + i)))
+        d.point((x, y), fill=(235, 238, 244, a))
     return img
 
 
-def add_grain(img: Image.Image, seed: str, amount: int = 16):
-    rng = random.Random(seed)
-    noise = Image.new("L", img.size)
-    px = noise.load()
-    for y in range(img.size[1]):
-        for x in range(img.size[0]):
-            px[x,y] = 128 + rng.randint(-amount, amount)
-    noise = noise.filter(ImageFilter.GaussianBlur(0.25))
-    overlay = Image.new("RGBA", img.size, (0,0,0,0))
-    overlay.putalpha(noise)
-    tint = Image.new("RGBA", img.size, (255,255,255,22))
-    overlay = ImageChops.multiply(tint, overlay)
-    img.alpha_composite(overlay)
+def text_width(text: str, fnt) -> int:
+    d = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    b = d.textbbox((0, 0), text, font=fnt)
+    return b[2] - b[0]
 
 
-def vertical_gradient(size, top, bottom):
-    w,h = size
-    base = Image.new("RGBA", size)
-    px = base.load()
-    for y in range(h):
-        t = y/max(1,h-1)
-        c = tuple(int(top[i]*(1-t)+bottom[i]*t) for i in range(3))
-        for x in range(w):
-            px[x,y] = (*c,255)
-    return base
-
-
-def radial(size, center, radius, color, alpha):
-    layer = Image.new("RGBA", size, (0,0,0,0))
-    dr = ImageDraw.Draw(layer)
-    steps = 18
-    for i in range(steps,0,-1):
-        r = radius * i/steps
-        a = int(alpha * (1 - (i-1)/steps) ** 2)
-        dr.ellipse((center[0]-r, center[1]-r, center[0]+r, center[1]+r), fill=(*color,a))
-    return layer.filter(ImageFilter.GaussianBlur(radius//6))
-
-
-def draw_multiline(img, pos, text, fnt, fill, spacing=6):
-    dr = ImageDraw.Draw(img)
-    dr.multiline_text(pos, text, font=fnt, fill=fill, spacing=spacing)
-
-
-def fit_lines(text: str, fnt, width: int, max_lines: int) -> list[str]:
+def fit_lines(text: str, fnt, max_width: int, max_lines: int) -> list[str]:
     words = text.split()
-    draw = ImageDraw.Draw(Image.new("RGB", (1,1)))
-    lines = []
-    cur = ""
+    d = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    lines, cur = [], ""
     for word in words:
-        test = (cur + " " + word).strip()
-        if draw.textbbox((0,0), test, font=fnt)[2] > width and cur:
+        trial = (cur + " " + word).strip()
+        if cur and d.textbbox((0, 0), trial, font=fnt)[2] > max_width:
             lines.append(cur)
             cur = word
             if len(lines) >= max_lines:
                 break
         else:
-            cur = test
+            cur = trial
     if cur and len(lines) < max_lines:
         lines.append(cur)
     if len(lines) == max_lines and len(" ".join(lines).split()) < len(words):
@@ -193,416 +197,299 @@ def fit_lines(text: str, fnt, width: int, max_lines: int) -> list[str]:
     return lines
 
 
-def draw_button_frame(draw, box, label_left, label_right, sheen_x=None):
-    x0,y0,x1,y1 = box
-    r = 13
-    draw.rounded_rectangle(box, radius=r, fill=(17,20,24), outline=(80,86,96), width=1)
-    draw.rounded_rectangle((x0+1,y0+1,x1-1,y0+18), radius=r, fill=(255,255,255,14))
-    draw.text((x0+18, y0+15), label_left, font=font("display",18), fill=INK)
-    draw.text((x1-18 - ImageDraw.Draw(Image.new("RGB", (1,1))).textbbox((0,0), label_right, font=font("sans",14))[2], y0+18), label_right, font=font("sans",14), fill=SOFT)
-    # arrow icon
-    ax = x1 - 28
-    ay = y0 + 26
-    draw.line((ax-8,ay,ax,ay), fill=SOFT, width=2)
-    draw.line((ax-4,ay-4,ax,ay), fill=SOFT, width=2)
-    draw.line((ax-4,ay+4,ax,ay), fill=SOFT, width=2)
-    if sheen_x is not None:
-        mask = Image.new("L", (x1-x0, y1-y0), 0)
-        md = ImageDraw.Draw(mask)
-        md.rounded_rectangle((0,0,x1-x0-1,y1-y0-1), radius=r, fill=255)
-        glow = Image.new("RGBA", (x1-x0, y1-y0), (0,0,0,0))
-        gd = ImageDraw.Draw(glow)
-        gd.rectangle((sheen_x-40,0,sheen_x+40,y1-y0), fill=(255,255,255,28))
-        glow.putalpha(ImageChops.multiply(glow.getchannel('A'), mask))
-        return glow
-    return None
-
-
-def build_owl_icon(size=(260,220), blink=0.0, head_shift=0.0):
-    w,h = size
-    img = Image.new("RGBA", size, (0,0,0,0))
-    dr = ImageDraw.Draw(img)
-    cx, cy = w//2 + int(head_shift), h//2
-    # body silhouette
-    dr.polygon([(cx-105,cy+65),(cx-128,cy-5),(cx-88,cy-76),(cx-28,cy-108),(cx,cy-86),(cx+28,cy-108),(cx+88,cy-76),(cx+128,cy-5),(cx+105,cy+65),(cx+42,cy+96),(cx,cy+118),(cx-42,cy+96)], fill=(15,18,23,255))
+def owl_emblem(size=(260, 280), phase=0.0, reveal=1.0) -> Image.Image:
+    """Custom dark owl emblem: recognizable silhouette, restrained chrome, no cartoon geometry."""
+    w, h = size
+    img = Image.new("RGBA", size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    cx = w // 2 + int(math.sin(phase * math.tau) * 1.5)
+    cy = h // 2 + int(math.sin(phase * math.tau * 0.7) * 2)
+    # broad wing silhouette
+    d.polygon([(cx-116,cy+72),(cx-126,cy-12),(cx-90,cy-92),(cx-42,cy-122),(cx-10,cy-94),
+               (cx,cy-70),(cx+10,cy-94),(cx+42,cy-122),(cx+90,cy-92),(cx+126,cy-12),(cx+116,cy+72),
+               (cx+62,cy+112),(cx+18,cy+126),(cx,cy+138),(cx-18,cy+126),(cx-62,cy+112)], fill=(11,14,18,255))
     # feather planes
-    dr.polygon([(cx-98,cy+55),(cx-98,cy-12),(cx-65,cy-70),(cx-15,cy-92),(cx-4,cy+95),(cx-54,cy+84)], fill=(28,31,37,255))
-    dr.polygon([(cx+98,cy+55),(cx+98,cy-12),(cx+65,cy-70),(cx+15,cy-92),(cx+4,cy+95),(cx+54,cy+84)], fill=(24,27,32,255))
-    dr.polygon([(cx-56,cy+88),(cx,cy-66),(cx+56,cy+88),(cx,cy+112)], fill=(11,13,17,255))
-    # face mask
-    dr.polygon([(cx-62,cy-20),(cx-24,cy-58),(cx,cy-40),(cx+24,cy-58),(cx+62,cy-20),(cx+45,cy+32),(cx,cy+48),(cx-45,cy+32)], fill=(42,47,56,255))
-    # eyes
-    eye_h = max(4, int(18 * (1-blink)))
-    dr.ellipse((cx-42,cy-18,cx-4,cy-18+eye_h), fill=(235,239,244,255))
-    dr.ellipse((cx+4,cy-18,cx+42,cy-18+eye_h), fill=(235,239,244,255))
-    if blink < 0.85:
-        dr.ellipse((cx-32,cy-11,cx-14,cy+7), fill=(10,12,15,255))
-        dr.ellipse((cx+14,cy-11,cx+32,cy+7), fill=(10,12,15,255))
-    # beak
-    dr.polygon([(cx-8,cy+10),(cx+8,cy+10),(cx,cy+28)], fill=(200,205,214,255))
-    # top chrome line
-    dr.arc((cx-78,cy-88,cx+78,cy-8), start=198, end=342, fill=(190,198,208,110), width=2)
+    d.polygon([(cx-100,cy+68),(cx-98,cy-24),(cx-62,cy-91),(cx-18,cy-106),(cx-4,cy+117),(cx-50,cy+104)], fill=(26,30,36,255))
+    d.polygon([(cx+100,cy+68),(cx+98,cy-24),(cx+62,cy-91),(cx+18,cy-106),(cx+4,cy+117),(cx+50,cy+104)], fill=(22,26,32,255))
+    # face shield
+    d.polygon([(cx-70,cy-26),(cx-32,cy-72),(cx,cy-54),(cx+32,cy-72),(cx+70,cy-26),
+               (cx+48,cy+36),(cx,cy+58),(cx-48,cy+36)], fill=(40,45,54,255))
+    d.polygon([(cx-62,cy-18),(cx-24,cy-52),(cx-8,cy-34),(cx-20,cy+20),(cx-48,cy+24)], fill=(54,60,70,255))
+    d.polygon([(cx+62,cy-18),(cx+24,cy-52),(cx+8,cy-34),(cx+20,cy+20),(cx+48,cy+24)], fill=(45,51,61,255))
+    # eyes, narrow and emblematic
+    blink = 0.93 if 0.47 < (phase % 1.0) < 0.50 else 0.0
+    eye_h = max(3, int(13 * (1 - blink)))
+    d.polygon([(cx-48,cy-14),(cx-16,cy-20),(cx-23,cy-20+eye_h),(cx-48,cy-14+eye_h)], fill=(236,240,245,255))
+    d.polygon([(cx+48,cy-14),(cx+16,cy-20),(cx+23,cy-20+eye_h),(cx+48,cy-14+eye_h)], fill=(236,240,245,255))
+    if blink < .8:
+        d.ellipse((cx-34,cy-12,cx-24,cy-2), fill=(5,7,10,255))
+        d.ellipse((cx+24,cy-12,cx+34,cy-2), fill=(5,7,10,255))
+    d.polygon([(cx-8,cy+10),(cx+8,cy+10),(cx,cy+34)], fill=(195,201,210,255))
+    # a few controlled chrome cuts
+    d.line((cx-78,cy-80,cx-28,cy-106), fill=(175,183,194,90), width=2)
+    d.line((cx+78,cy-80,cx+28,cy-106), fill=(175,183,194,80), width=2)
+    d.line((cx-54,cy+82,cx-12,cy+120), fill=(175,183,194,45), width=1)
+    d.line((cx+54,cy+82,cx+12,cy+120), fill=(175,183,194,45), width=1)
+    if reveal < 1.0:
+        alpha = img.getchannel("A").point(lambda p: int(p * max(0, min(1, reveal))))
+        img.putalpha(alpha)
     return img
 
 
-def draw_wordmark(img, reveal_t: float, chrome_t: float):
-    dr = ImageDraw.Draw(img)
-    disp = font("display", 74)
-    small = font("display", 32)
-    base_x = 300
-    y = 208
-    text = "THOTH"
-    # reveal letters one by one
-    for i,ch in enumerate(text):
-        alpha = max(0.0, min(1.0, (reveal_t*len(text) - i)))
-        if alpha <= 0:
+def draw_wordmark(img: Image.Image, progress: float, sheen: float) -> None:
+    d = ImageDraw.Draw(img)
+    big = font("display", 78)
+    small = font("display", 30)
+    x0, y0 = 354, 146
+    for idx, ch in enumerate("THOTH"):
+        a = max(0.0, min(1.0, progress * 6 - idx))
+        if a <= 0:
             continue
-        x = base_x + i*56
-        layer = Image.new("RGBA", img.size, (0,0,0,0))
-        ld = ImageDraw.Draw(layer)
-        ld.text((x,y), ch, font=disp, fill=(205,210,218,int(255*alpha)))
-        # chrome sheen mask
-        if chrome_t > 0:
-            bbox = ld.textbbox((x,y), ch, font=disp)
-            sw = int((bbox[2]-bbox[0]) * 0.58)
-            sheen_x = int(bbox[0] + (bbox[2]-bbox[0]+sw) * chrome_t - sw)
-            ld.rectangle((sheen_x,bbox[1],sheen_x+sw,bbox[3]), fill=(255,255,255,60))
-            mask = Image.new("L", img.size, 0)
-            ImageDraw.Draw(mask).text((x,y), ch, font=disp, fill=255)
-            layer.putalpha(ImageChops.multiply(layer.getchannel('A'), mask))
-        img.alpha_composite(layer)
-    # /FND
-    if reveal_t > 0.65:
-        alpha = min(1.0, (reveal_t-0.65)/0.35)
-        dr.text((604, 232), "/FND", font=small, fill=(218,223,231,int(255*alpha)))
+        x = x0 + idx * 62
+        d.text((x, y0), ch, font=big, fill=(235, 239, 244, int(255*a)))
+    if progress > .62:
+        a = min(1.0, (progress - .62) / .25)
+        d.text((670, 191), "/FND", font=small, fill=(219, 224, 231, int(255*a)))
+    if sheen > 0:
+        # soft chrome reflection across wordmark region
+        overlay = Image.new("RGBA", img.size, (0,0,0,0))
+        od = ImageDraw.Draw(overlay)
+        sx = int(330 + sheen * 500)
+        od.polygon([(sx-38,125),(sx+5,125),(sx+90,245),(sx+47,245)], fill=(255,255,255,20))
+        overlay = overlay.filter(ImageFilter.GaussianBlur(8))
+        img.alpha_composite(overlay)
 
 
-def hero_background_frame(t: float, seed: str) -> Image.Image:
-    img = vertical_gradient((W, SCENE1_H), (8,9,11), (4,5,7))
-    img.alpha_composite(radial(img.size, (620,150), 210, (210,214,220), int(46+12*math.sin(t*math.tau))))
-    img.alpha_composite(radial(img.size, (120,520), 180, (88,92,100), 20))
-    img.alpha_composite(radial(img.size, (780,470), 140, (88,92,100), 14))
-    dr = ImageDraw.Draw(img)
-    # monolith / arch shapes
-    dr.polygon([(0,620),(0,360),(98,280),(160,620)], fill=(11,12,15,255))
-    dr.polygon([(880,620),(880,310),(760,250),(676,620)], fill=(10,11,14,255))
-    dr.rounded_rectangle((92,118,788,560), radius=36, outline=(48,52,59,90), width=1)
-    # subtle top arc
-    dr.arc((190,95,700,510), 205, 335, fill=(88,93,102,90), width=1)
-    # dust / stars
-    rng = random.Random(seed)
-    for i in range(26):
-        x = (rng.randint(0,W-1) + int(t*22*(1+i%3))) % W
-        y = 48 + (i*37) % 300
-        a = 55 + int(45*(0.5+0.5*math.sin(t*math.tau + i)))
-        r = 1 if i%5 else 2
-        dr.ellipse((x-r,y-r,x+r,y+r), fill=(230,233,240,a))
-    # linework
-    dr.line((64,68,816,68), fill=(56,60,68,120), width=1)
-    dr.line((64,552,816,552), fill=(44,48,56,120), width=1)
-    add_grain(img, f"hero-{seed}-{int(t*1000)}", amount=8)
-    return img
-
-
-def make_scene_hero(config, user, links):
-    frames = []
-    name = config.get("display_name", "THOTH /FND")
-    title_line = config.get("title_line", "")
-    about = config.get("about", [])[:3]
-    total = 28
+def render_hero(config: dict, user: dict) -> None:
+    frames=[]
+    about=config.get("about", [])[:3]
+    total=36
     for i in range(total):
-        t = i/(total-1)
-        img = hero_background_frame(t, user["login"])
-        dr = ImageDraw.Draw(img)
-        # panel frame
-        dr.rounded_rectangle((24,24,W-24,SCENE1_H-24), radius=32, outline=(72,78,88,180), width=1)
-        dr.line((48,92,832,92), fill=(56,60,70,120), width=1)
-        # owl reveal
-        owl_alpha = min(1.0, max(0.0, (t-0.05)/0.20))
-        blink = 0.92 if i in (12,13) else 0.0
-        owl = build_owl_icon(blink=blink, head_shift=math.sin(t*math.tau)*1.5)
-        owl = owl.resize((220, 186), Image.LANCZOS)
-        if owl_alpha < 1:
-            a = owl.getchannel('A').point(lambda p: int(p*owl_alpha))
-            owl.putalpha(a)
-        img.alpha_composite(owl, (82,150))
-        # wordmark
-        word_t = min(1.0, max(0.0, (t-0.18)/0.36))
-        chrome_t = min(1.0, max(0.0, (t-0.48)/0.18))
-        draw_wordmark(img, word_t, chrome_t)
-        # title line
-        if t > 0.54:
-            alpha = min(1.0, (t-0.54)/0.16)
-            dr.text((302, 300), title_line, font=font("sans", 18), fill=(196,201,210,int(255*alpha)))
-        # body text
-        body_font = font("serif", 21)
-        y = 352
-        for idx, paragraph in enumerate(about):
-            appear = max(0.0, min(1.0, (t-(0.61 + idx*0.09))/0.12))
-            if appear <= 0:
-                continue
-            wrapped = "\n".join(textwrap.wrap(paragraph, width=62))
-            layer = Image.new("RGBA", img.size, (0,0,0,0))
-            draw_multiline(layer, (82,y), wrapped, body_font, (238,241,245,int(255*appear)), spacing=8)
+        t=i/(total-1)
+        img=background((W,HERO_H), t, user["login"], 1)
+        d=ImageDraw.Draw(img)
+        d.text((52,42), config.get("eyebrow","THOTHFND").upper(), font=font("mono",10), fill=MUTED)
+        # reveal owl + wordmark, then hold while background remains alive
+        reveal=min(1.0,max(0.0,(t-.03)/.20))
+        owl=owl_emblem(phase=t, reveal=reveal)
+        img.alpha_composite(owl,(52,118))
+        word=min(1.0,max(0.0,(t-.13)/.28))
+        sheen=max(0.0,min(1.0,(t-.38)/.18))
+        draw_wordmark(img,word,sheen)
+        if t>.45:
+            a=min(1.0,(t-.45)/.12)
+            title="privacy · security · anonymity · systems · automation"
+            layer=Image.new("RGBA",img.size,(0,0,0,0)); ld=ImageDraw.Draw(layer)
+            ld.text((356,246),title,font=font("sans",16),fill=(*SOFT,int(255*a)))
             img.alpha_composite(layer)
-            y += 64
-        # top tiny labels
-        dr.text((50, 48), user["login"].upper(), font=font("mono", 10), fill=SOFT)
-        dr.text((W-210, 48), "EDITORIAL PROFILE / V11", font=font("mono", 10), fill=MUTED)
-        frames.append(img.convert("P", palette=Image.ADAPTIVE, colors=256))
-    save_gif(frames, OUT / "scene-01-hero.gif", duration=90)
+        # personal copy: controlled line count, no overlap
+        body_font=font("serif",19)
+        y=318
+        for idx,p in enumerate(about):
+            appear=max(0.0,min(1.0,(t-(.53+idx*.08))/.12))
+            if appear<=0: continue
+            lines=fit_lines(p,body_font,700,2)
+            layer=Image.new("RGBA",img.size,(0,0,0,0)); ld=ImageDraw.Draw(layer)
+            yy=y
+            for line in lines:
+                ld.text((84,yy),line,font=body_font,fill=(232,235,240,int(255*appear)))
+                yy+=27
+            img.alpha_composite(layer)
+            y+=67
+        frames.append(img.convert("P",palette=Image.ADAPTIVE,colors=192))
+    save_gif(frames,OUT/"scene-01-hero.gif",95)
 
 
-def builds_background_frame(t: float) -> Image.Image:
-    img = vertical_gradient((W, SCENE2_H), (9,10,12), (6,7,9))
-    dr = ImageDraw.Draw(img)
-    dr.rounded_rectangle((24,24,W-24,SCENE2_H-24), radius=32, outline=(70,76,84,180), width=1)
-    dr.line((440,70,440,390), fill=(50,54,62,140), width=1)
-    dr.line((48,70,832,70), fill=(50,54,62,120), width=1)
-    # calm background bands
-    dr.arc((90,100,390,360), 215, 15, fill=(72,78,88,100), width=1)
-    dr.arc((510,110,800,350), 195, 350, fill=(72,78,88,100), width=1)
-    add_grain(img, f"builds-{int(t*1000)}", amount=7)
-    return img
-
-
-def draw_orbit_block(img, box, t, title, status, summary, mode="orbit"):
-    x0,y0,x1,y1 = box
-    dr = ImageDraw.Draw(img)
-    dr.text((x0, y0), title.upper(), font=font("display", 36), fill=INK)
-    dr.text((x0, y0+38), status.upper(), font=font("mono", 10), fill=MUTED)
-    summary_lines = fit_lines(summary, font("serif", 18), x1-x0-16, 3)
-    tx = x0
-    ty = y1 - 88
-    for line in summary_lines:
-        dr.text((tx, ty), line, font=font("serif", 18), fill=SOFT)
-        ty += 24
-    cx = x0 + 140
-    cy = y0 + 140
-    if mode == "orbit":
-        for r in (52,78,104):
-            dr.ellipse((cx-r,cy-r,cx+r,cy+r), outline=(84,90,100,110), width=1)
-        for j,ang in enumerate((t*360, -t*260+75, t*180+140)):
-            a = math.radians(ang)
-            r = (52,78,104)[j]
-            px = cx + math.cos(a)*r
-            py = cy + math.sin(a)*r
-            dr.ellipse((px-8,py-8,px+8,py+8), fill=(232,236,241,220))
-        dr.rounded_rectangle((cx-24,cy-16,cx+24,cy+16), radius=8, outline=(190,196,206,150), fill=(18,21,25), width=1)
-        dr.line((cx-12,cy,cx+12,cy), fill=(220,224,230), width=2)
-        dr.line((cx,cy-9,cx,cy+9), fill=(220,224,230), width=2)
-    else:
-        pts = [(x0+78,y0+172),(x0+138,y0+118),(x0+228,y0+132),(x0+248,y0+205),(x0+174,y0+242),(x0+98,y0+226)]
-        for a,b in ((0,1),(1,2),(2,3),(3,4),(4,5),(5,0),(1,4),(2,5)):
-            dr.line((*pts[a],*pts[b]), fill=(86,92,102,130), width=1)
-        pulse = int((t*5)%len(pts))
-        for idx,p in enumerate(pts):
-            r = 6 if idx==pulse else 4
-            fill = (236,239,244,230) if idx==pulse else (178,184,194,210)
-            dr.ellipse((p[0]-r,p[1]-r,p[0]+r,p[1]+r), fill=fill)
-        # packet moving on one edge
-        a = pts[0]; b = pts[1]
-        q = (t*2)%1.0
-        px = a[0]*(1-q)+b[0]*q
-        py = a[1]*(1-q)+b[1]*q
-        dr.ellipse((px-5,py-5,px+5,py+5), fill=(255,255,255,240))
-
-
-def make_scene_builds(config, repos):
-    projects = config.get("projects", [])[:2]
-    frames = []
-    total = 24
+def render_builds(config: dict) -> None:
+    projects=config.get("projects",[])[:2]
+    total=28; frames=[]
     for i in range(total):
-        t = i/(total-1)
-        img = builds_background_frame(t)
-        dr = ImageDraw.Draw(img)
-        dr.text((50, 42), "CURRENT BUILDS", font=font("display", 16), fill=SOFT)
-        left, right = projects[0], projects[1]
-        draw_orbit_block(img, (60,98,396,390), t, left["name"], left.get("status",""), left.get("summary",""), mode="orbit")
-        draw_orbit_block(img, (484,98,820,390), t, right["name"], right.get("status",""), right.get("summary",""), mode="network")
-        frames.append(img.convert("P", palette=Image.ADAPTIVE, colors=256))
-    save_gif(frames, OUT / "scene-02-builds.gif", duration=100)
+        t=i/(total-1)
+        img=background((W,BUILDS_H),t,"builds",2)
+        d=ImageDraw.Draw(img)
+        d.text((52,50),"CURRENT BUILDS",font=font("display",16),fill=SOFT)
+        for idx,p in enumerate(projects):
+            x0=60 if idx==0 else 482
+            d.text((x0,95),p["name"].upper(),font=font("display",34),fill=INK)
+            d.text((x0,135),p.get("status","").upper(),font=font("mono",10),fill=MUTED)
+            cx=x0+125; cy=232
+            if idx==0:
+                # browser/isolation graphic
+                d.rounded_rectangle((cx-70,cy-52,cx+70,cy+52),radius=14,outline=(113,121,132,160),width=1)
+                d.rounded_rectangle((cx-48,cy-34,cx+48,cy+34),radius=10,outline=(80,88,98,150),width=1)
+                for j,r in enumerate((80,103)):
+                    a=math.radians((t*360*(1 if j==0 else -0.7))+j*100)
+                    px=cx+math.cos(a)*r; py=cy+math.sin(a)*r*.62
+                    d.ellipse((px-5,py-5,px+5,py+5),fill=(230,234,240,220))
+                d.line((cx-22,cy,cx+22,cy),fill=(212,217,224),width=2)
+                d.line((cx,cy-14,cx,cy+14),fill=(212,217,224),width=2)
+            else:
+                pts=[(cx-70,cy+20),(cx-20,cy-48),(cx+66,cy-30),(cx+88,cy+40),(cx+10,cy+70)]
+                edges=((0,1),(1,2),(2,3),(3,4),(4,0),(1,4))
+                for a,b in edges: d.line((*pts[a],*pts[b]),fill=(93,101,112,150),width=1)
+                pulse=int((t*6)%len(pts))
+                for j,pnt in enumerate(pts):
+                    r=6 if j==pulse else 4
+                    d.ellipse((pnt[0]-r,pnt[1]-r,pnt[0]+r,pnt[1]+r),fill=(236,239,244,230) if j==pulse else (160,168,179,200))
+            summary=fit_lines(p.get("summary",""),font("serif",16),320,3)
+            yy=325
+            for line in summary:
+                d.text((x0,yy),line,font=font("serif",16),fill=SOFT); yy+=23
+        frames.append(img.convert("P",palette=Image.ADAPTIVE,colors=160))
+    save_gif(frames,OUT/"scene-02-builds.gif",100)
 
 
-def style_portrait(avatar: Image.Image | None, login: str) -> Image.Image:
+def portrait_image(avatar: Image.Image | None, login: str) -> Image.Image:
     if avatar is None:
-        base = Image.new("RGB", (360,360), (28,30,34))
-        dr = ImageDraw.Draw(base)
-        dr.ellipse((70,38,290,258), fill=(215,220,226))
-        dr.rectangle((112,232,248,340), fill=(215,220,226))
-        dr.text((130,150), login[:1].upper(), font=font("display", 110), fill=(20,22,26))
-        avatar = base
-    img = ImageOps.fit(avatar, (360, 360), method=Image.LANCZOS, centering=(0.5,0.42))
-    gray = ImageOps.grayscale(img)
-    gray = ImageOps.autocontrast(gray, cutoff=1)
-    gray = ImageEnhance.Contrast(gray).enhance(1.55)
-    sharp = gray.filter(ImageFilter.DETAIL)
-    edges = gray.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.GaussianBlur(0.6))
-    inv = ImageOps.invert(edges)
-    merged = Image.blend(sharp, inv, 0.18)
-    quant = ImageOps.posterize(merged.convert("RGB"), 4).convert("L")
-    out = Image.merge("RGBA", (quant, quant, quant, Image.new("L", quant.size, 255)))
-    # vignette
-    vig = Image.new("L", out.size, 255)
-    vd = ImageDraw.Draw(vig)
-    vd.ellipse((-30,-30,out.size[0]+30,out.size[1]+30), fill=220)
-    vig = vig.filter(ImageFilter.GaussianBlur(50))
-    out.putalpha(vig)
-    return out
+        # neutral preview placeholder that makes the layout visible without pretending to be the real avatar
+        img=Image.new("RGB",(320,320),(20,24,30)); d=ImageDraw.Draw(img)
+        d.ellipse((58,36,262,240),fill=(202,208,216)); d.rectangle((108,220,212,315),fill=(202,208,216))
+        d.text((90,130),"LIVE",font=font("display",48),fill=(20,24,30)); d.text((72,182),"AVATAR",font=font("display",34),fill=(20,24,30))
+        avatar=img
+    img=ImageOps.fit(avatar,(320,320),method=Image.LANCZOS,centering=(0.5,0.45))
+    g=ImageOps.grayscale(img); g=ImageOps.autocontrast(g,cutoff=1)
+    g=ImageEnhance.Contrast(g).enhance(1.38)
+    # editorial posterization with a small amount of detail retained
+    q=ImageOps.posterize(g.convert("RGB"),5).convert("L")
+    detail=g.filter(ImageFilter.DETAIL)
+    mix=Image.blend(q,detail,0.28)
+    return Image.merge("RGBA",(mix,mix,mix,Image.new("L",mix.size,255)))
 
 
-def make_scene_profile(config, user, avatar, avatar_bytes):
-    about = config.get("about", [])
-    interests = config.get("interests", [])
-    portrait = style_portrait(avatar, user["login"])
-    digest = hashlib.sha256(avatar_bytes or b"demo-avatar-v11").hexdigest().upper()[:12]
-    frames = []
-    total = 28
+def render_profile(config: dict, user: dict, avatar: Image.Image | None, avatar_bytes: bytes) -> None:
+    portrait=portrait_image(avatar,user["login"])
+    digest=hashlib.sha256(avatar_bytes or b"v12-demo-avatar").hexdigest().upper()[:12]
+    interests=config.get("interests",[])[:9]
+    total=32; frames=[]
     for i in range(total):
-        t = i/(total-1)
-        img = vertical_gradient((W, SCENE3_H), (8,9,12), (6,7,9))
-        dr = ImageDraw.Draw(img)
-        dr.rounded_rectangle((24,24,W-24,SCENE3_H-24), radius=32, outline=(70,76,84,180), width=1)
-        dr.line((48,72,832,72), fill=(52,56,64,120), width=1)
-        dr.text((50, 40), "PROFILE", font=font("display", 16), fill=SOFT)
-        # left portrait frame
-        dr.rounded_rectangle((58,110,388,440), radius=22, fill=(12,14,17), outline=(72,78,88), width=1)
-        base = Image.new("RGBA", img.size, (0,0,0,0))
-        base.alpha_composite(portrait, (70,122))
-        # moving scan band ping-pong
-        u = (i % total)/(total-1)
-        tri = 1 - abs(2*u - 1)  # 0->1->0
-        xpos = int(50 + tri*300)
-        band_mask = Image.new("L", portrait.size, 0)
-        bd = ImageDraw.Draw(band_mask)
-        bd.rectangle((xpos-38, 0, xpos+38, portrait.size[1]), fill=180)
-        band_mask = band_mask.filter(ImageFilter.GaussianBlur(22))
-        enhanced = ImageEnhance.Contrast(portrait.convert("RGB")).enhance(1.28)
-        enhanced = ImageEnhance.Brightness(enhanced).enhance(1.08).convert("RGBA")
-        layer = portrait.copy()
-        banded = Image.new("RGBA", portrait.size, (0,0,0,0))
-        banded.paste(enhanced, (0,0), band_mask)
-        layer.alpha_composite(banded)
-        # subtle scan line
-        line = Image.new("RGBA", portrait.size, (0,0,0,0))
-        ld = ImageDraw.Draw(line)
-        ld.rectangle((xpos, 0, xpos+2, portrait.size[1]), fill=(255,255,255,70))
-        line = line.filter(ImageFilter.GaussianBlur(1))
-        layer.alpha_composite(line)
-        base.alpha_composite(layer, (70,122))
-        img.alpha_composite(base)
-        # right text
-        dr.text((446, 116), config.get("display_name", "THOTH /FND"), font=font("display", 30), fill=INK)
-        dr.text((446, 154), user["login"], font=font("mono", 11), fill=MUTED)
-        meta = [
-            ("SOURCE", "github/avatar"),
-            ("DIGEST", digest),
-            ("STATE", "synchronized"),
-            ("LOOP", "bidirectional scan"),
-        ]
-        y = 192
-        for k,v in meta:
-            dr.text((446, y), k, font=font("mono", 10), fill=MUTED)
-            dr.text((548, y-3), v, font=font("sans", 15), fill=SOFT)
-            y += 28
-        dr.text((446, 314), "INTERESTS", font=font("mono", 10), fill=MUTED)
-        y = 342
-        for item in interests[:9]:
-            dr.text((446, y), item.upper(), font=font("sans", 16), fill=INK if y < 402 else SOFT)
-            y += 20
-        add_grain(img, f"profile-{i}", amount=6)
-        frames.append(img.convert("P", palette=Image.ADAPTIVE, colors=256))
-    save_gif(frames, OUT / "scene-03-profile.gif", duration=100)
+        t=i/(total-1)
+        img=background((W,PROFILE_H),t,"profile",3)
+        d=ImageDraw.Draw(img)
+        d.text((52,48),"PROFILE",font=font("display",16),fill=SOFT)
+        # portrait — no card; only the image itself with a controlled matte edge
+        matte=Image.new("RGBA",portrait.size,(0,0,0,0))
+        matte.alpha_composite(portrait)
+        # smooth ping-pong scan from left to right and back
+        tri=1-abs(2*t-1)
+        xpos=int(18+tri*(portrait.width-36))
+        mask=Image.new("L",portrait.size,0); md=ImageDraw.Draw(mask)
+        md.rectangle((xpos-40,0,xpos+40,portrait.height),fill=150)
+        mask=mask.filter(ImageFilter.GaussianBlur(24))
+        enhanced=ImageEnhance.Contrast(portrait.convert("RGB")).enhance(1.24)
+        enhanced=ImageEnhance.Brightness(enhanced).enhance(1.08).convert("RGBA")
+        band=Image.new("RGBA",portrait.size,(0,0,0,0)); band.paste(enhanced,(0,0),mask)
+        matte.alpha_composite(band)
+        scan=Image.new("RGBA",portrait.size,(0,0,0,0)); sd=ImageDraw.Draw(scan)
+        sd.rectangle((xpos,0,xpos+1,portrait.height),fill=(255,255,255,80))
+        scan=scan.filter(ImageFilter.GaussianBlur(1)); matte.alpha_composite(scan)
+        img.alpha_composite(matte,(60,108))
+        # metadata below image
+        d.text((60,442),"@"+user["login"],font=font("mono",11),fill=SOFT)
+        d.text((60,466),f"AVATAR SHA256  {digest}",font=font("mono",9),fill=MUTED)
+        # right side
+        d.text((430,110),config.get("display_name","THOTH /FND"),font=font("display",30),fill=INK)
+        d.text((430,150),"INTERESTS",font=font("mono",10),fill=MUTED)
+        # 2-column interest composition, larger and cleaner
+        left=interests[:5]; right=interests[5:]
+        yy=186
+        for j,item in enumerate(left):
+            f=font("sans",20 if j<3 else 17)
+            d.text((430,yy),item,font=f,fill=INK if j<3 else SOFT); yy+=38
+        yy=186
+        for item in right:
+            d.text((655,yy),item,font=font("sans",16),fill=SOFT); yy+=36
+        frames.append(img.convert("P",palette=Image.ADAPTIVE,colors=192))
+    save_gif(frames,OUT/"scene-03-profile.gif",105)
 
 
-def make_button(label: str, action: str, path: Path):
-    frames = []
-    total = 18
+def render_button(label: str, action: str, path: Path) -> None:
+    w,h=250,40; frames=[]; total=18
     for i in range(total):
-        img = Image.new("RGBA", (BTN_W, BTN_H), (0,0,0,0))
-        sheen = int(-40 + (BTN_W+80)*(i/(total-1)))
-        overlay = draw_button_frame(ImageDraw.Draw(img), (0,0,BTN_W-1,BTN_H-1), label, action, sheen_x=sheen)
-        if overlay is not None:
-            img.alpha_composite(overlay, (0,0))
-        frames.append(img.convert("P", palette=Image.ADAPTIVE, colors=256))
-    save_gif(frames, path, duration=90)
+        img=Image.new("RGBA",(w,h),(0,0,0,0)); d=ImageDraw.Draw(img)
+        # GitHub-like base: 6px radius, subtle border, no sci-fi bevels.
+        d.rounded_rectangle((0,0,w-1,h-1),radius=6,fill=BUTTON,outline=BUTTON_BORDER,width=1)
+        d.line((7,1,w-8,1),fill=(71,78,87,90),width=1)
+        d.text((14,10),label,font=font("sans",14),fill=INK)
+        aw=text_width(action,font("sans",12))
+        d.text((w-34-aw,11),action,font=font("sans",12),fill=SOFT)
+        # small drawn arrow
+        ax=w-18; ay=20
+        d.line((ax-6,ay,ax,ay),fill=SOFT,width=2); d.line((ax-3,ay-3,ax,ay),fill=SOFT,width=2); d.line((ax-3,ay+3,ax,ay),fill=SOFT,width=2)
+        # restrained moving highlight
+        x=int(-24+(w+48)*(i/(total-1)))
+        sheen=Image.new("RGBA",(w,h),(0,0,0,0)); sd=ImageDraw.Draw(sheen)
+        sd.polygon([(x-15,0),(x+4,0),(x+25,h),(x+6,h)],fill=(255,255,255,16))
+        img.alpha_composite(sheen)
+        frames.append(img.convert("P",palette=Image.ADAPTIVE,colors=96))
+    save_gif(frames,path,90)
 
 
-def update_readme(user, links, repo_ctas):
-    parts = []
-    parts.append(f'<p align="center"><img src="assets/generated/scene-01-hero.gif" width="100%" alt="V11 hero"></p>')
+def write_readme(links: list[dict], repo_ctas: list[dict]) -> None:
+    out=[]
+    out.append('<p align="center"><img src="assets/generated/scene-01-hero.gif" width="100%" alt="THOTH /FND"></p>')
     if links:
-        link_html = []
+        buttons=[]
         for link in links:
-            slug = link["id"].lower()
-            img = f'assets/generated/link-{slug}.gif'
-            link_html.append(f'<a href="{link["url"]}"><img src="{img}" height="52" alt="{link["label"]}"></a>')
-        parts.append(f'<p align="center">{"&nbsp;".join(link_html)}</p>')
-    parts.append(f'<p align="center"><img src="assets/generated/scene-02-builds.gif" width="100%" alt="V11 builds"></p>')
+            buttons.append(f'<a href="{link["url"]}"><img src="assets/generated/link-{link["id"].lower()}.gif" height="40" alt="{link["label"]}"></a>')
+        out.append('<p align="center">'+'&nbsp;'.join(buttons)+'</p>')
+    out.append('<p align="center"><img src="assets/generated/scene-02-builds.gif" width="100%" alt="Current builds"></p>')
     if repo_ctas:
-        rows = []
-        for cta in repo_ctas:
-            rows.append(f'<a href="{cta["url"]}"><img src="assets/generated/{cta["asset"]}" height="52" alt="{cta["label"]}"></a>')
-        parts.append(f'<p align="center">{"&nbsp;".join(rows)}</p>')
-    parts.append(f'<p align="center"><img src="assets/generated/scene-03-profile.gif" width="100%" alt="V11 profile"></p>')
-    md = "\n\n".join(parts) + "\n"
-    README.write_text(md, encoding="utf-8")
+        buttons=[]
+        for c in repo_ctas:
+            buttons.append(f'<a href="{c["url"]}"><img src="assets/generated/{c["asset"]}" height="40" alt="{c["label"]}"></a>')
+        out.append('<p align="center">'+'&nbsp;'.join(buttons)+'</p>')
+    out.append('<p align="center"><img src="assets/generated/scene-03-profile.gif" width="100%" alt="Profile"></p>')
+    README.write_text('\n\n'.join(out)+'\n',encoding='utf-8')
 
 
-def static_preview(path: Path):
-    hero = Image.open(OUT / "scene-01-hero.gif")
-    hero.seek(hero.n_frames-1)
-    hero_final = hero.convert("RGBA")
-    builds = Image.open(OUT / "scene-02-builds.gif")
-    builds.seek(builds.n_frames//2)
-    builds_frame = builds.convert("RGBA")
-    profile = Image.open(OUT / "scene-03-profile.gif")
-    profile.seek(profile.n_frames//2)
-    profile_frame = profile.convert("RGBA")
-    H = hero_final.height + builds_frame.height + profile_frame.height + 40
-    canvas = Image.new("RGBA", (W, H), BG+(255,))
-    y = 0
-    for im in (hero_final, builds_frame, profile_frame):
-        canvas.alpha_composite(im, (0,y))
-        y += im.height + 20
+def preview(path: Path) -> None:
+    items=[]
+    for name,which in (("scene-01-hero.gif","last"),("scene-02-builds.gif","mid"),("scene-03-profile.gif","mid")):
+        im=Image.open(OUT/name)
+        im.seek(im.n_frames-1 if which=="last" else im.n_frames//2)
+        items.append(im.convert("RGBA"))
+    canvas=Image.new("RGBA",(W,sum(x.height for x in items)+40),(13,17,23,255))
+    y=0
+    for im in items:
+        canvas.alpha_composite(im,(0,y)); y+=im.height+20
     canvas.save(path)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--demo", action="store_true")
-    parser.add_argument("--login", default=os.environ.get("GH_LOGIN", "thothfnd"))
-    parser.add_argument("--preview", default="")
-    args = parser.parse_args()
+def export_frames(prefix: str) -> None:
+    # frame audit helpers for package validation
+    for gif in ("scene-01-hero.gif","scene-02-builds.gif","scene-03-profile.gif"):
+        im=Image.open(OUT/gif)
+        for label,idx in (("start",0),("mid",im.n_frames//2),("end",im.n_frames-1)):
+            im.seek(idx)
+            im.convert("RGBA").save(ROOT/f"{prefix}-{gif[:-4]}-{label}.png")
 
-    config = json.loads(DATA.read_text(encoding="utf-8"))
+
+def main() -> None:
+    ap=argparse.ArgumentParser(); ap.add_argument("--demo",action="store_true"); ap.add_argument("--login",default=os.environ.get("GH_LOGIN","thothfnd")); ap.add_argument("--preview",default=""); ap.add_argument("--audit-frames",action="store_true"); args=ap.parse_args()
+    config=json.loads(DATA.read_text(encoding="utf-8"))
     if args.demo or not os.environ.get("GITHUB_TOKEN"):
-        user, repos, avatar, avatar_bytes = demo_data(args.login)
+        user,repos,avatar,avatar_bytes=demo_data(args.login)
     else:
-        token = os.environ.get("GITHUB_TOKEN", "")
-        user = github_user(args.login, token)
-        repos = github_repos(args.login, token)
-        avatar, avatar_bytes = download_avatar(user.get("avatar_url", ""), token)
-    user.setdefault("login", args.login)
-    links = active_links(config, user["login"])
+        token=os.environ.get("GITHUB_TOKEN","")
+        user=github_user(args.login,token); repos=github_repos(args.login,token); avatar,avatar_bytes=download_avatar(user.get("avatar_url",""),token)
+    user.setdefault("login",args.login)
+    links=active_links(config,user["login"])
     clean_generated()
-    # render buttons first for active links
     for link in links:
-        make_button(link["label"], "OPEN", OUT / f'link-{link["id"].lower()}.gif')
-    repo_ctas = []
-    for project in config.get("projects", [])[:2]:
-        repo = find_repo(project, repos)
+        render_button(link["label"],"Open",OUT/f'link-{link["id"].lower()}.gif')
+    repo_ctas=[]
+    for p in config.get("projects",[])[:2]:
+        repo=find_repo(p,repos)
         if repo:
-            slug = project["name"].lower().replace(" ", "-")
-            asset = f'cta-{slug}.gif'
-            make_button(project["name"].upper(), "OPEN REPOSITORY", OUT / asset)
-            repo_ctas.append({"label": project["name"], "asset": asset, "url": repo["html_url"]})
-    make_scene_hero(config, user, links)
-    make_scene_builds(config, repos)
-    make_scene_profile(config, user, avatar, avatar_bytes)
-    update_readme(user, links, repo_ctas)
-    if args.preview:
-        static_preview(Path(args.preview))
+            slug=p["name"].lower().replace(" ","-")
+            asset=f"cta-{slug}.gif"
+            render_button(p["name"],"Repository",OUT/asset)
+            repo_ctas.append({"label":p["name"],"url":repo["html_url"],"asset":asset})
+    render_hero(config,user)
+    render_builds(config)
+    render_profile(config,user,avatar,avatar_bytes)
+    write_readme(links,repo_ctas)
+    if args.preview: preview(Path(args.preview))
+    if args.audit_frames: export_frames("V12-AUDIT")
 
-if __name__ == "__main__":
-    main()
+if __name__=="__main__": main()
