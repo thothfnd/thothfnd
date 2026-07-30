@@ -334,7 +334,8 @@ def about(profile: dict) -> str:
             parts.append(f'<text x="40" y="{y}" class="sans" font-size="{size}" font-weight="{weight}" opacity="{opacity}">{esc(line)}{reveal}</text>')
             y += 31 if p_i == 0 else 27
         y += 18
-    parts.append(f'<rect x="-180" y="338" width="180" height="2" fill="url(#aboutBeam)">{anim("<animate attributeName=\"x\" values=\"-180;900\" dur=\"6s\" repeatCount=\"indefinite\"/>")}</rect>')
+    about_beam_anim = anim('<animate attributeName="x" values="-180;900" dur="6s" repeatCount="indefinite"/>')
+    parts.append(f'<rect x="-180" y="338" width="180" height="2" fill="url(#aboutBeam)">{about_beam_anim}</rect>')
     return svg(360, "\n".join(parts))
 
 
@@ -396,7 +397,8 @@ def identity(image: Image.Image | None, login: str, digest: str) -> str:
 ''']
     # Coarse silhouette is a short opening phase.
     coarse_op = "0" if not STATIC else "0"
-    coarse_group = [f'<g opacity="{coarse_op}">{anim("<animate attributeName=\"opacity\" values=\"0;.75;.75;0\" keyTimes=\"0;.12;.72;1\" dur=\"1.2s\" begin=\".1s\" fill=\"freeze\"/>")}']
+    coarse_reveal_anim = anim('<animate attributeName="opacity" values="0;.75;.75;0" keyTimes="0;.12;.72;1" dur="1.2s" begin=".1s" fill="freeze"/>')
+    coarse_group = [f'<g opacity="{coarse_op}">{coarse_reveal_anim}']
     c_top = top + max(0, len(final)-len(coarse))*line_h/2
     for i, line in enumerate(coarse):
         coarse_group.append(f'<text x="310" y="{c_top+i*line_h:.1f}" text-anchor="middle" class="mono" font-size="12" fill="{STEEL}" opacity=".82" xml:space="preserve">{esc(line)}</text>')
@@ -410,7 +412,8 @@ def identity(image: Image.Image | None, login: str, digest: str) -> str:
             delay = 1.0 + i*.026
             parts.append(f'<clipPath id="id{i}"><rect x="42" y="{y-8:.1f}" width="0" height="11"><animate attributeName="width" from="0" to="540" dur=".32s" begin="{delay:.3f}s" fill="freeze"/></rect></clipPath>')
             parts.append(f'<text x="310" y="{y:.1f}" text-anchor="middle" clip-path="url(#id{i})" class="mono" font-size="8.8" fill="{TEXT}" opacity=".94" xml:space="preserve">{esc(line)}</text>')
-    parts.append(f'<rect x="24" y="54" width="575" height="1.5" fill="url(#idBeam)" opacity=".45">{anim(f"<animate attributeName=\"y\" values=\"54;{height-30};54\" dur=\"5.2s\" begin=\"1.2s\" repeatCount=\"indefinite\"/>")}</rect>')
+    id_beam_anim = anim(f'<animate attributeName="y" values="54;{height-30};54" dur="5.2s" begin="1.2s" repeatCount="indefinite"/>')
+    parts.append(f'<rect x="24" y="54" width="575" height="1.5" fill="url(#idBeam)" opacity=".45">{id_beam_anim}</rect>')
     return svg(height, "\n".join(parts))
 
 
@@ -427,7 +430,8 @@ def project_panel(project: dict, kind: str) -> str:
         deco.append(owl_pixels(725, 72, 8, "powl"))
         for r in (52, 80, 108):
             deco.append(f'<circle cx="725" cy="142" r="{r}" fill="none" stroke="#22252b" opacity=".6"/>')
-        deco.append(f'<circle cx="725" cy="142" r="3" fill="{CHROME}">{anim("<animate attributeName=\"r\" values=\"2;5;2\" dur=\"2.8s\" repeatCount=\"indefinite\"/>")}</circle>')
+        ring_pulse_anim = anim('<animate attributeName="r" values="2;5;2" dur="2.8s" repeatCount="indefinite"/>')
+        deco.append(f'<circle cx="725" cy="142" r="3" fill="{CHROME}">{ring_pulse_anim}</circle>')
     else:
         nodes = [(660,92),(762,74),(810,142),(742,206),(645,195),(708,146)]
         edges = [(0,5),(1,5),(2,5),(3,5),(4,5),(0,1),(1,2),(2,3),(3,4),(4,0)]
@@ -437,7 +441,8 @@ def project_panel(project: dict, kind: str) -> str:
         for i,(x,y) in enumerate(nodes):
             pulse = anim(f'<animate attributeName="r" values="3;{5 if i==5 else 4};3" dur="{2.2+i*.2:.1f}s" repeatCount="indefinite"/>')
             deco.append(f'<circle cx="{x}" cy="{y}" r="3" fill="{CHROME}" opacity="{.9 if i==5 else .55}">{pulse}</circle>')
-        deco.append(f'<circle cx="708" cy="146" r="54" fill="none" stroke="#1d2025" stroke-dasharray="4 8">{anim("<animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 708 146\" to=\"360 708 146\" dur=\"18s\" repeatCount=\"indefinite\"/>")}</circle>')
+        ring_rotate_anim = anim('<animateTransform attributeName="transform" type="rotate" from="0 708 146" to="360 708 146" dur="18s" repeatCount="indefinite"/>')
+        deco.append(f'<circle cx="708" cy="146" r="54" fill="none" stroke="#1d2025" stroke-dasharray="4 8">{ring_rotate_anim}</circle>')
     body = [f'''
 <defs><linearGradient id="projBeam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
 <rect width="880" height="300" fill="{BG}"/>
@@ -450,7 +455,8 @@ def project_panel(project: dict, kind: str) -> str:
         body.append(f'<text x="42" y="{204+i*24}" class="sans soft" font-size="14">{esc(line)}</text>')
     body.append(f'<text x="840" y="276" text-anchor="end" class="mono {"soft" if url else "faint"}" font-size="11">{esc(status)}</text>')
     body.extend(deco)
-    body.append(f'<rect x="-180" y="286" width="180" height="2" fill="url(#projBeam)" opacity=".45">{anim("<animate attributeName=\"x\" values=\"-180;900\" dur=\"5.4s\" repeatCount=\"indefinite\"/>")}</rect>')
+    project_beam_anim = anim('<animate attributeName="x" values="-180;900" dur="5.4s" repeatCount="indefinite"/>')
+    body.append(f'<rect x="-180" y="286" width="180" height="2" fill="url(#projBeam)" opacity=".45">{project_beam_anim}</rect>')
     return svg(h, "\n".join(body))
 
 
