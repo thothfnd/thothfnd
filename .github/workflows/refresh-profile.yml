@@ -1,4 +1,4 @@
-name: Refresh cinematic profile
+name: Refresh nocturne profile
 
 on:
   schedule:
@@ -9,13 +9,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: thothfnd-profile-v9
+  group: thothfnd-profile-v10
   cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -33,7 +33,10 @@ jobs:
       - name: Install renderer
         run: python -m pip install -r requirements.txt
 
-      - name: Generate V9 cinematic profile
+      - name: Compile renderer
+        run: python -m py_compile scripts/generate_profile.py scripts/cleanup_repo.py
+
+      - name: Generate V10 nocturne profile
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +44,7 @@ jobs:
 
       - name: Remove migration note after successful generation
         shell: bash
-        run: rm -f START-HERE-V9.txt
+        run: rm -f START-HERE-V10.txt
 
       - name: Commit meaningful changes and cleanup
         shell: bash
@@ -54,5 +57,5 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "profile: refresh V9 cinematic interface"
+          git commit -m "profile: refresh V10 nocturne interface"
           git push
