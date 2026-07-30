@@ -2,10 +2,22 @@
   "identity": {
     "mark": "THOTH /FND",
     "handle": "thothfnd",
+    "eyebrow": "PRIVACY · SECURITY · ANONYMITY · SYSTEMS · AUTOMATION",
     "lines": [
-      "Privacy, security, anonymity, systems, automation and the edges where all of them meet are what keep me interested.",
-      "I like taking complicated ideas apart, understanding what really leaks or breaks, then rebuilding them into tools that are cleaner, harder to correlate and easier to verify.",
-      "Most of what I build starts from curiosity: browsers, networks, cryptography, low-level behavior, infrastructure and anything that can be pushed far beyond its default design."
+      "I’m drawn to privacy, security, anonymity, systems, automation and the difficult parts most people never look at.",
+      "I like understanding how things actually behave under the surface, finding where assumptions fail, and turning that understanding into cleaner, stronger systems.",
+      "I tend to go deep: browsers, networks, cryptography, low-level behavior, infrastructure and anything that rewards obsessive curiosity."
+    ],
+    "interests": [
+      "privacy",
+      "security",
+      "anonymity",
+      "browser architecture",
+      "networks",
+      "cryptography",
+      "low-level systems",
+      "automation",
+      "infrastructure"
     ]
   },
   "projects": [
@@ -14,8 +26,8 @@
       "name": "THOTH BROWSER",
       "repo_names": ["THOTH-Browser", "Thoth-Browser", "thoth-browser"],
       "status": "IN DEVELOPMENT",
-      "subtitle": "Privacy-first browser architecture",
-      "description": "Compartmentalization, anti-correlation design, routing boundaries, fingerprint resistance and verifiable behavior.",
+      "subtitle": "Privacy-first browser project",
+      "description": "A browser project built around compartmentalization, isolation, anti-correlation design and stronger privacy boundaries.",
       "url": ""
     },
     {
@@ -24,7 +36,7 @@
       "repo_names": ["RelayX", "relayx"],
       "status": "IN DEVELOPMENT",
       "subtitle": "Second public project",
-      "description": "Repository details and source become directly accessible here as soon as RelayX is public on this account.",
+      "description": "A second project on this account. Its public description and repository link can evolve directly from this configuration as the project becomes public.",
       "url": ""
     }
   ],

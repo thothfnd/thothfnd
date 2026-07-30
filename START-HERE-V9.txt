@@ -1,0 +1,9 @@
+V9 CINEMATIC PROFILE
+
+1. Upload/replace every file in this package at the root of your profile repository.
+2. Keep .github/workflows/refresh-profile.yml from THIS package.
+3. Open Actions -> Refresh cinematic profile -> Run workflow.
+4. The workflow verifies V9, removes known V1-V8 leftovers, regenerates the profile and commits the cleanup automatically.
+
+Edit data/profile.json later to add Telegram/channel/website links or change your personal text.
+START-HERE-V9.txt is automatically removed by the first successful V9 workflow run.

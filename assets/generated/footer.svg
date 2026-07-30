@@ -1,15 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="104" viewBox="0 0 880 104">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="90" viewBox="0 0 1200 90">
 <style>
-.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f6f7f8}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f6f7f8}
-.serif{font-family:Georgia,"Times New Roman",serif;fill:#f6f7f8}
-.soft{fill:#b6bbc3}.faint{fill:#777d87}
+.display{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f4f5f7}
+.text{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#c1c6cf}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#8f96a3}
+
 </style>
-
-<rect width="880" height="104" fill="#050506"/>
-<line x1="38" y1="20" x2="842" y2="20" stroke="#2c2f35"/>
-<rect x="406" y="43" width="8" height="8" fill="#e9ebee" opacity=".9"><animate attributeName="opacity" values=".9;.14;.9" dur="2.4s" repeatCount="indefinite"/></rect>
-<rect x="466" y="43" width="8" height="8" fill="#e9ebee" opacity=".9"><animate attributeName="opacity" values=".9;.14;.9" dur="2.4s" begin=".08s" repeatCount="indefinite"/></rect>
-<text x="440" y="78" text-anchor="middle" class="mono soft" font-size="12" letter-spacing="2">THOTH /FND · @thothfnd</text>
-
+<line x1="32" y1="28" x2="1168" y2="28" stroke="#24272d"/><text x="32" y="65" class="display" font-size="14" font-weight="650">THOTH /FND</text><circle cx="1160" cy="60" r="3" fill="#d9dde4"><animate attributeName="opacity" values="1;.2;1" dur="1.8s" repeatCount="indefinite"/></circle>
 </svg>

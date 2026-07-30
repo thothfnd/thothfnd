@@ -1,21 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="86" viewBox="0 0 420 86">
+<svg xmlns="http://www.w3.org/2000/svg" width="292" height="90" viewBox="0 0 292 90">
 <style>
-.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f6f7f8}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f6f7f8}
-.serif{font-family:Georgia,"Times New Roman",serif;fill:#f6f7f8}
-.soft{fill:#b6bbc3}.faint{fill:#777d87}
+.display{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f4f5f7}
+.text{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#c1c6cf}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#8f96a3}
+
 </style>
 
-<defs>
- <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f8fa" stop-opacity=".50"/><stop offset=".35" stop-color="#6f757e" stop-opacity=".16"/><stop offset="1" stop-color="#24272d" stop-opacity=".55"/></linearGradient>
- <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-</defs>
-<rect width="420" height="86" fill="#050506"/>
-<path d="M18,15 L398,15 L406,22 L406,67 L398,75 L18,75 L10,64 L10,24 Z" fill="#0d0f12" stroke="url(#edge)"/>
-<line x1="30" y1="60" x2="390" y2="60" stroke="#25282e"/>
-<text x="30" y="42" class="sans" font-size="20" font-weight="760">GITHUB</text>
-<text x="390" y="42" text-anchor="end" class="mono faint" font-size="11">OPEN ↗</text>
-<rect x="-110" y="14" width="90" height="52" fill="url(#shine)" opacity=".20"><animate attributeName="x" values="-110;440" dur="4.2s" begin="0.00s" repeatCount="indefinite"/></rect>
-<path d="M382,28 l8,8 -8,8" fill="none" stroke="#e9ebee" stroke-width="2" opacity=".65"/>
+<defs><linearGradient id="linkbg"><stop stop-color="#0a0b0d"/><stop offset=".5" stop-color="#17191e"/><stop offset="1" stop-color="#090a0c"/></linearGradient></defs>
+<path d="M14,5 H274 L289,20 V70 L274,85 H14 L2,73 V18 Z" fill="url(#linkbg)" stroke="#3f444d"/>
+<text x="22" y="45" class="display" font-size="15" font-weight="650">GITHUB</text>
+<path d="M244,27 H268 V51 M268,27 L240,55" fill="none" stroke="#f4f5f7" stroke-width="2.4"/>
+<line x1="22" y1="64" x2="22" y2="64" stroke="#d9dde4" stroke-width="2"><animate attributeName="x2" values="22;135;22" dur="4.2s" repeatCount="indefinite"/></line>
 
 </svg>
