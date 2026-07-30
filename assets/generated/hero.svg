@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="322" viewBox="0 0 880 322">
+<style>
+.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f5f6}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f5f5f6}
+.soft{fill:#b8bbc1}.faint{fill:#858991}.chrome{fill:#e3e5e8}
+</style>
+
+<defs>
+ <linearGradient id="wordChrome" gradientUnits="userSpaceOnUse" x1="36" y1="0" x2="724" y2="0">
+  <stop offset="0" stop-color="#868b92"/><stop offset=".18" stop-color="#f5f6f7"/><stop offset=".42" stop-color="#a2a7ae"/><stop offset=".67" stop-color="#ffffff"/><stop offset="1" stop-color="#858a91"/>
+ </linearGradient>
+ <linearGradient id="heroScan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e3e5e8" stop-opacity="0"/><stop offset=".5" stop-color="#e3e5e8" stop-opacity=".7"/><stop offset="1" stop-color="#e3e5e8" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="880" height="322" fill="#080808"/>
+<line x1="36" y1="34" x2="844" y2="34" stroke="#2c2d30"/>
+<text x="36" y="23" class="mono faint" font-size="12">THOTHFND / SYSTEMS PROFILE</text>
+<text x="844" y="23" text-anchor="end" class="mono faint" font-size="12">PUBLIC INTERFACE</text>
+<path d="M36,72 H108 M72.0,72 V140" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<path d="M124,72 V140 M196,72 V140 M124,106.0 H196" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<rect x="212" y="72" width="72" height="68" rx="8" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<path d="M300,72 H372 M336.0,72 V140" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<path d="M388,72 V140 M460,72 V140 M388,106.0 H460" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<path d="M476,140 V72 H548 M476,106.0 H538" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<path d="M564,140 V72 L636,140 V72" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<path d="M652,72 V140 H672 C724,140 724,72 672,72 Z" stroke="url(#wordChrome)" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+<text x="38" y="177" class="mono soft" font-size="14">@thothfnd</text>
+<text x="38" y="213" class="sans soft" font-size="18">Browser systems. Identity isolation. Evidence-driven security.</text>
+<line x1="36" y1="238" x2="844" y2="238" stroke="#2c2d30"/>
+
+<text x="36" y="267" class="mono faint" font-size="11">DISCIPLINE</text>
+<text x="36" y="294" class="sans" font-size="15" font-weight="650">Browser systems</text>
+<text x="240" y="267" class="mono faint" font-size="11">PRINCIPLE</text>
+<text x="240" y="294" class="sans" font-size="15" font-weight="650">Privacy architecture</text>
+<text x="444" y="267" class="mono faint" font-size="11">METHOD</text>
+<text x="444" y="294" class="sans" font-size="15" font-weight="650">Evidence-driven</text>
+<text x="648" y="267" class="mono faint" font-size="11">MODE</text>
+<text x="648" y="294" class="sans" font-size="15" font-weight="650">Private R&amp;D</text>
+<rect x="-220" y="311" width="220" height="1.5" fill="url(#heroScan)"><animate attributeName="x" values="-220;920" dur="6s" repeatCount="indefinite"/></rect>
+</svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="268" viewBox="0 0 880 268">
+<style>
+.sans{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f5f5f6}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:#f5f5f6}
+.soft{fill:#b8bbc1}.faint{fill:#858991}.chrome{fill:#e3e5e8}
+</style>
+
+<defs>
+ <linearGradient id="idScan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e3e5e8" stop-opacity="0"/><stop offset=".5" stop-color="#e3e5e8" stop-opacity=".8"/><stop offset="1" stop-color="#e3e5e8" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="880" height="268" fill="#080808"/>
+<line x1="36" y1="34" x2="844" y2="34" stroke="#2c2d30"/>
+<text x="36" y="23" class="mono faint" font-size="12">IDENTITY / AVATAR → ASCII</text>
+<text x="844" y="23" text-anchor="end" class="mono faint" font-size="12">SHA256 DEMO-0000000</text>
+<text x="36" y="68" class="mono soft" font-size="12">RAW</text><line x1="78" y1="64" x2="174" y2="64" stroke="#2c2d30"/>
+<text x="194" y="68" class="mono soft" font-size="12">COARSE</text><line x1="258" y1="64" x2="354" y2="64" stroke="#2c2d30"/>
+<text x="374" y="68" class="mono soft" font-size="12">DENSE</text><line x1="430" y1="64" x2="526" y2="64" stroke="#2c2d30"/>
+<text x="546" y="68" class="mono soft" font-size="12">FINAL</text>
+<line x1="36" y1="84" x2="650" y2="84" stroke="#2c2d30"/>
+
+<g opacity="0"><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.72;1" dur="0.95s" begin="0.15s" fill="freeze"/>
+<text x="440" y="126.0" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">                    .,:iillllii,.</text>
+<text x="440" y="134.6" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">               .:iIttfffjjjrrxxnnuuI;.</text>
+<text x="440" y="143.2" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">            .;tXXUUUUUUUUUUUUUUUUXXf,</text>
+<text x="440" y="151.8" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">          :fXUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<text x="440" y="160.4" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">        .nXUUUUU.    PROFILE    .UUXj</text>
+<text x="440" y="169.0" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">        ;XUUUUUU      READY      UUXt</text>
+<text x="440" y="177.6" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">        .nXUUUUU.     SYNC      .UUXj</text>
+<text x="440" y="186.2" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">          :fXUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<text x="440" y="194.8" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">            .;tXXUUUUUUUUUUUUUUUUXXf,</text>
+<text x="440" y="203.4" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">               .:iIttfffjjjrrxxnnuuI;.</text>
+<text x="440" y="212.0" text-anchor="middle" class="mono" style="font-size:11.2px;fill:#f5f5f6;opacity:.92" xml:space="preserve">                    .,:iillllii,.</text>
+</g>
+<g opacity="0"><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.72;1" dur="0.95s" begin="0.85s" fill="freeze"/>
+<text x="440" y="126.0" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">                    .,:iillllii,.</text>
+<text x="440" y="134.6" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">               .:iIttfffjjjrrxxnnuuI;.</text>
+<text x="440" y="143.2" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">            .;tXXUUUUUUUUUUUUUUUUXXf,</text>
+<text x="440" y="151.8" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">          :fXUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<text x="440" y="160.4" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">        .nXUUUUU.    PROFILE    .UUXj</text>
+<text x="440" y="169.0" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">        ;XUUUUUU      READY      UUXt</text>
+<text x="440" y="177.6" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">        .nXUUUUU.     SYNC      .UUXj</text>
+<text x="440" y="186.2" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">          :fXUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<text x="440" y="194.8" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">            .;tXXUUUUUUUUUUUUUUUUXXf,</text>
+<text x="440" y="203.4" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">               .:iIttfffjjjrrxxnnuuI;.</text>
+<text x="440" y="212.0" text-anchor="middle" class="mono" style="font-size:8.9px;fill:#f5f5f6;opacity:.92" xml:space="preserve">                    .,:iillllii,.</text>
+</g>
+<clipPath id="f0"><rect x="42" y="119.0" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.450s" fill="freeze"/></rect></clipPath>
+<text x="440" y="126.0" text-anchor="middle" clip-path="url(#f0)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">                    .,:iillllii,.</text>
+<clipPath id="f1"><rect x="42" y="127.6" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.474s" fill="freeze"/></rect></clipPath>
+<text x="440" y="134.6" text-anchor="middle" clip-path="url(#f1)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">               .:iIttfffjjjrrxxnnuuI;.</text>
+<clipPath id="f2"><rect x="42" y="136.2" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.498s" fill="freeze"/></rect></clipPath>
+<text x="440" y="143.2" text-anchor="middle" clip-path="url(#f2)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">            .;tXXUUUUUUUUUUUUUUUUXXf,</text>
+<clipPath id="f3"><rect x="42" y="144.8" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.522s" fill="freeze"/></rect></clipPath>
+<text x="440" y="151.8" text-anchor="middle" clip-path="url(#f3)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">          :fXUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<clipPath id="f4"><rect x="42" y="153.4" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.546s" fill="freeze"/></rect></clipPath>
+<text x="440" y="160.4" text-anchor="middle" clip-path="url(#f4)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">        .nXUUUUU.    PROFILE    .UUXj</text>
+<clipPath id="f5"><rect x="42" y="162.0" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.570s" fill="freeze"/></rect></clipPath>
+<text x="440" y="169.0" text-anchor="middle" clip-path="url(#f5)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">        ;XUUUUUU      READY      UUXt</text>
+<clipPath id="f6"><rect x="42" y="170.6" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.594s" fill="freeze"/></rect></clipPath>
+<text x="440" y="177.6" text-anchor="middle" clip-path="url(#f6)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">        .nXUUUUU.     SYNC      .UUXj</text>
+<clipPath id="f7"><rect x="42" y="179.2" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.618s" fill="freeze"/></rect></clipPath>
+<text x="440" y="186.2" text-anchor="middle" clip-path="url(#f7)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">          :fXUUUUUUUUUUUUUUUUUUUUUUXr</text>
+<clipPath id="f8"><rect x="42" y="187.8" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.642s" fill="freeze"/></rect></clipPath>
+<text x="440" y="194.8" text-anchor="middle" clip-path="url(#f8)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">            .;tXXUUUUUUUUUUUUUUUUXXf,</text>
+<clipPath id="f9"><rect x="42" y="196.4" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.666s" fill="freeze"/></rect></clipPath>
+<text x="440" y="203.4" text-anchor="middle" clip-path="url(#f9)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">               .:iIttfffjjjrrxxnnuuI;.</text>
+<clipPath id="f10"><rect x="42" y="205.0" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="1.690s" fill="freeze"/></rect></clipPath>
+<text x="440" y="212.0" text-anchor="middle" clip-path="url(#f10)" class="mono" style="font-size:7.25px;fill:#f5f5f6;opacity:.95" xml:space="preserve">                    .,:iillllii,.</text>
+<text x="36" y="249" class="mono faint" font-size="11">GRID 33×11 / MONOCHROME / SOURCE github/avatar</text>
+<rect x="-220" y="260" width="220" height="1.4" fill="url(#idScan)"><animate attributeName="x" values="-220;920" dur="5.4s" begin="1.5s" repeatCount="indefinite"/></rect>
+</svg>

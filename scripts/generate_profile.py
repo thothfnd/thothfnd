@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import html
 import io
 import json
@@ -18,18 +19,17 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-ASSETS = ROOT / "assets"
-CONFIG = ROOT / "profile.json"
+ASSETS = ROOT / "assets" / "generated"
+PROFILE = ROOT / "data" / "profile.json"
+CAPS = ROOT / "data" / "capabilities.json"
 
-# Monochrome chrome palette. No accent blue, no neon.
-BG = "#090909"
-BG2 = "#0e0e0f"
-LINE = "#303034"
-TEXT = "#f4f4f5"
-SOFT = "#b7bac0"
-FAINT = "#7f838b"
-CHROME = "#dfe2e6"
-CHROME_DARK = "#8e949c"
+BG = "#080808"
+LINE = "#2c2d30"
+TEXT = "#f5f5f6"
+SOFT = "#b8bbc1"
+FAINT = "#858991"
+CHROME = "#e3e5e8"
+CHROME_DARK = "#92979f"
 ASCII_RAMP = " .`'^,:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 
 
@@ -45,9 +45,7 @@ def write(path: Path, data: str) -> None:
 def svg(width: int, height: int, body: str) -> str:
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
 <style>
-.display{{font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;fill:{TEXT}}}
-.sans{{font-family:"Helvetica Neue",Arial,system-ui,sans-serif;fill:{TEXT}}}
-.serif{{font-family:Georgia,"Times New Roman",serif;fill:{SOFT}}}
+.sans{{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:{TEXT}}}
 .mono{{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;fill:{TEXT}}}
 .soft{{fill:{SOFT}}}.faint{{fill:{FAINT}}}.chrome{{fill:{CHROME}}}
 </style>
@@ -56,11 +54,11 @@ def svg(width: int, height: int, body: str) -> str:
 
 
 def api(url: str, token: str = "") -> bytes:
-    headers = {"User-Agent": "github-profile-v6-bespoke", "Accept": "application/vnd.github+json"}
+    headers = {"User-Agent": "github-profile-v7-final", "Accept": "application/vnd.github+json"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    request = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(request, timeout=30) as response:
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=35) as response:
         return response.read()
 
 
@@ -75,23 +73,18 @@ query($login:String!){
   login name bio location websiteUrl createdAt
   followers{totalCount} following{totalCount}
   repositories(first:60,privacy:PUBLIC,ownerAffiliations:OWNER,isFork:false,orderBy:{field:PUSHED_AT,direction:DESC}){
-   totalCount
-   nodes{name url stargazerCount forkCount languages(first:8,orderBy:{field:SIZE,direction:DESC}){edges{size node{name color}}}}
+   totalCount nodes{name url stargazerCount forkCount languages(first:8,orderBy:{field:SIZE,direction:DESC}){edges{size node{name color}}}}
   }
   contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{contributionCount date weekday}}}}
  }
 }'''
-    request = urllib.request.Request(
+    req = urllib.request.Request(
         "https://api.github.com/graphql",
         data=json.dumps({"query": query, "variables": {"login": login}}).encode(),
-        headers={
-            "Authorization": f"Bearer {token}",
-            "User-Agent": "github-profile-v6-bespoke",
-            "Content-Type": "application/json",
-        },
+        headers={"Authorization": f"Bearer {token}", "User-Agent": "github-profile-v7-final", "Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=45) as response:
+    with urllib.request.urlopen(req, timeout=45) as response:
         result = json.loads(response.read().decode())
     if result.get("errors"):
         raise RuntimeError(result["errors"])
@@ -106,17 +99,11 @@ def demo_user(login: str) -> tuple[dict, dict]:
         count = 0 if i % 5 else (i * 7) % 11
         if i % 17 == 0:
             count += 4
-        ds.append({"date": date.isoformat(), "contributionCount": count, "weekday": (date.weekday() + 1) % 7})
+        ds.append({"date": date.isoformat(), "contributionCount": count, "weekday": (date.weekday()+1)%7})
     weeks = [{"contributionDays": ds[i:i+7]} for i in range(0, len(ds), 7)]
     graph = {
-        "login": login,
-        "name": login,
-        "bio": None,
-        "location": None,
-        "websiteUrl": None,
-        "createdAt": "2024-01-01T00:00:00Z",
-        "followers": {"totalCount": 12},
-        "following": {"totalCount": 3},
+        "login": login, "name": login, "bio": None, "location": None, "websiteUrl": None,
+        "createdAt": "2024-01-01T00:00:00Z", "followers": {"totalCount": 0}, "following": {"totalCount": 0},
         "repositories": {"totalCount": 3, "nodes": []},
         "contributionsCollection": {"contributionCalendar": {"totalContributions": sum(d["contributionCount"] for d in ds), "weeks": weeks}},
     }
@@ -150,7 +137,7 @@ def top_languages(graph: dict) -> list[tuple[str, int]]:
         for edge in (repo.get("languages") or {}).get("edges", []):
             name = edge["node"]["name"]
             totals[name] = totals.get(name, 0) + int(edge["size"])
-    return sorted(totals.items(), key=lambda item: item[1], reverse=True)[:6]
+    return sorted(totals.items(), key=lambda item: item[1], reverse=True)[:4]
 
 
 def wrap(text: str, max_chars: int, max_lines: int) -> list[str]:
@@ -173,18 +160,19 @@ def wrap(text: str, max_chars: int, max_lines: int) -> list[str]:
     return lines
 
 
-def fetch_avatar(url: str, token: str) -> Image.Image | None:
+def fetch_avatar(url: str, token: str) -> tuple[Image.Image | None, str]:
     if not url:
-        return None
+        return None, "DEMO-000000000000"
     try:
         raw = api(url + ("&" if "?" in url else "?") + "s=900", token)
-        return Image.open(io.BytesIO(raw)).convert("RGBA")
+        digest = hashlib.sha256(raw).hexdigest().upper()
+        return Image.open(io.BytesIO(raw)).convert("RGBA"), digest
     except Exception as error:
         print(f"avatar fallback: {error}", file=sys.stderr)
-        return None
+        return None, "ERR-000000000000"
 
 
-def ascii_portrait(image: Image.Image) -> list[str]:
+def ascii_portrait(image: Image.Image, cols: int) -> list[str]:
     try:
         from rembg import remove
         cut = remove(image)
@@ -198,146 +186,189 @@ def ascii_portrait(image: Image.Image) -> list[str]:
     ys, xs = np.where(alpha > 16)
     if len(xs) > 10:
         pad = 18
-        image = image.crop((
-            max(0, int(xs.min()) - pad), max(0, int(ys.min()) - pad),
-            min(image.width, int(xs.max()) + pad), min(image.height, int(ys.max()) + pad),
-        ))
-
+        image = image.crop((max(0, int(xs.min())-pad), max(0, int(ys.min())-pad), min(image.width, int(xs.max())+pad), min(image.height, int(ys.max())+pad)))
     canvas = Image.new("RGB", image.size, "white")
     canvas.paste(image.convert("RGB"), mask=image.getchannel("A"))
     gray = np.array(canvas.convert("L"))
     gray = cv2.createCLAHE(clipLimit=2.8, tileGridSize=(8, 8)).apply(gray)
     gray = cv2.GaussianBlur(gray, (0, 0), 0.55)
-    gray = np.clip(np.power(gray.astype(np.float32) / 255.0, 1.42) * 255, 0, 255).astype(np.uint8)
-
-    cols = 100
+    gray = np.clip(np.power(gray.astype(np.float32)/255.0, 1.42)*255, 0, 255).astype(np.uint8)
     ratio = gray.shape[0] / max(1, gray.shape[1])
-    rows = max(30, min(76, int(cols * ratio * 0.49)))
+    rows = max(16, min(76, int(cols * ratio * 0.49)))
     small = cv2.resize(gray, (cols, rows), interpolation=cv2.INTER_AREA)
-    return ["".join(ASCII_RAMP[int((255 - int(pixel)) / 255 * (len(ASCII_RAMP) - 1))] for pixel in row).rstrip() for row in small]
+    return ["".join(ASCII_RAMP[int((255-int(pixel))/255*(len(ASCII_RAMP)-1))] for pixel in row).rstrip() for row in small]
 
 
-def hero(login: str, graph: dict, cfg: dict) -> str:
-    name = (graph.get("name") or login).upper()
-    tagline = cfg.get("tagline") or graph.get("bio") or "privacy engineering"
-    joined = (graph.get("createdAt") or "")[:4] or "--"
-    location = (graph.get("location") or "NETWORK / PRIVATE")[:28].upper()
-    body = f'''
+# Bespoke vector wordmark: geometric strokes, no font dependency.
+def wordmark(text: str, x: int, y: int, letter_w: int = 72, letter_h: int = 68, gap: int = 16) -> tuple[str, int]:
+    pieces: list[str] = []
+    cursor = x
+    sw = 7
+    for char in text:
+        x0, x1 = cursor, cursor + letter_w
+        y0, y1, ym = y, y + letter_h, y + letter_h / 2
+        common = f'stroke="url(#wordChrome)" stroke-width="{sw}" stroke-linecap="square" stroke-linejoin="miter" fill="none"'
+        if char == "T":
+            pieces.append(f'<path d="M{x0},{y0} H{x1} M{(x0+x1)/2},{y0} V{y1}" {common}/>')
+        elif char == "H":
+            pieces.append(f'<path d="M{x0},{y0} V{y1} M{x1},{y0} V{y1} M{x0},{ym} H{x1}" {common}/>')
+        elif char == "O":
+            pieces.append(f'<rect x="{x0}" y="{y0}" width="{letter_w}" height="{letter_h}" rx="8" {common}/>')
+        elif char == "F":
+            pieces.append(f'<path d="M{x0},{y1} V{y0} H{x1} M{x0},{ym} H{x1-10}" {common}/>')
+        elif char == "N":
+            pieces.append(f'<path d="M{x0},{y1} V{y0} L{x1},{y1} V{y0}" {common}/>')
+        elif char == "D":
+            pieces.append(f'<path d="M{x0},{y0} V{y1} H{x0+20} C{x1},{y1} {x1},{y0} {x0+20},{y0} Z" {common}/>')
+        cursor += letter_w + gap
+    return "\n".join(pieces), cursor - x - gap
+
+def hero(login: str, graph: dict, profile: dict) -> str:
+    focus = profile.get("focus", [])[:4]
+    mark, mark_width = wordmark("THOTHFND", 36, 72, letter_w=72, letter_h=68, gap=16)
+    body = [f'''
 <defs>
- <linearGradient id="chromeText" x1="0" y1="0" x2="1" y2="0">
-  <stop offset="0" stop-color="#8c9198"/><stop offset=".28" stop-color="#f3f4f5"/><stop offset=".53" stop-color="#a0a5ac"/><stop offset=".78" stop-color="#ffffff"/><stop offset="1" stop-color="#858a91"/>
+ <linearGradient id="wordChrome" gradientUnits="userSpaceOnUse" x1="36" y1="0" x2="{36+mark_width}" y2="0">
+  <stop offset="0" stop-color="#868b92"/><stop offset=".18" stop-color="#f5f6f7"/><stop offset=".42" stop-color="#a2a7ae"/><stop offset=".67" stop-color="#ffffff"/><stop offset="1" stop-color="#858a91"/>
  </linearGradient>
- <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CHROME}" stop-opacity="0"/><stop offset=".48" stop-color="{CHROME}" stop-opacity=".8"/><stop offset="1" stop-color="{CHROME}" stop-opacity="0"/></linearGradient>
- <clipPath id="tag"><rect x="36" y="0" width="0" height="240"><animate attributeName="width" from="0" to="810" dur="1.25s" begin=".25s" fill="freeze"/></rect></clipPath>
+ <linearGradient id="heroScan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CHROME}" stop-opacity="0"/><stop offset=".5" stop-color="{CHROME}" stop-opacity=".7"/><stop offset="1" stop-color="{CHROME}" stop-opacity="0"/></linearGradient>
 </defs>
-<rect width="880" height="318" fill="{BG}"/>
+<rect width="880" height="322" fill="{BG}"/>
 <line x1="36" y1="34" x2="844" y2="34" stroke="{LINE}"/>
-<text x="36" y="24" class="mono faint" font-size="9">THOTHFND / PROFILE INDEX</text>
-<text x="844" y="24" text-anchor="end" class="mono faint" font-size="9">LIVE DATA / GENERATED</text>
-<text x="34" y="128" class="display" font-size="72" font-weight="900" fill="url(#chromeText)">{esc(name)}</text>
-<text x="38" y="159" class="mono soft" font-size="12">@{esc(login)}</text>
-<g clip-path="url(#tag)"><text x="38" y="205" class="serif" font-size="21" font-style="italic">{esc(tagline)}</text></g>
-<line x1="36" y1="232" x2="844" y2="232" stroke="{LINE}"/>
-<text x="36" y="262" class="mono faint" font-size="8">REPOS</text><text x="36" y="290" class="display" font-size="25" font-weight="800">{graph['repositories']['totalCount']}</text>
-<text x="170" y="262" class="mono faint" font-size="8">FOLLOWERS</text><text x="170" y="290" class="display" font-size="25" font-weight="800">{graph['followers']['totalCount']}</text>
-<text x="326" y="262" class="mono faint" font-size="8">FOLLOWING</text><text x="326" y="290" class="display" font-size="25" font-weight="800">{graph['following']['totalCount']}</text>
-<text x="482" y="262" class="mono faint" font-size="8">JOINED</text><text x="482" y="290" class="display" font-size="25" font-weight="800">{esc(joined)}</text>
-<text x="638" y="262" class="mono faint" font-size="8">LOCATION</text><text x="638" y="290" class="sans" font-size="12">{esc(location)}</text>
-<rect x="-240" y="307" width="240" height="1.5" fill="url(#scan)"><animate attributeName="x" values="-240;920" dur="5.6s" repeatCount="indefinite"/></rect>
-'''
-    return svg(880, 318, body)
+<text x="36" y="23" class="mono faint" font-size="12">THOTHFND / SYSTEMS PROFILE</text>
+<text x="844" y="23" text-anchor="end" class="mono faint" font-size="12">PUBLIC INTERFACE</text>
+{mark}
+<text x="38" y="177" class="mono soft" font-size="14">@{esc(login)}</text>
+<text x="38" y="213" class="sans soft" font-size="18">{esc(profile.get('tagline',''))}</text>
+<line x1="36" y1="238" x2="844" y2="238" stroke="{LINE}"/>
+''']
+    cols = [36, 240, 444, 648]
+    for idx, item in enumerate(focus):
+        x = cols[idx]
+        body.append(f'<text x="{x}" y="267" class="mono faint" font-size="11">{esc(item.get("label",""))}</text>')
+        body.append(f'<text x="{x}" y="294" class="sans" font-size="15" font-weight="650">{esc(item.get("value",""))}</text>')
+    body.append(f'<rect x="-220" y="311" width="220" height="1.5" fill="url(#heroScan)"><animate attributeName="x" values="-220;920" dur="6s" repeatCount="indefinite"/></rect>')
+    return svg(880, 322, "\n".join(body))
 
 
-def identity(image: Image.Image | None, login: str) -> str:
-    lines = ascii_portrait(image) if image is not None else [
-        "                           .,:iillllii,:.",
-        "                      .:iIttfffjjjrrxxnnuuI;.",
-        "                  .;tXXUUUUUUUUUUUUUUUUUUXXf,",
-        "                :fXUUUUUUUUUUUUUUUUUUUUUUUUXr",
-        "              .nXUUUUU.      PROFILE      .UUXj",
-        "              ;XUUUUUU       AVATAR        UUXt",
-        "              ;XUUUUUU        READY        UUXt",
-        "              .nXUUUUU.       SYNC        .UUXj",
-        "                :fXUUUUUUUUUUUUUUUUUUUUUUUUXr",
-        "                  .;tXXUUUUUUUUUUUUUUUUUUXXf,",
-        "                      .:iIttfffjjjrrxxnnuuI;.",
-        "                           .,:iillllii,:.",
+def identity(image: Image.Image | None, login: str, digest: str) -> str:
+    fallback = [
+        "                    .,:iillllii,.",
+        "               .:iIttfffjjjrrxxnnuuI;.",
+        "            .;tXXUUUUUUUUUUUUUUUUXXf,",
+        "          :fXUUUUUUUUUUUUUUUUUUUUUUXr",
+        "        .nXUUUUU.    PROFILE    .UUXj",
+        "        ;XUUUUUU      READY      UUXt",
+        "        .nXUUUUU.     SYNC      .UUXj",
+        "          :fXUUUUUUUUUUUUUUUUUUUUUUXr",
+        "            .;tXXUUUUUUUUUUUUUUUUXXf,",
+        "               .:iIttfffjjjrrxxnnuuI;.",
+        "                    .,:iillllii,.",
     ]
+    if image is None:
+        coarse = fallback
+        dense = fallback
+        final = fallback
+    else:
+        coarse = ascii_portrait(image, 44)
+        dense = ascii_portrait(image, 70)
+        final = ascii_portrait(image, 100)
+
     line_h = 8.6
-    top = 94
-    height = int(top + len(lines) * line_h + 48)
-    pieces = [f'''
-<defs><linearGradient id="idscan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CHROME}" stop-opacity="0"/><stop offset=".5" stop-color="{CHROME}" stop-opacity=".78"/><stop offset="1" stop-color="{CHROME}" stop-opacity="0"/></linearGradient></defs>
+    top = 126
+    height = int(top + len(final) * line_h + 48)
+    body: list[str] = [f'''
+<defs>
+ <linearGradient id="idScan" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CHROME}" stop-opacity="0"/><stop offset=".5" stop-color="{CHROME}" stop-opacity=".8"/><stop offset="1" stop-color="{CHROME}" stop-opacity="0"/></linearGradient>
+</defs>
 <rect width="880" height="{height}" fill="{BG}"/>
-<line x1="36" y1="30" x2="844" y2="30" stroke="{LINE}"/>
-<text x="36" y="21" class="mono faint" font-size="9">IDENTITY / ASCII RENDER</text>
-<text x="844" y="21" text-anchor="end" class="mono faint" font-size="9">@{esc(login)}</text>
-<text x="36" y="61" class="mono soft" font-size="10">01 FETCH</text><line x1="104" y1="57" x2="182" y2="57" stroke="{LINE}"/>
-<text x="202" y="61" class="mono soft" font-size="10">02 MASK</text><line x1="266" y1="57" x2="344" y2="57" stroke="{LINE}"/>
-<text x="364" y="61" class="mono soft" font-size="10">03 MAP</text><line x1="424" y1="57" x2="502" y2="57" stroke="{LINE}"/>
-<text x="522" y="61" class="mono soft" font-size="10">04 REVEAL</text>
-<rect x="36" y="70" width="0" height="1.4" fill="{CHROME}"><animate attributeName="width" from="0" to="626" dur="1.45s" begin=".08s" fill="freeze"/></rect>
+<line x1="36" y1="34" x2="844" y2="34" stroke="{LINE}"/>
+<text x="36" y="23" class="mono faint" font-size="12">IDENTITY / AVATAR → ASCII</text>
+<text x="844" y="23" text-anchor="end" class="mono faint" font-size="12">SHA256 {esc(digest[:12])}</text>
+<text x="36" y="68" class="mono soft" font-size="12">RAW</text><line x1="78" y1="64" x2="174" y2="64" stroke="{LINE}"/>
+<text x="194" y="68" class="mono soft" font-size="12">COARSE</text><line x1="258" y1="64" x2="354" y2="64" stroke="{LINE}"/>
+<text x="374" y="68" class="mono soft" font-size="12">DENSE</text><line x1="430" y1="64" x2="526" y2="64" stroke="{LINE}"/>
+<text x="546" y="68" class="mono soft" font-size="12">FINAL</text>
+<line x1="36" y1="84" x2="650" y2="84" stroke="{LINE}"/>
 ''']
-    for index, line in enumerate(lines):
+
+    def phase(lines: list[str], font_size: float, begin: float, dur: float) -> str:
+        local: list[str] = [f'<g opacity="0"><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.72;1" dur="{dur}s" begin="{begin}s" fill="freeze"/>']
+        phase_top = top + max(0, len(final)-len(lines))*line_h/2
+        for i, line in enumerate(lines):
+            y = phase_top + i * line_h
+            local.append(f'<text x="440" y="{y:.1f}" text-anchor="middle" class="mono" style="font-size:{font_size}px;fill:{TEXT};opacity:.92" xml:space="preserve">{esc(line)}</text>')
+        local.append('</g>')
+        return "\n".join(local)
+
+    body.append(phase(coarse, 11.2, 0.15, 0.95))
+    body.append(phase(dense, 8.9, 0.85, 0.95))
+    for index, line in enumerate(final):
         y = top + index * line_h
-        delay = 0.65 + index * 0.026
-        pieces.append(f'<clipPath id="c{index}"><rect x="44" y="{y-7:.1f}" width="0" height="10"><animate attributeName="width" from="0" to="792" dur=".34s" begin="{delay:.3f}s" fill="freeze"/></rect></clipPath>')
-        pieces.append(f'<text x="440" y="{y:.1f}" text-anchor="middle" clip-path="url(#c{index})" class="mono" style="font-size:7.35px;fill:{TEXT};opacity:.94" xml:space="preserve">{esc(line)}</text>')
-    pieces.append(f'<rect x="44" y="{height-18}" width="8" height="11" fill="{CHROME}"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>')
-    pieces.append(f'<rect x="-220" y="{height-28}" width="220" height="1.4" fill="url(#idscan)"><animate attributeName="x" values="-220;920" dur="5.2s" begin="1.1s" repeatCount="indefinite"/></rect>')
-    return svg(880, height, "\n".join(pieces))
+        delay = 1.45 + index * 0.024
+        body.append(f'<clipPath id="f{index}"><rect x="42" y="{y-7:.1f}" width="0" height="10"><animate attributeName="width" from="0" to="796" dur=".32s" begin="{delay:.3f}s" fill="freeze"/></rect></clipPath>')
+        body.append(f'<text x="440" y="{y:.1f}" text-anchor="middle" clip-path="url(#f{index})" class="mono" style="font-size:7.25px;fill:{TEXT};opacity:.95" xml:space="preserve">{esc(line)}</text>')
+    body.append(f'<text x="36" y="{height-19}" class="mono faint" font-size="11">GRID {len(final[0]) if final and final[0] else 100}×{len(final)} / MONOCHROME / SOURCE github/avatar</text>')
+    body.append(f'<rect x="-220" y="{height-8}" width="220" height="1.4" fill="url(#idScan)"><animate attributeName="x" values="-220;920" dur="5.4s" begin="1.5s" repeatCount="indefinite"/></rect>')
+    return svg(880, height, "\n".join(body))
 
 
-def stack(cfg: dict) -> str:
-    groups = (cfg.get("stack_groups") or [])[:5]
-    total = str(cfg.get("stack_total", "200+"))
-    number = re.sub(r"[^0-9]", "", total) or "200"
-    suffix = "+" if "+" in total else ""
-    row_y = [92, 136, 180, 224, 268]
+def capability_count(catalog: dict) -> int:
+    return len({item for values in catalog.values() for item in values})
+
+
+def stack(caps: dict) -> str:
+    catalog = caps.get("catalog", {})
+    featured = [
+        ("LANGUAGES", ["Python","C++","Rust","TypeScript","Go"]),
+        ("BROWSER SYSTEMS", ["Gecko","XPCOM","Fission","Necko","WebExtensions"]),
+        ("SECURITY", ["Threat Modeling","Cryptography","WebAuthn","PKI","Zero Trust"]),
+        ("SYSTEMS", ["Linux","Windows","x86-64","ARM64","LLVM IR"]),
+        ("INFRASTRUCTURE", ["Docker","Kubernetes","Terraform","PostgreSQL","GitHub Actions"]),
+    ]
+    count = capability_count(catalog)
+    row_y = [102, 148, 194, 240, 286]
     body = [f'''
-<defs><linearGradient id="stackchrome" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8e949b"/><stop offset=".48" stop-color="#f7f7f8"/><stop offset="1" stop-color="#8b9097"/></linearGradient></defs>
-<rect width="880" height="324" fill="{BG}"/>
-<line x1="36" y1="30" x2="844" y2="30" stroke="{LINE}"/>
-<text x="36" y="21" class="mono faint" font-size="9">STACK / CAPABILITY INDEX</text>
-<text x="820" y="93" text-anchor="end" class="display" font-size="58" font-weight="900" fill="url(#stackchrome)">{esc(number)}{esc(suffix)}</text>
-<text x="820" y="113" text-anchor="end" class="mono faint" font-size="8">TECHNOLOGIES / A–Z COVERAGE</text>
+<defs><linearGradient id="capChrome" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8f949b"/><stop offset=".48" stop-color="#fafafa"/><stop offset="1" stop-color="#8b9097"/></linearGradient></defs>
+<rect width="880" height="338" fill="{BG}"/>
+<line x1="36" y1="34" x2="844" y2="34" stroke="{LINE}"/>
+<text x="36" y="23" class="mono faint" font-size="12">CAPABILITY INDEX / CURATED VIEW</text>
+<text x="844" y="88" text-anchor="end" class="sans" font-size="58" font-weight="800" fill="url(#capChrome)">{count}</text>
+<text x="844" y="111" text-anchor="end" class="mono faint" font-size="11">INDEXED CAPABILITIES</text>
 ''']
-    for index, group in enumerate(groups):
+    for index, (label, items) in enumerate(featured):
         y = row_y[index]
-        label = str(group.get("label", "GROUP"))
-        items = [str(item) for item in group.get("items", [])][:5]
-        text = "   /   ".join(items)
-        font = 19 if index == 0 else 13
-        weight = 800 if index == 0 else 600
-        body.append(f'<text x="36" y="{y}" class="mono faint" font-size="8">{esc(label)}</text>')
-        body.append(f'<line x1="104" y1="{y-4}" x2="138" y2="{y-4}" stroke="{LINE}"/>')
-        body.append(f'<text x="158" y="{y}" class="sans" font-size="{font}" font-weight="{weight}">{esc(text)}</text>')
-        body.append(f'<line x1="36" y1="{y+17}" x2="690" y2="{y+17}" stroke="{LINE}" stroke-dasharray="654" stroke-dashoffset="654"><animate attributeName="stroke-dashoffset" from="654" to="0" dur=".75s" begin="{0.12+index*0.12:.2f}s" fill="freeze"/></line>')
-    body.append(f'<text x="820" y="278" text-anchor="end" class="serif" font-size="15" font-style="italic">curated, not exhaustive.</text>')
-    return svg(880, 324, "\n".join(body))
+        body.append(f'<text x="36" y="{y}" class="mono faint" font-size="11">{esc(label)}</text>')
+        body.append(f'<line x1="156" y1="{y-4}" x2="190" y2="{y-4}" stroke="{LINE}"/>')
+        body.append(f'<text x="212" y="{y}" class="sans" font-size="15" font-weight="600">{esc("   /   ".join(items))}</text>')
+        body.append(f'<line x1="36" y1="{y+17}" x2="700" y2="{y+17}" stroke="{LINE}"/>')
+    body.append(f'<text x="844" y="304" text-anchor="end" class="mono faint" font-size="11">COUNTED FROM data/capabilities.json</text>')
+    return svg(880, 338, "\n".join(body))
 
 
-def works(cfg: dict) -> str:
-    projects = cfg.get("projects", [])[:3]
-    height = 122 + 138 * len(projects)
-    body = [f'''
+def works(profile: dict) -> str:
+    works_data = profile.get("works", [])[:3]
+    height = 120 + 150 * len(works_data)
+    body: list[str] = [f'''
 <rect width="880" height="{height}" fill="{BG}"/>
-<line x1="36" y1="30" x2="844" y2="30" stroke="{LINE}"/>
-<text x="36" y="21" class="mono faint" font-size="9">SELECTED WORKS / CURRENT</text>
-<text x="844" y="21" text-anchor="end" class="serif" font-size="12" font-style="italic">systems under construction</text>
+<line x1="36" y1="34" x2="844" y2="34" stroke="{LINE}"/>
+<text x="36" y="23" class="mono faint" font-size="12">SELECTED WORK / PRACTICE</text>
 ''']
     base = 76
-    for index, project in enumerate(projects, 1):
-        y = base + (index - 1) * 138
-        desc = wrap(project.get("description", ""), 50, 2)
-        body.append(f'<text x="36" y="{y+30}" class="display" font-size="42" font-weight="900" fill="{CHROME_DARK}">0{index}</text>')
-        body.append(f'<line x1="96" y1="{y}" x2="96" y2="{y+98}" stroke="{LINE}"/>')
-        body.append(f'<text x="122" y="{y+18}" class="mono faint" font-size="9">{esc(project.get("status", "ACTIVE"))}</text>')
-        body.append(f'<text x="122" y="{y+52}" class="display" font-size="25" font-weight="900">{esc(project.get("name", "PROJECT"))}</text>')
-        body.append(f'<text x="122" y="{y+76}" class="mono soft" font-size="9">{esc(project.get("tech", ""))}</text>')
+    for idx, work in enumerate(works_data):
+        y = base + idx * 150
+        desc = wrap(work.get("description", ""), 54, 2)
+        body.append(f'<text x="36" y="{y+34}" class="sans" font-size="44" font-weight="800" fill="{CHROME_DARK}">{esc(work.get("index", f"0{idx+1}"))}</text>')
+        body.append(f'<line x1="105" y1="{y}" x2="105" y2="{y+112}" stroke="{LINE}"/>')
+        body.append(f'<text x="132" y="{y+19}" class="mono faint" font-size="11">{esc(work.get("status",""))}</text>')
+        body.append(f'<text x="132" y="{y+59}" class="sans" font-size="27" font-weight="800">{esc(work.get("name",""))}</text>')
+        body.append(f'<text x="132" y="{y+84}" class="mono soft" font-size="11">{esc(work.get("discipline",""))}</text>')
         for line_index, line in enumerate(desc):
-            body.append(f'<text x="450" y="{y+44+line_index*20}" class="sans soft" font-size="11.5">{esc(line)}</text>')
-        body.append(f'<line x1="36" y1="{y+116}" x2="844" y2="{y+116}" stroke="{LINE}"/>')
+            body.append(f'<text x="468" y="{y+51+line_index*22}" class="sans soft" font-size="13">{esc(line)}</text>')
+        url = work.get("url", "").strip()
+        if url:
+            body.append(f'<text x="844" y="{y+107}" text-anchor="end" class="mono soft" font-size="11">VIEW SOURCE ↗</text>')
+        body.append(f'<line x1="36" y1="{y+126}" x2="844" y2="{y+126}" stroke="{LINE}"/>')
     return svg(880, height, "\n".join(body))
 
 
@@ -346,74 +377,59 @@ def signal(graph: dict) -> str:
     current, longest = streaks(ds)
     total = graph["contributionsCollection"]["contributionCalendar"]["totalContributions"]
     active = sum(1 for d in ds if int(d["contributionCount"]) > 0)
-    stars = sum(int(repo.get("stargazerCount") or 0) for repo in graph["repositories"]["nodes"])
-    weeks = [sum(int(d["contributionCount"]) for d in week["contributionDays"]) for week in graph["contributionsCollection"]["contributionCalendar"]["weeks"]]
-    max_week = max(weeks or [1]) or 1
+    weeks = graph["contributionsCollection"]["contributionCalendar"]["weeks"][-53:]
+    week_values = [sum(int(d["contributionCount"]) for d in w["contributionDays"]) for w in weeks]
+    max_week = max(week_values or [1]) or 1
     points = []
-    for index, value in enumerate(weeks):
-        x = 300 + 530 * index / max(1, len(weeks) - 1)
-        y = 184 - 94 * value / max_week
+    for index, value in enumerate(week_values):
+        x = 330 + 500 * index / max(1, len(week_values)-1)
+        y = 168 - 80 * value / max_week
         points.append((x, y))
     polyline = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
     languages = top_languages(graph)
-    dominant = languages[0][0] if languages else "—"
-    body = f'''
-<rect width="880" height="274" fill="{BG}"/>
-<line x1="36" y1="30" x2="844" y2="30" stroke="{LINE}"/>
-<text x="36" y="21" class="mono faint" font-size="9">SIGNAL / GITHUB ACTIVITY</text>
-<text x="36" y="104" class="display" font-size="64" font-weight="900">{total}</text>
-<text x="40" y="126" class="mono faint" font-size="8">CONTRIBUTIONS / LAST YEAR</text>
-<text x="40" y="166" class="display" font-size="23" font-weight="800">{active}</text><text x="40" y="183" class="mono faint" font-size="8">ACTIVE DAYS</text>
-<text x="128" y="166" class="display" font-size="23" font-weight="800">{current}</text><text x="128" y="183" class="mono faint" font-size="8">CURRENT STREAK</text>
-<text x="224" y="166" class="display" font-size="23" font-weight="800">{longest}</text><text x="224" y="183" class="mono faint" font-size="8">LONGEST</text>
-<polyline points="{polyline}" fill="none" stroke="{CHROME}" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1000" stroke-dashoffset="1000"><animate attributeName="stroke-dashoffset" from="1000" to="0" dur="1.8s" begin=".1s" fill="freeze"/></polyline>
-<line x1="300" y1="204" x2="830" y2="204" stroke="{LINE}"/>
-<text x="300" y="233" class="mono faint" font-size="8">REPOS</text><text x="300" y="256" class="display" font-size="20" font-weight="800">{graph['repositories']['totalCount']}</text>
-<text x="414" y="233" class="mono faint" font-size="8">STARS</text><text x="414" y="256" class="display" font-size="20" font-weight="800">{stars}</text>
-<text x="526" y="233" class="mono faint" font-size="8">DOMINANT</text><text x="526" y="256" class="sans" font-size="12">{esc(dominant)}</text>
-'''
-    if points:
-        x, y = points[-1]
-        body += f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3.5" fill="{TEXT}"><animate attributeName="r" values="3;4.8;3" dur="1.9s" repeatCount="indefinite"/></circle>'
-    return svg(880, 274, body)
+    language_text = " / ".join(name for name, _ in languages[:3]) or "NO PUBLIC LANGUAGE SIGNAL YET"
 
-
-def year(graph: dict) -> str:
-    weeks = graph["contributionsCollection"]["contributionCalendar"]["weeks"][-53:]
-    counts = [int(d["contributionCount"]) for week in weeks for d in week["contributionDays"]]
-    maximum = max(counts or [1])
-    body = [f'''
-<rect width="880" height="184" fill="{BG}"/>
-<line x1="36" y1="30" x2="844" y2="30" stroke="{LINE}"/>
-<text x="36" y="21" class="mono faint" font-size="9">THE YEAR / CONTRIBUTION FIELD</text>
+    body: list[str] = [f'''
+<rect width="880" height="356" fill="{BG}"/>
+<line x1="36" y1="34" x2="844" y2="34" stroke="{LINE}"/>
+<text x="36" y="23" class="mono faint" font-size="12">SIGNAL / GITHUB ACTIVITY</text>
+<text x="36" y="111" class="sans" font-size="64" font-weight="800">{total}</text>
+<text x="40" y="137" class="mono faint" font-size="11">CONTRIBUTIONS / LAST YEAR</text>
+<text x="40" y="183" class="sans" font-size="25" font-weight="750">{active}</text><text x="40" y="204" class="mono faint" font-size="11">ACTIVE DAYS</text>
+<text x="150" y="183" class="sans" font-size="25" font-weight="750">{current}</text><text x="150" y="204" class="mono faint" font-size="11">CURRENT STREAK</text>
+<text x="262" y="183" class="sans" font-size="25" font-weight="750">{longest}</text><text x="262" y="204" class="mono faint" font-size="11">LONGEST</text>
+<polyline points="{polyline}" fill="none" stroke="{CHROME}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1000" stroke-dashoffset="1000"><animate attributeName="stroke-dashoffset" from="1000" to="0" dur="1.7s" begin=".1s" fill="freeze"/></polyline>
+<line x1="330" y1="194" x2="830" y2="194" stroke="{LINE}"/>
+<text x="330" y="219" class="mono faint" font-size="11">PUBLIC LANGUAGE SIGNAL</text>
+<text x="330" y="244" class="sans soft" font-size="13">{esc(language_text)}</text>
+<line x1="36" y1="266" x2="844" y2="266" stroke="{LINE}"/>
 ''']
-    cell, gap, x0, y0 = 10, 3, 96, 55
-    for label, weekday in [("MON", 1), ("WED", 3), ("FRI", 5)]:
-        body.append(f'<text x="36" y="{y0+weekday*(cell+gap)+9}" class="mono faint" font-size="8">{label}</text>')
+    counts = [int(d["contributionCount"]) for w in weeks for d in w["contributionDays"]]
+    maximum = max(counts or [1])
+    cell, gap, x0, y0 = 10, 3, 110, 284
+    for label, weekday in [("M",1),("W",3),("F",5)]:
+        body.append(f'<text x="58" y="{y0+weekday*(cell+gap)+9}" class="mono faint" font-size="10">{label}</text>')
     for week_index, week in enumerate(weeks):
         for day in week["contributionDays"]:
-            weekday = int(day.get("weekday", 0))
-            count = int(day["contributionCount"])
-            x = x0 + week_index * (cell + gap)
-            y = y0 + weekday * (cell + gap)
-            opacity = .24 if count <= 0 else .28 + .72 * (math.log1p(count) / math.log1p(maximum))
+            weekday = int(day.get("weekday",0)); count = int(day["contributionCount"])
+            x = x0 + week_index*(cell+gap); y = y0 + weekday*(cell+gap)
+            opacity = .20 if count <= 0 else .28 + .72*(math.log1p(count)/math.log1p(maximum))
             fill = LINE if count <= 0 else CHROME
-            delay = (week_index * 7 + weekday) * .003
-            body.append(f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" fill="{fill}" opacity="0"><animate attributeName="opacity" from="0" to="{opacity:.2f}" dur=".14s" begin="{delay:.3f}s" fill="freeze"/></rect>')
-    body.append(f'<text x="844" y="166" text-anchor="end" class="serif" font-size="11" font-style="italic">quiet / loud</text>')
-    return svg(880, 184, "\n".join(body))
+            delay = (week_index*7+weekday)*.0025
+            body.append(f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="2" fill="{fill}" opacity="0"><animate attributeName="opacity" from="0" to="{opacity:.2f}" dur=".13s" begin="{delay:.3f}s" fill="freeze"/></rect>')
+    return svg(880, 356, "\n".join(body))
 
 
-def footer(cfg: dict) -> str:
-    stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+def footer(profile: dict, caps: dict) -> str:
+    count = capability_count(caps.get("catalog", {}))
     body = f'''
-<rect width="880" height="84" fill="{BG}"/>
-<line x1="36" y1="18" x2="844" y2="18" stroke="{LINE}"/>
-<text x="36" y="51" class="display" font-size="12" font-weight="800">{esc(cfg.get('footer', 'BUILT FOR SIGNAL, NOT NOISE.'))}</text>
-<text x="36" y="70" class="mono faint" font-size="8">LOCAL GENERATION / NO THIRD-PARTY BADGE SERVICE / {esc(stamp)}</text>
-<rect x="832" y="38" width="8" height="13" fill="{CHROME}"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
+<rect width="880" height="92" fill="{BG}"/>
+<line x1="36" y1="20" x2="844" y2="20" stroke="{LINE}"/>
+<text x="36" y="54" class="sans" font-size="14" font-weight="700">{esc(profile.get('footer',''))}</text>
+<text x="36" y="76" class="mono faint" font-size="11">LOCAL SVG GENERATION / {count} INDEXED CAPABILITIES / NO THIRD-PARTY BADGE SERVICE</text>
+<rect x="832" y="41" width="8" height="14" fill="{CHROME}"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
 '''
-    return svg(880, 84, body)
+    return svg(880, 92, body)
 
 
 def main() -> int:
@@ -423,7 +439,8 @@ def main() -> int:
     parser.add_argument("--demo", action="store_true")
     args = parser.parse_args()
 
-    cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
+    profile = json.loads(PROFILE.read_text(encoding="utf-8"))
+    caps = json.loads(CAPS.read_text(encoding="utf-8"))
     try:
         if args.demo or not args.token:
             rest, graph = demo_user(args.login)
@@ -433,14 +450,13 @@ def main() -> int:
         print(f"live data fallback: {error}", file=sys.stderr)
         rest, graph = demo_user(args.login)
 
-    image = None if args.demo else fetch_avatar(rest.get("avatar_url", ""), args.token)
-    write(ASSETS / "hero.svg", hero(args.login, graph, cfg))
-    write(ASSETS / "identity.svg", identity(image, args.login))
-    write(ASSETS / "stack.svg", stack(cfg))
-    write(ASSETS / "works.svg", works(cfg))
+    image, digest = (None, "DEMO-000000000000") if args.demo else fetch_avatar(rest.get("avatar_url", ""), args.token)
+    write(ASSETS / "hero.svg", hero(args.login, graph, profile))
+    write(ASSETS / "identity.svg", identity(image, args.login, digest))
+    write(ASSETS / "capabilities.svg", stack(caps))
+    write(ASSETS / "works.svg", works(profile))
     write(ASSETS / "signal.svg", signal(graph))
-    write(ASSETS / "year.svg", year(graph))
-    write(ASSETS / "footer.svg", footer(cfg))
+    write(ASSETS / "footer.svg", footer(profile, caps))
     return 0
 
 

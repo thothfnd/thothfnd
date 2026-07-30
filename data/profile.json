@@ -1,0 +1,48 @@
+{
+  "tagline": "Browser systems. Identity isolation. Evidence-driven security.",
+  "focus": [
+    {
+      "label": "DISCIPLINE",
+      "value": "Browser systems"
+    },
+    {
+      "label": "PRINCIPLE",
+      "value": "Privacy architecture"
+    },
+    {
+      "label": "METHOD",
+      "value": "Evidence-driven"
+    },
+    {
+      "label": "MODE",
+      "value": "Private R&D"
+    }
+  ],
+  "works": [
+    {
+      "index": "01",
+      "name": "THOTH BROWSER",
+      "status": "PRIVATE R&D",
+      "discipline": "Browser architecture / privacy engineering",
+      "description": "Identity compartmentalization, routing boundaries, fingerprint resistance and deterministic certification.",
+      "url": ""
+    },
+    {
+      "index": "02",
+      "name": "CERTIFICATION SYSTEMS",
+      "status": "INTERNAL",
+      "discipline": "Verification / release engineering",
+      "description": "Reproducible gates, evidence chains, failure closure and machine-readable GO / NO-GO decisions.",
+      "url": ""
+    },
+    {
+      "index": "03",
+      "name": "SECURITY ARCHITECTURE",
+      "status": "ONGOING",
+      "discipline": "Isolation / authorization / automation",
+      "description": "Compartmentalized systems designed around explicit trust boundaries, least privilege and low operator friction.",
+      "url": ""
+    }
+  ],
+  "footer": "BUILD QUIETLY. VERIFY EVERYTHING."
+}
