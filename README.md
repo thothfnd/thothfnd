@@ -1,16 +1,34 @@
-## Hi there 👋
+<p align="center">
+  <img src="./assets/avatar-ascii.svg" alt="ASCII portrait generated from the current GitHub profile picture" width="720">
+</p>
 
-<!--
-**thothfnd/thothfnd** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+<p align="center">
+  <img src="./assets/profile-meta.svg" alt="GitHub profile metadata" width="720">
+</p>
 
-Here are some ideas to get you started:
+---
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+### build
+
+`security` · `privacy` · `systems` · `automation` · `product`
+
+I build things that are meant to survive contact with reality.
+
+### current
+
+- Replace this line with your main project.
+- Replace this one with what you are exploring right now.
+- Keep this profile sparse: a few strong projects are better than a wall of badges.
+
+### projects
+
+**Project One** — one sharp sentence explaining why it matters.  
+**Project Two** — one sharp sentence explaining what makes it different.  
+**Project Three** — one sharp sentence explaining what you actually built.
+
+---
+
+<sub>
+The portrait is generated from the current GitHub profile picture by this repository's GitHub Action.
+Change the profile picture on GitHub and the ASCII portrait follows automatically on the next refresh.
+</sub>
