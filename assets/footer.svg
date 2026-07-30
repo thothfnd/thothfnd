@@ -10,7 +10,7 @@
 <rect width="880" height="84" fill="#090909"/>
 <line x1="36" y1="18" x2="844" y2="18" stroke="#303034"/>
 <text x="36" y="51" class="display" font-size="12" font-weight="800">BUILT FOR SIGNAL, NOT NOISE.</text>
-<text x="36" y="70" class="mono faint" font-size="8">LOCAL GENERATION / NO THIRD-PARTY BADGE SERVICE / 2026-07-30 04:09 UTC</text>
+<text x="36" y="70" class="mono faint" font-size="8">LOCAL GENERATION / NO THIRD-PARTY BADGE SERVICE / 2026-07-30 04:17 UTC</text>
 <rect x="832" y="38" width="8" height="13" fill="#dfe2e6"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
 
 </svg>

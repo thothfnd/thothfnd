@@ -22,10 +22,10 @@
 <text x="38" y="159" class="mono soft" font-size="12">@thothfnd</text>
 <g clip-path="url(#tag)"><text x="38" y="205" class="serif" font-size="21" font-style="italic">privacy engineering // browser systems // security architecture</text></g>
 <line x1="36" y1="232" x2="844" y2="232" stroke="#303034"/>
-<text x="36" y="262" class="mono faint" font-size="8">REPOS</text><text x="36" y="290" class="display" font-size="25" font-weight="800">3</text>
-<text x="170" y="262" class="mono faint" font-size="8">FOLLOWERS</text><text x="170" y="290" class="display" font-size="25" font-weight="800">12</text>
-<text x="326" y="262" class="mono faint" font-size="8">FOLLOWING</text><text x="326" y="290" class="display" font-size="25" font-weight="800">3</text>
-<text x="482" y="262" class="mono faint" font-size="8">JOINED</text><text x="482" y="290" class="display" font-size="25" font-weight="800">2024</text>
+<text x="36" y="262" class="mono faint" font-size="8">REPOS</text><text x="36" y="290" class="display" font-size="25" font-weight="800">1</text>
+<text x="170" y="262" class="mono faint" font-size="8">FOLLOWERS</text><text x="170" y="290" class="display" font-size="25" font-weight="800">0</text>
+<text x="326" y="262" class="mono faint" font-size="8">FOLLOWING</text><text x="326" y="290" class="display" font-size="25" font-weight="800">0</text>
+<text x="482" y="262" class="mono faint" font-size="8">JOINED</text><text x="482" y="290" class="display" font-size="25" font-weight="800">2026</text>
 <text x="638" y="262" class="mono faint" font-size="8">LOCATION</text><text x="638" y="290" class="sans" font-size="12">NETWORK / PRIVATE</text>
 <rect x="-240" y="307" width="240" height="1.5" fill="url(#scan)"><animate attributeName="x" values="-240;920" dur="5.6s" repeatCount="indefinite"/></rect>
 
