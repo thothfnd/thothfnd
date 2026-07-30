@@ -3,5 +3,5 @@
 text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
 .fg{fill:#e6edf3}.muted{fill:#7d8590}.accent{fill:#58a6ff}.good{fill:#3fb950}
 </style>
-<line x1="8" y1="14" x2="872" y2="14" stroke="#30363d"/><text x="8" y="48" class="fg" font-size="12">BUILD QUIETLY. VERIFY EVERYTHING.</text><text x="8" y="72" class="muted" font-size="9">GENERATED LOCALLY // NO THIRD-PARTY BADGE SERVICE // 2026-07-30 03:00 UTC</text><rect x="846" y="38" width="8" height="14" fill="#58a6ff"><animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/></rect>
+<line x1="8" y1="14" x2="872" y2="14" stroke="#30363d"/><text x="8" y="48" class="fg" font-size="12">BUILD QUIETLY. VERIFY EVERYTHING.</text><text x="8" y="72" class="muted" font-size="9">GENERATED LOCALLY // NO THIRD-PARTY BADGE SERVICE // 2026-07-30 03:22 UTC</text><rect x="846" y="38" width="8" height="14" fill="#58a6ff"><animate attributeName="opacity" values="1;0;1" dur=".9s" repeatCount="indefinite"/></rect>
 </svg>
