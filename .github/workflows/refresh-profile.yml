@@ -1,4 +1,4 @@
-name: Refresh animated profile
+name: Refresh profile interface
 
 on:
   schedule:
@@ -9,41 +9,46 @@ permissions:
   contents: write
 
 concurrency:
-  group: animated-profile-refresh
-  cancel-in-progress: false
+  group: profile-interface-refresh
+  cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout profile repository
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip
-      - name: Cache portrait model
-        uses: actions/cache@v4
+
+      - name: Cache portrait segmentation model
+        uses: actions/cache@v5
         with:
           path: ~/.u2net
-          key: rembg-u2net-v2
+          key: rembg-u2net-v3
+
       - name: Install renderer
-        run: python -m pip install --upgrade pip && python -m pip install -r requirements.txt
-      - name: Generate complete profile
+        run: python -m pip install -r requirements.txt
+
+      - name: Generate profile
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/generate_profile.py
-      - name: Commit only changed output
+
+      - name: Commit only meaningful changes
         run: |
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "Profile already current."
+          git add assets/generated/
+          if git diff --cached --quiet; then
+            echo "No public profile data changed. Nothing to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md assets/
-          git commit -m "profile: refresh animated interface"
+          git commit -m "profile: refresh generated interface"
           git push
