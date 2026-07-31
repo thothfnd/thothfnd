@@ -41,20 +41,23 @@ async def capture(runtime):
         browser=await p.chromium.launch(**launch_kwargs)
         page=await browser.new_page(viewport={'width':int(rend['width']),'height':900},device_scale_factor=int(rend.get('scale',1)))
         await page.set_content(html,wait_until='load')
-        scenes=[('hero',float(rend['hero_seconds'])),('stats',float(rend['stats_seconds']))]
-        for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds'])))
-        scenes.append(('activity',float(rend['activity_seconds'])))
-        for scene,seconds in scenes:
+        # Scene-specific pacing. Hero gets extra temporal resolution for the
+        # handwritten/typed reveals; the stats strip intentionally loops much
+        # more slowly so it reads as a calm editorial ticker, not a stock tape.
+        scenes=[('hero',float(rend['hero_seconds']),max(fps,12)),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
+        for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds']),fps))
+        scenes.append(('activity',float(rend['activity_seconds']),max(fps,10)))
+        for scene,seconds,scene_fps in scenes:
             if (out/f'{scene}.gif').exists():
                 continue
             el=page.locator(f'[data-capture="{scene}"]')
             if await el.count()==0: continue
-            count=max(16,round(seconds*fps)); frames=[]
+            count=max(16,round(seconds*scene_fps)); frames=[]
             for i in range(count):
                 t=i/count
                 await page.evaluate("([scene,t])=>window.__THOTH_RENDER_FRAME(scene,t)",[scene,t])
                 f=tmp/f'{scene}-{i:03d}.png'; await el.screenshot(path=str(f),animations='disabled'); frames.append(f)
-            gif_from(frames,out/f'{scene}.gif',round(1000/fps))
+            gif_from(frames,out/f'{scene}.gif',round(1000/scene_fps))
             if scene=='hero': png_from(frames[round(count*.55)],out/'hero-preview.png')
         for pr in runtime.get('projects',[])[:3]:
             for j,_ in enumerate([x for x in pr.get('links',[]) if x.get('url')][:5]):

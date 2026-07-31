@@ -98,6 +98,7 @@ def collect(username, token):
     days=[d for w in weeks for d in w['contributionDays']]
     active=sum(1 for d in days if d['contributionCount']>0)
     levels=[LEVEL.get(d['contributionLevel'],0) for d in days]
+    contribution_weeks=[{'days':[{'date':d.get('date',''),'count':int(d.get('contributionCount') or 0),'level':LEVEL.get(d.get('contributionLevel'),0)} for d in w.get('contributionDays',[])]} for w in weeks]
     projects=[]
     media_exts=('png','webp','jpg','jpeg')
     base=cfg.get('project_profile_path','.github/profile').rstrip('/')
@@ -135,7 +136,7 @@ def collect(username, token):
     return {
       'mode':'live','generated_at':None,
       'account':{'login':username,'followers':data['followers']['totalCount'],'commits_label':'PUBLIC COMMITS','commits':public_commits,'releases':total_releases,'contributions_12m':data['contributionsCollection']['contributionCalendar']['totalContributions'],'active_days_12m':active},
-      'contribution_levels':levels,'projects':projects,'recent_commits':recent
+      'contribution_levels':levels,'contribution_weeks':contribution_weeks,'projects':projects,'recent_commits':recent
     }
 
 def main():
