@@ -11,7 +11,7 @@ const chars=(text,cls,{breakable=false}={})=>[...String(text??'')].map((ch,i)=>{
   if(ch===' '&&breakable) return `<span class="${cls} console-space" data-char="${i}">&nbsp;</span><wbr>`;
   return `<span class="${cls}" data-char="${i}">${ch===' '?'&nbsp;':esc(ch)}</span>`;
 }).join('');
-function owl(){return `<pre class="owl" aria-label="THOTH owl emblem">  ╱\\ ╱\\\n ╱  V  \\\n│  • •  │\n ╲  ^  ╱\n  ╲___╱</pre>`}
+function owl(){return `<div class="owl-mark" aria-label="THOTH owl emblem"><span class="owl-orbit"></span><span class="owl-crescent"></span><span class="owl-crest owl-crest-left"></span><span class="owl-crest owl-crest-right"></span><span class="owl-eye owl-eye-left"></span><span class="owl-eye owl-eye-right"></span><span class="owl-beak"></span></div>`}
 function appleHeroLine(text,row){
   const spec=APPLE_HERO[text];
   if(!spec) return `<div class="hello-row hello-fallback" data-row="${row}">${chars(text,'hello-char')}</div>`;
@@ -106,9 +106,9 @@ function heroTimeline(){
   const chars=lines.reduce((n,line)=>n+(line.dataset.text||'').length,0);
   const pause=HERO_LINE_PAUSE*Math.max(0,lines.length-1);
   const headlineEnd=Math.max(.8*APPLE_SPEED,.7*APPLE_SPEED+2.8*APPLE_SPEED);
-  const resolveStart=headlineEnd+.10;
-  const resolveDuration=.24;
-  const consoleStart=resolveStart+resolveDuration+.16;
+  const resolveStart=headlineEnd+.04;
+  const resolveDuration=.54;
+  const consoleStart=resolveStart+resolveDuration+.12;
   const typeSeconds=chars/HERO_CHAR_RATE+pause;
   return {headlineEnd,resolveStart,resolveDuration,consoleStart,total:consoleStart+typeSeconds+.55};
 }
@@ -147,9 +147,19 @@ function setHero(t){
         offset+=lengths[gi];
       });
 
-      const resolved=bezierEaseInOut((sec-timeline.resolveStart)/timeline.resolveDuration);
-      row.style.setProperty('--resolve',resolved.toFixed(6));
-      if(fill) fill.style.setProperty('--fill-alpha',resolved.toFixed(6));
+      const fillIn=smoothstep((sec-timeline.resolveStart)/timeline.resolveDuration);
+      const strokeFade=smoothstep((sec-(timeline.resolveStart+.18))/(timeline.resolveDuration+.20));
+      const settle=smoothstep((sec-(timeline.resolveStart+.06))/(timeline.resolveDuration+.10));
+
+      glyphs.forEach(g=>{
+        const localStroke=Number(g.style.getPropertyValue('--stroke'))||0;
+        g.style.setProperty('--stroke-alpha', (localStroke?Math.max(0,1-strokeFade):0).toFixed(6));
+      });
+
+      row.style.setProperty('--resolve',settle.toFixed(6));
+      row.style.setProperty('--stroke-fade',strokeFade.toFixed(6));
+      row.style.setProperty('--settle',settle.toFixed(6));
+      if(fill) fill.style.setProperty('--fill-alpha',fillIn.toFixed(6));
     }else{
       const chars=$$('.hello-char',row);
       const start=.04+ri*.17, end=.31+ri*.20;

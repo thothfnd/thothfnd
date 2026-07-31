@@ -71,7 +71,7 @@ async def capture(runtime):
         apple_headline_seconds=max(.8*1.1,.7*1.1+2.8*1.1)  # 3.85s
         console_pause_seconds=.075*max(0,len(console_lines)-1)
         hero_seconds=max(float(rend['hero_seconds']),apple_headline_seconds+.10+.24+.16+(console_chars/40.0)+console_pause_seconds+.55)
-        scenes=[('hero',hero_seconds,40),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
+        scenes=[('hero',hero_seconds,56),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
         for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds']),fps))
         scenes.append(('activity',float(rend['activity_seconds']),max(fps,10)))
         for scene,seconds,scene_fps in scenes:
