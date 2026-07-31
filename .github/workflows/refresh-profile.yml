@@ -1,60 +1,55 @@
-name: Refresh continuum profile
-
+name: Refresh THOTH FND profile
 on:
-  schedule:
-    - cron: "17 */6 * * *"
   workflow_dispatch:
-
+  push:
+    branches: [main]
+    paths:
+      - 'source/**'
+      - 'scripts/**'
+      - 'data/profile.json'
+      - 'requirements.txt'
+      - '.github/workflows/refresh-profile.yml'
+  schedule:
+    - cron: '17 */6 * * *'
 permissions:
   contents: write
-
-concurrency:
-  group: thothfnd-profile-v12
-  cancel-in-progress: true
-
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: '3.11'
           cache: pip
-
-      - name: Verify and clean legacy profile artifacts
-        run: python scripts/cleanup_repo.py --apply --audit
-
-      - name: Install renderer
-        run: python -m pip install -r requirements.txt
-
-      - name: Compile renderer
-        run: python -m py_compile scripts/generate_profile.py scripts/cleanup_repo.py
-
-      - name: Generate V12 continuum profile
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      - name: Install Chromium for deterministic raster rendering
+        run: python -m playwright install --with-deps chromium
+      - name: Validate cleanup safety gate
+        run: python scripts/cleanup_repo.py
+      - name: Clean legacy/generated assets safely
+        run: python scripts/cleanup_repo.py --apply
+      - name: Collect live GitHub data and public pins
         env:
-          GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python scripts/generate_profile.py
-
-      - name: Remove migration note after successful generation
-        shell: bash
-        run: rm -f START-HERE-V12.txt
-
-      - name: Commit meaningful changes and cleanup
+        run: python scripts/collect_github.py
+      - name: Build visual source and README
+        run: python scripts/build_profile.py
+      - name: Render GitHub-compatible assets
+        run: python scripts/render_assets.py
+      - name: Validate generated output and motion
+        run: python scripts/validate_build.py
+      - name: Commit meaningful changes only
         shell: bash
         run: |
-          set -euo pipefail
-          git add -A
+          git add README.md assets/generated data/runtime.json
           if git diff --cached --quiet; then
-            echo "No profile or cleanup changes. Nothing to commit."
+            echo "No profile changes."
             exit 0
           fi
-          git config user.name "github-actions[bot]"
+          git config user.name "thoth-profile-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "profile: refresh V12 continuum interface"
+          git commit -m "profile: refresh generated presentation"
           git push
