@@ -1,6 +1,6 @@
 # Install / update
 
-1. Copy the V3 files into the profile repository (`thothfnd/thothfnd`).
+1. Copy the files into the profile repository ex: (`thothfnd/thothfnd`).
 2. Edit `data/profile.json` for global links/copy.
 3. Add `.github/profile/` metadata/assets to public pinned project repositories as desired.
 4. Run `python scripts/cleanup_repo.py` first (dry run), then `python scripts/cleanup_repo.py --apply`.
