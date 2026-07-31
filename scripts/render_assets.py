@@ -31,7 +31,8 @@ def gif_from(frames,out,duration):
                 dst=td/f'frame-{i:04d}.png'
                 try: os.link(src,dst)
                 except OSError: shutil.copy2(src,dst)
-            filt='[0:v]split[s0][s1];[s0]palettegen=max_colors=192:stats_mode=full[p];[s1][p]paletteuse=dither=sierra2_4a'
+            dither='none' if out.name=='hero.gif' else 'sierra2_4a'
+            filt=f'[0:v]split[s0][s1];[s0]palettegen=max_colors=192:stats_mode=full[p];[s1][p]paletteuse=dither={dither}'
             cmd=[ffmpeg,'-hide_banner','-loglevel','error','-y','-framerate',f'{fps:.6f}','-i',str(td/'frame-%04d.png'),'-filter_complex',filt,'-loop','0',str(out)]
             proc=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
             if proc.returncode==0 and out.exists() and out.stat().st_size>0:
@@ -63,15 +64,14 @@ async def capture(runtime):
         page=await browser.new_page(viewport={'width':int(rend['width']),'height':900},device_scale_factor=int(rend.get('scale',1)))
         await page.set_content(html,wait_until='load')
         # Scene-specific pacing. The Hero is captured at 30fps because the
-        # console is required to advance one visible character per frame. Its
-        # duration mirrors the selected Apple Hello demo at speed=1.1, then
-        # allocates exactly 30 chars/s for the configured console copy.
+        # Hero uses an exact GIF-friendly 25 fps cadence (40 ms/frame).
+        # The console advances one visible character per frame at 25 chars/s.
         console_lines=cfg.get('identity',{}).get('console',[]) or []
         console_chars=sum(len(str(x)) for x in console_lines)
         apple_headline_seconds=max(.8*1.1,.7*1.1+2.8*1.1)  # 3.85s
         console_pause_seconds=.075*max(0,len(console_lines)-1)
-        hero_seconds=max(float(rend['hero_seconds']),apple_headline_seconds+.10+.24+.16+(console_chars/40.0)+console_pause_seconds+.55)
-        scenes=[('hero',hero_seconds,56),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
+        hero_seconds=max(float(rend['hero_seconds']),apple_headline_seconds+.03+.36+.10+(console_chars/25.0)+console_pause_seconds+.45+.32)
+        scenes=[('hero',hero_seconds,25),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
         for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds']),fps))
         scenes.append(('activity',float(rend['activity_seconds']),max(fps,10)))
         for scene,seconds,scene_fps in scenes:
@@ -81,7 +81,7 @@ async def capture(runtime):
             if await el.count()==0: continue
             count=max(16,round(seconds*scene_fps)); frames=[]
             for i in range(count):
-                t=i/count
+                t=i/(count-1) if scene=='hero' and count>1 else i/count
                 await page.evaluate("([scene,t])=>window.__THOTH_RENDER_FRAME(scene,t)",[scene,t])
                 f=tmp/f'{scene}-{i:03d}.png'; await el.screenshot(path=str(f),animations='disabled'); frames.append(f)
             gif_from(frames,out/f'{scene}.gif',round(1000/scene_fps))
