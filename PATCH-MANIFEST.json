@@ -1,0 +1,10 @@
+{
+  "version": "3.0.5",
+  "scope": "hero-only",
+  "files": [
+    "source/app.js",
+    "source/styles.css",
+    "scripts/render_assets.py"
+  ],
+  "qa_preview": "docs/V3.0.5-HERO-QA.png"
+}

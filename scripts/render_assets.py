@@ -62,10 +62,16 @@ async def capture(runtime):
         browser=await p.chromium.launch(**launch_kwargs)
         page=await browser.new_page(viewport={'width':int(rend['width']),'height':900},device_scale_factor=int(rend.get('scale',1)))
         await page.set_content(html,wait_until='load')
-        # Scene-specific pacing. Hero gets extra temporal resolution for the
-        # handwritten/typed reveals; the stats strip intentionally loops much
-        # more slowly so it reads as a calm editorial ticker, not a stock tape.
-        scenes=[('hero',max(float(rend['hero_seconds'])*2.1,10.0),max(fps,24)),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
+        # Scene-specific pacing. The Hero is captured at 30fps because the
+        # console is required to advance one visible character per frame. Its
+        # duration mirrors the selected Apple Hello demo at speed=1.1, then
+        # allocates exactly 30 chars/s for the configured console copy.
+        console_lines=cfg.get('identity',{}).get('console',[]) or []
+        console_chars=sum(len(str(x)) for x in console_lines)
+        apple_headline_seconds=max(.8*1.1,.7*1.1+2.8*1.1)  # 3.85s
+        console_pause_seconds=.18*max(0,len(console_lines)-1)
+        hero_seconds=max(float(rend['hero_seconds']),apple_headline_seconds+.28+(console_chars/30.0)+console_pause_seconds+.75)
+        scenes=[('hero',hero_seconds,30),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
         for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds']),fps))
         scenes.append(('activity',float(rend['activity_seconds']),max(fps,10)))
         for scene,seconds,scene_fps in scenes:

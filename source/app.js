@@ -13,8 +13,12 @@ function appleHeroLine(text,row){
   const spec=APPLE_HERO[text];
   if(!spec) return `<div class="hello-row hello-fallback" data-row="${row}">${chars(text,'hello-char')}</div>`;
   const [x,y,w,h]=spec.vb, ratio=w/h;
-  const paths=spec.glyphs.map((g,n)=>`<path class="hello-glyph" data-glyph="${n}" pathLength="1" d="${g.d}"/>`).join('');
-  return `<div class="hello-row apple-row" data-row="${row}" style="--aspect:${ratio.toFixed(5)}"><svg class="hello-svg" viewBox="${x} ${y} ${w} ${h}" role="img" aria-label="${esc(text)}" preserveAspectRatio="xMinYMid meet">${paths}</svg><i class="apple-pen" aria-hidden="true"></i></div>`;
+  // One compound path per line. This is deliberate: the selected Apple Hello
+  // reference animates a small number of continuous SVG paths with pathLength,
+  // not each letter independently. Keeping each headline line as one path
+  // preserves that cadence instead of producing a glyph-by-glyph typewriter.
+  const compound=spec.glyphs.map(g=>g.d).join(' ');
+  return `<div class="hello-row apple-row" data-row="${row}" style="--aspect:${ratio.toFixed(5)}"><svg class="hello-svg" viewBox="${x} ${y} ${w} ${h}" role="img" aria-label="${esc(text)}" preserveAspectRatio="xMinYMid meet"><path class="hello-line-fill" d="${compound}"/><path class="hello-line-path" pathLength="1" d="${compound}"/></svg></div>`;
 }
 function hero(){
   const id=CFG.identity;
@@ -86,55 +90,77 @@ $('#app').innerHTML=hero()+stats()+(RT.projects||[]).slice(0,3).map(project).joi
 let frameT=.42, ctaT=.2;
 function ease(x){return 1-Math.pow(1-clamp(x),3)}
 function smoothstep(x){x=clamp(x);return x*x*(3-2*x)}
+function bezierEaseInOut(x){
+  // CSS/Motion easeInOut: cubic-bezier(0.42, 0, 0.58, 1).
+  // Newton iteration solves x(u), then evaluates y(u).
+  x=clamp(x); if(x===0||x===1)return x;
+  const x1=.42,y1=0,x2=.58,y2=1;
+  const sample=(u,a,b)=>3*(1-u)*(1-u)*u*a+3*(1-u)*u*u*b+u*u*u;
+  const deriv=(u,a,b)=>3*(1-u)*(1-u)*a+6*(1-u)*u*(b-a)+3*u*u*(1-b);
+  let u=x;
+  for(let i=0;i<6;i++){const dx=sample(u,x1,x2)-x,d=deriv(u,x1,x2);if(Math.abs(d)<1e-6)break;u=clamp(u-dx/d)}
+  return sample(u,y1,y2);
+}
+function heroTimeline(){
+  const lines=$$('.console-line');
+  const chars=lines.reduce((n,line)=>n+(line.dataset.text||'').length,0);
+  const pause=.18*Math.max(0,lines.length-1);
+  const appleSpeed=1.1; // exact speed used by the selected 21st.dev demo.
+  const headlineEnd=Math.max(.8*appleSpeed,.7*appleSpeed+2.8*appleSpeed); // 3.85s
+  const settle=.28;
+  const consoleStart=headlineEnd+settle;
+  const typeSeconds=chars/30+pause; // 30 visible characters/s, one-per-frame at 30fps capture.
+  return {headlineEnd,consoleStart,total:consoleStart+typeSeconds+.75};
+}
 function setHero(t){
   document.documentElement.style.setProperty('--hero-t',t);
+  const timeline=heroTimeline();
+  const sec=clamp(t)*timeline.total;
+  const appleSpeed=1.1;
   const rows=$$('.hello-row');
   rows.forEach((row,ri)=>{
-    const glyphs=$$('.hello-glyph',row);
-    if(glyphs.length){
-      // Apple Hello reference: vector stroke is drawn from pathLength 0 -> 1
-      // with rounded caps and an ease-in-out cadence. Lines overlap slightly
-      // so the second line begins while the first settles.
-      const start=ri===0?.035:.185, end=ri===0?.305:.505;
-      const lp=smoothstep((t-start)/(end-start));
-      const overlap=.38, slot=1/(glyphs.length-(glyphs.length>1?overlap:0));
-      glyphs.forEach((g,i)=>{
-        const local=smoothstep((lp-(i*slot*(1-overlap)))/(slot*(1+overlap)));
-        const fill=smoothstep((local-.58)/.42);
-        const stroke=Math.max(0,local*(1-fill)*.96);
-        g.style.setProperty('--draw',local.toFixed(5));
-        g.style.setProperty('--fill',fill.toFixed(5));
-        g.style.setProperty('--stroke',stroke.toFixed(5));
-      });
-      row.style.setProperty('--line-draw',lp.toFixed(5));
-      const pen=$('.apple-pen',row); if(pen){pen.style.setProperty('--pen-x',(lp*100).toFixed(3)+'%');pen.style.setProperty('--pen-on',String(lp>0&&lp<.995?1:0));}
+    const path=$('.hello-line-path',row), fill=$('.hello-line-fill',row);
+    if(path){
+      // Exact timing model from AppleHelloEnglishEffect @ speed=1.1:
+      // path 1: duration .8*speed, delay 0, easeInOut
+      // path 2: duration 2.8*speed, delay .7*speed, easeInOut
+      const delay=(ri===0?0:.7*appleSpeed);
+      const duration=(ri===0?.8*appleSpeed:2.8*appleSpeed);
+      const draw=bezierEaseInOut((sec-delay)/duration);
+      path.style.setProperty('--draw',draw.toFixed(6));
+      path.style.setProperty('--stroke',draw>0?1:0);
+      // The original Apple component remains a stroke. We preserve that exact
+      // drawing phase, then resolve into the existing solid THOTH typography
+      // only after that path has fully finished.
+      const resolve=bezierEaseInOut((sec-(delay+duration))/.22);
+      path.style.setProperty('--path-alpha',(1-resolve*.78).toFixed(6));
+      if(fill) fill.style.setProperty('--fill-alpha',resolve.toFixed(6));
     }else{
       const chars=$$('.hello-char',row), start=.04+ri*.17, end=.31+ri*.20, head=smoothstep((t-start)/(end-start))*chars.length;
       chars.forEach((e,i)=>e.style.setProperty('--ink',clamp(head-i).toFixed(4)));
     }
   });
 
-  // True typewriter layout: only the prefix that has actually been typed is
-  // inserted into the DOM. Hidden characters take no width, so the caret
-  // physically follows the text instead of freezing at the end of the line.
+  // Console is physically below the headline. Characters are inserted as a
+  // real prefix at 30 chars/s. At 30fps capture this yields one new visible
+  // character per frame, eliminating the previous jump/freeze behaviour.
   const lines=$$('.console-line');
-  const pauseUnits=9;
-  const lengths=lines.map(line=>(line.dataset.text||'').length);
-  const totalUnits=lengths.reduce((a,n)=>a+n,0)+pauseUnits*Math.max(0,lines.length-1);
-  const cStart=.285, cEnd=.985;
-  const head=clamp((t-cStart)/(cEnd-cStart))*totalUnits;
-  let cursor=0;
+  const charRate=30, pause=.18;
+  let cursorSec=timeline.consoleStart;
   lines.forEach((line,li)=>{
-    const text=line.dataset.text||'', lineStart=cursor, lineEnd=lineStart+text.length;
-    const typedCount=Math.max(0,Math.min(text.length,Math.floor(head-lineStart+1e-6)));
+    const text=line.dataset.text||'';
+    const local=Math.max(0,sec-cursorSec);
+    const typedCount=Math.max(0,Math.min(text.length,Math.floor(local*charRate+1e-9)));
     const typed=$('.typed',line); if(typed) typed.textContent=text.slice(0,typedCount);
-    const active=head>=lineStart&&head<lineEnd;
-    const done=head>=lineEnd;
+    const lineDuration=text.length/charRate;
+    const active=sec>=cursorSec&&sec<cursorSec+lineDuration;
+    const done=sec>=cursorSec+lineDuration;
     line.style.setProperty('--line-on',(active||done)?1:0);
     line.style.setProperty('--cursor-on',active?1:0);
-    // Subtle continuous caret energy, no square/block blink or stationary hold.
-    line.style.setProperty('--cursor-alpha',active?(0.66+0.24*Math.sin(t*72+li)).toFixed(4):0);
-    cursor=lineEnd+(li<lines.length-1?pauseUnits:0);
+    // No blinking white square. A thin caret follows the current character and
+    // disappears immediately when the line completes.
+    line.style.setProperty('--cursor-alpha',active?.78:0);
+    cursorSec+=lineDuration+(li<lines.length-1?pause:0);
   });
 }
 function setStats(t){const drift=Math.sin(t*Math.PI*2)*26;document.documentElement.style.setProperty('--marquee-x',drift.toFixed(3)+'px')}
