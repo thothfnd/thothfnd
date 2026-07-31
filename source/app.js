@@ -6,7 +6,7 @@ function hero(){const id=CFG.identity;return `<section class="hero capture" data
 function stats(){const a=RT.account||{}; const vals=[[a.commits_label||'COMMITS',a.commits],['RELEASES',a.releases],['FOLLOWERS',a.followers]]; let units=''; for(let l=0;l<6;l++) vals.forEach(([k,v])=>units+=`<span class="stat-unit"><b>${fmt(v)}</b> ${esc(k)}</span><span class="stat-sep">—</span>`); return `<section class="stats capture" data-capture="stats"><div class="stats-track">${units}</div></section>`}
 function mediaItem(m,i,p){if(m.type==='iframe') return `<figure class="media-card" data-media="${i}"><iframe ${m.srcdoc?`srcdoc="${esc(m.srcdoc)}"`:`src="${esc(m.src)}"`} title="${esc(p.name)} — ${esc(m.label)}"></iframe><figcaption>${esc(m.label)}</figcaption></figure>`; return `<figure class="media-card" data-media="${i}"><img src="${esc(m.src)}" alt="${esc(p.name)} — ${esc(m.label||('View '+(i+1)))}"><figcaption>${esc(m.label||('View '+(i+1)))}</figcaption></figure>`}
 function project(p,i){const media=(p.media||[]).slice(0,5); const links=(p.links||[]).filter(x=>x.url).slice(0,5); return `<section class="project capture" data-capture="project-${esc(p.slug)}" data-slug="${esc(p.slug)}"><div class="project-number">0${i+1}</div><div class="project-copy"><div class="project-status">${esc(p.status||'Public project')}</div><h2>${esc(p.name)}</h2><p class="project-lead">${esc(p.headline)}</p><p class="project-overview">${esc(p.overview)}</p><div class="pillars">${(p.pillars||[]).slice(0,6).map(x=>`<span>${esc(x)}</span>`).join('')}</div><div class="project-meta">${p.language?`<span>${esc(p.language)}</span>`:''}${p.updated?`<span>updated ${esc(p.updated)}</span>`:''}</div></div><div class="project-visual ${media.length?'':'is-empty'}">${p.logo?`<img class="project-logo" src="${esc(p.logo)}" alt="${esc(p.name)} logo">`:''}${media.length?`<div class="stack">${media.map((m,n)=>mediaItem(m,n,p)).join('')}</div>`:`<div class="no-media"><span>Project media</span><strong>Real assets only.</strong><p>Add <code>.github/profile/cover-01.png</code> (and more covers) to this repository. No generated placeholder artwork is substituted.</p></div>`}</div><div class="cta-row">${links.map((x,n)=>`<a class="cta" data-cta="${esc(p.slug)}-${n}" href="${esc(x.url)}"><span>${esc(x.label)}</span><i>↗</i></a>`).join('')}</div></section>`}
-function activity(){const a=RT.account||{}, levels=(RT.contribution_levels||[]).slice(-182), commits=(RT.recent_commits||[]).slice(0,5);return `<section class="activity capture" data-capture="activity"><div class="activity-title"><span>ACTIVITY / 12M</span><h2>Development trace.</h2></div><div class="activity-stats"><div><b>${fmt(a.commits)}</b><span>${esc(a.commits_label||'COMMITS')}</span></div><div><b>${fmt(a.contributions_12m)}</b><span>CONTRIBUTIONS / 12M</span></div><div><b>${fmt(a.active_days_12m)}</b><span>ACTIVE DAYS / 12M</span></div></div><div class="rhythm">${levels.map((x,i)=>`<i style="--level:${Math.max(0,Math.min(4,Number(x)||0))}" data-pixel="${i}"></i>`).join('')}</div><div class="recent"><div class="path" aria-hidden="true"><svg viewBox="0 0 1000 260" preserveAspectRatio="none"><path d="M20 215 C165 220 170 55 345 74 S540 230 650 165 S825 38 980 78"/></svg></div>${commits.map((c,i)=>`<a class="commit" href="${esc(c.url||'#')}" data-commit="${i}"><i></i><time>${esc(c.date)}</time><strong>${esc(c.repo)}</strong><code>${esc(c.sha)}</code><p>${esc(c.message)}</p></a>`).join('')||'<div class="activity-empty">No recent public commits available.</div>'}</div></section>`}
+function activity(){const a=RT.account||{}, levels=(RT.contribution_levels||[]).slice(-182), commits=(RT.recent_commits||[]).slice(0,5);return `<section class="activity capture" data-capture="activity"><div class="activity-title"><span>ACTIVITY / 12M</span><h2>Development trace.</h2></div><div class="activity-stats"><div><b>${fmt(a.commits)}</b><span>${esc(a.commits_label||'COMMITS')}</span></div><div><b>${fmt(a.contributions_12m)}</b><span>CONTRIBUTIONS / 12M</span></div><div><b>${fmt(a.active_days_12m)}</b><span>ACTIVE DAYS / 12M</span></div></div><div class="rhythm">${levels.map((x,i)=>`<i style="--level:${Math.max(0,Math.min(4,Number(x)||0))}" data-pixel="${i}"></i>`).join('')}</div><div class="recent"><div class="path" aria-hidden="true"><svg viewBox="0 0 1000 260" preserveAspectRatio="none"><path d="M20 215 C165 220 170 55 345 74 S540 230 650 165 S825 38 980 78"/><circle class="trace-head" cx="20" cy="215" r="5"/></svg></div>${commits.map((c,i)=>`<a class="commit" href="${esc(c.url||'#')}" data-commit="${i}"><i></i><time>${esc(c.date)}</time><strong>${esc(c.repo)}</strong><code>${esc(c.sha)}</code><p>${esc(c.message)}</p></a>`).join('')||'<div class="activity-empty">No recent public commits available.</div>'}</div></section>`}
 $('#app').innerHTML=hero()+stats()+(RT.projects||[]).slice(0,3).map(project).join('')+activity();
 
 // Deterministic render API: visual source is interactive in browser, renderer sets exact normalized frame t.
@@ -15,7 +15,32 @@ function ease(x){return 1-Math.pow(1-Math.max(0,Math.min(1,x)),3)}
 function setHero(t){document.documentElement.style.setProperty('--hero-t',t); document.querySelectorAll('.hello-row').forEach((e,i)=>{let x=Math.max(0,Math.min(1,(t-.04-i*.11)/.22)); e.style.setProperty('--reveal',ease(x));}); document.querySelectorAll('.console-line').forEach((e,i)=>{let x=Math.max(0,Math.min(1,(t-.38-i*.08)/.13)); e.style.setProperty('--line',x);})}
 function setStats(t){document.documentElement.style.setProperty('--marquee',t)}
 function setProject(slug,t){const sec=document.querySelector(`[data-slug="${CSS.escape(slug)}"]`); if(!sec)return; sec.style.setProperty('--pt',t); const cards=[...sec.querySelectorAll('.media-card')]; if(cards.length){const phase=(t*cards.length)%cards.length,active=Math.floor(phase); cards.forEach((c,i)=>{let pos=(i-active+cards.length)%cards.length;c.style.setProperty('--pos',pos);c.style.setProperty('--frac',phase-active)})}}
-function setActivity(t){const sec=$('.activity');sec.style.setProperty('--at',t);sec.querySelectorAll('.commit').forEach((x,i)=>x.style.setProperty('--ci',Math.max(0,Math.min(1,(t-.08-i*.11)/.18))))}
+function setActivity(t){
+  const sec=$('.activity'); if(!sec)return;
+  const tt=Math.max(0,Math.min(1,t)); sec.style.setProperty('--at',tt);
+  // A deterministic scan travels over the *real* contribution cells. The
+  // underlying intensity remains data-driven; the scan is only a motion cue.
+  const cells=[...sec.querySelectorAll('.rhythm i')], cols=26;
+  const sweep=-3 + tt*(cols+6);
+  cells.forEach((cell,i)=>{
+    const col=i%cols, distance=Math.abs(col-sweep);
+    const scan=Math.max(0,1-distance/3.2);
+    cell.style.setProperty('--scan',scan.toFixed(4));
+  });
+  // Draw the real recent-commit path and move a small trace head along it.
+  const path=sec.querySelector('.path path'), head=sec.querySelector('.trace-head');
+  if(path){
+    const len=path.getTotalLength();
+    path.style.strokeDasharray=String(len);
+    path.style.strokeDashoffset=String(len*(1-Math.max(.06,tt)));
+    if(head){ const p=path.getPointAtLength(len*tt); head.setAttribute('cx',p.x); head.setAttribute('cy',p.y); head.style.opacity=String(.22+.78*Math.sin(Math.PI*tt)); }
+  }
+  sec.querySelectorAll('.commit').forEach((x,i)=>{
+    const reveal=Math.max(0,Math.min(1,(tt-.06-i*.105)/.2));
+    const breathe=.86+.14*Math.sin(Math.PI*Math.max(0,Math.min(1,(tt-i*.04))));
+    x.style.setProperty('--ci',(reveal*breathe).toFixed(4));
+  });
+}
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
 window.__THOTH_RENDER_FRAME=(scene,t)=>{frameT=t; if(scene==='hero'||scene==='all')setHero(t); if(scene==='stats'||scene==='all')setStats(t); if(scene.startsWith('project-'))setProject(scene.slice(8),t); if(scene==='all')(RT.projects||[]).forEach(p=>setProject(p.slug,t)); if(scene==='activity'||scene==='all')setActivity(t); window.__THOTH_RENDER_CTA(t)};
 window.__THOTH_RENDER_FRAME('all',.42);
