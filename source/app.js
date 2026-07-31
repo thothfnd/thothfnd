@@ -71,11 +71,36 @@ function calendarMarkup(){
   const cells=weeks.map((w,wi)=>`<div class="contrib-week" data-week="${wi}">${Array.from({length:7},(_,di)=>{const d=w.days[di]||{date:'',count:0,level:0};return `<i data-week="${wi}" data-day="${di}" style="--level:${Math.max(0,Math.min(4,d.level))}" title="${esc(d.date)}${d.date?' — ':''}${d.count} contributions"></i>`}).join('')}</div>`).join('');
   return `<div class="calendar-shell"><div class="month-axis">${monthAxis}</div><div class="weekday-axis"><span style="--day:1">MON</span><span style="--day:3">WED</span><span style="--day:5">FRI</span></div><div class="calendar-grid">${cells}<b class="calendar-scan" aria-hidden="true"></b></div></div>`
 }
+function commitRoutePath(points,height){
+  if(!points.length)return '';
+  const first=points[0];
+  let d=`M 2 ${height-10} C 13 ${height-10} ${first.x} ${first.y+18} ${first.x} ${first.y}`;
+  for(let i=1;i<points.length;i++){
+    const a=points[i-1],b=points[i],mid=(a.y+b.y)/2;
+    d+=` C ${a.x} ${mid} ${b.x} ${mid} ${b.x} ${b.y}`;
+  }
+  return d;
+}
 function commitPlan(commits){
   if(!commits.length)return '<div class="activity-empty">No recent public commits available.</div>';
-  const xs=[24,52,34,62,42], ys=commits.map((_,i)=>30+i*60), pts=commits.map((_,i)=>`${xs[i%xs.length]},${ys[i]}`).join(' ');
-  const rows=commits.map((c,i)=>`<a class="commit-row" href="${esc(c.url||'#')}" data-commit="${i}" style="--node-x:${xs[i%xs.length]}px"><span class="route-node" aria-hidden="true"></span><span class="commit-card"><span class="commit-top"><time>${esc(c.date)}</time><strong>${esc(c.repo)}</strong><code>${esc(c.sha)}</code></span><span class="commit-message">${esc(c.message)}</span></span></a>`).join('');
-  return `<div class="commit-plan"><svg class="commit-route" viewBox="0 0 90 ${Math.max(300,commits.length*60)}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}"/><circle class="route-head" cx="${xs[0]}" cy="${ys[0]}" r="4"/></svg>${rows}</div>`
+
+  // Repositories determine the lanes. The route is therefore a rendering of
+  // real commit history rather than a decorative random zigzag.
+  const repos=[...new Set(commits.map(c=>String(c.repo||'repository')))];
+  const laneCount=Math.max(1,repos.length);
+  const laneX=laneCount===1?[44]:Array.from({length:laneCount},(_,i)=>18+i*(52/(laneCount-1)));
+  const laneByRepo=new Map(repos.map((repo,i)=>[repo,laneX[i]]));
+  const rowHeight=62, height=Math.max(310,commits.length*rowHeight+4);
+  const visualPoints=commits.map((c,i)=>({x:laneByRepo.get(String(c.repo||'repository'))||44,y:31+i*rowHeight}));
+  const chronological=[...visualPoints].reverse();
+  const path=commitRoutePath(chronological,height);
+  const rows=commits.map((c,i)=>{
+    const p=visualPoints[i];
+    const nodeAt=commits.length===1?.55:.14+((commits.length-1-i)/(commits.length-1))*.80;
+    return `<a class="commit-row" href="${esc(c.url||'#')}" data-commit="${i}" data-node-at="${nodeAt.toFixed(4)}" style="--node-x:${p.x.toFixed(2)}px"><span class="route-node" aria-hidden="true"></span><span class="commit-card"><span class="commit-top"><time>${esc(c.date)}</time><strong>${esc(c.repo)}</strong><code>${esc(c.sha)}</code>${i===0?'<em class="commit-head-tag">HEAD</em>':''}</span><span class="commit-message">${esc(c.message)}</span></span></a>`;
+  }).join('');
+  const start=chronological[0];
+  return `<div class="commit-plan"><span class="trace-transfer" aria-hidden="true"><i></i></span><svg class="commit-route" viewBox="0 0 100 ${height}" preserveAspectRatio="none" aria-hidden="true"><path class="commit-route-base" d="${path}"/><path class="commit-route-progress" d="${path}"/><path class="commit-route-sheen" d="${path}"/><circle class="route-halo" cx="${start.x}" cy="${start.y}" r="7"/><circle class="route-head" cx="${start.x}" cy="${start.y}" r="3.5"/></svg>${rows}</div>`
 }
 function activity(){
   const a=RT.account||{}, commits=(RT.recent_commits||[]).slice(0,5);
@@ -194,10 +219,60 @@ function setHero(t){
 function setStats(t){const drift=Math.sin(t*Math.PI*2)*26;document.documentElement.style.setProperty('--marquee-x',drift.toFixed(3)+'px')}
 function setProject(slug,t){const sec=document.querySelector(`[data-slug="${CSS.escape(slug)}"]`); if(!sec)return; sec.style.setProperty('--pt',t); const cards=$$('.media-card',sec); if(cards.length){const phase=(t*cards.length)%cards.length,active=Math.floor(phase); cards.forEach((c,i)=>{let pos=(i-active+cards.length)%cards.length;c.style.setProperty('--pos',pos);c.style.setProperty('--frac',phase-active)})}}
 function setActivity(t){
-  const sec=$('.activity'); if(!sec)return; const tt=clamp(t); sec.style.setProperty('--at',tt);
-  const weeks=$$('.contrib-week',sec), sweep=-2+tt*(weeks.length+4); weeks.forEach((w,wi)=>{const scan=Math.max(0,1-Math.abs(wi-sweep)/2.5); w.style.setProperty('--scan',scan.toFixed(4))});
-  const route=$('.commit-route polyline',sec), head=$('.route-head',sec); if(route){const len=route.getTotalLength(); route.style.strokeDasharray=String(len); route.style.strokeDashoffset=String(len*(1-Math.max(.03,tt))); if(head){const p=route.getPointAtLength(len*tt); head.setAttribute('cx',p.x); head.setAttribute('cy',p.y); head.style.opacity=String(.2+.8*Math.sin(Math.PI*tt));}}
-  $$('.commit-row',sec).forEach((row,i)=>{const reveal=clamp((tt-.06-i*.12)/.18);row.style.setProperty('--ci',reveal.toFixed(4))});
+  const sec=$('.activity'); if(!sec)return;
+  const tt=clamp(t); sec.style.setProperty('--at',tt);
+
+  // Phase 1: read the real contribution calendar, then hand the motion to the
+  // commit route. The scan is intentionally finished before the branch pulse.
+  const scanProgress=smoothstep(tt/.25);
+  const scanAlpha=1-smoothstep((tt-.22)/.09);
+  sec.style.setProperty('--scan-alpha',scanAlpha.toFixed(4));
+  const weeks=$$('.contrib-week',sec), sweep=-2+scanProgress*(weeks.length+4);
+  weeks.forEach((w,wi)=>{
+    const scan=scanAlpha*Math.max(0,1-Math.abs(wi-sweep)/2.4);
+    w.style.setProperty('--scan',scan.toFixed(4));
+  });
+
+  const transfer=smoothstep((tt-.19)/.10)*(1-smoothstep((tt-.35)/.10));
+  sec.style.setProperty('--transfer',transfer.toFixed(4));
+
+  // Phase 2: oldest visible commit -> newest public commit (HEAD).
+  const progress=smoothstep((tt-.28)/.50);
+  const loopFade=1-smoothstep((tt-.91)/.09);
+  const route=$('.commit-route-progress',sec), sheen=$('.commit-route-sheen',sec);
+  const head=$('.route-head',sec), halo=$('.route-halo',sec);
+  if(route){
+    const len=route.getTotalLength();
+    route.style.strokeDasharray=String(len);
+    route.style.strokeDashoffset=String(len*(1-progress));
+    route.style.opacity=String(loopFade);
+
+    const headVisible=smoothstep((tt-.275)/.04)*loopFade;
+    const point=route.getPointAtLength(len*progress);
+    if(head){head.setAttribute('cx',point.x);head.setAttribute('cy',point.y);head.style.opacity=String(headVisible)}
+    if(halo){halo.setAttribute('cx',point.x);halo.setAttribute('cy',point.y);halo.style.opacity=String(headVisible*.34);halo.setAttribute('r',String(6.5+1.8*Math.sin(progress*Math.PI*5)**2))}
+    if(sheen){
+      const trail=Math.max(18,Math.min(34,len*.11));
+      sheen.style.strokeDasharray=`${trail} ${len+trail}`;
+      sheen.style.strokeDashoffset=String(-(progress*len-trail));
+      sheen.style.opacity=String(headVisible*.72);
+    }
+  }
+
+  const rows=$$('.commit-row',sec);
+  rows.forEach((row,i)=>{
+    const nodeAt=Number(row.dataset.nodeAt||0);
+    const reached=smoothstep((progress-nodeAt)/.075);
+    const arrival=Math.max(0,1-Math.abs(progress-nodeAt)/.075)*loopFade;
+    const visible=.14+reached*.86*loopFade;
+    const isHead=i===0;
+    const focus=(isHead?smoothstep((progress-nodeAt)/.055):arrival)*loopFade;
+    row.style.setProperty('--ci',visible.toFixed(4));
+    row.style.setProperty('--node-active',(reached*loopFade).toFixed(4));
+    row.style.setProperty('--node-pulse',arrival.toFixed(4));
+    row.style.setProperty('--focus',focus.toFixed(4));
+    row.style.setProperty('--head-on',(isHead?reached*loopFade:0).toFixed(4));
+  });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
 window.__THOTH_RENDER_FRAME=(scene,t)=>{frameT=t;if(scene==='hero'||scene==='all')setHero(t);if(scene==='stats'||scene==='all')setStats(t);if(scene.startsWith('project-'))setProject(scene.slice(8),t);if(scene==='all')(RT.projects||[]).forEach(p=>setProject(p.slug,t));if(scene==='activity'||scene==='all')setActivity(t);window.__THOTH_RENDER_CTA(t)};
