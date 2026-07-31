@@ -31,7 +31,7 @@ def gif_from(frames,out,duration):
                 dst=td/f'frame-{i:04d}.png'
                 try: os.link(src,dst)
                 except OSError: shutil.copy2(src,dst)
-            filt='[0:v]split[s0][s1];[s0]palettegen=max_colors=160:stats_mode=diff[p];[s1][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle'
+            filt='[0:v]split[s0][s1];[s0]palettegen=max_colors=192:stats_mode=full[p];[s1][p]paletteuse=dither=sierra2_4a'
             cmd=[ffmpeg,'-hide_banner','-loglevel','error','-y','-framerate',f'{fps:.6f}','-i',str(td/'frame-%04d.png'),'-filter_complex',filt,'-loop','0',str(out)]
             proc=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
             if proc.returncode==0 and out.exists() and out.stat().st_size>0:
@@ -69,9 +69,9 @@ async def capture(runtime):
         console_lines=cfg.get('identity',{}).get('console',[]) or []
         console_chars=sum(len(str(x)) for x in console_lines)
         apple_headline_seconds=max(.8*1.1,.7*1.1+2.8*1.1)  # 3.85s
-        console_pause_seconds=.18*max(0,len(console_lines)-1)
-        hero_seconds=max(float(rend['hero_seconds']),apple_headline_seconds+.28+(console_chars/30.0)+console_pause_seconds+.75)
-        scenes=[('hero',hero_seconds,30),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
+        console_pause_seconds=.075*max(0,len(console_lines)-1)
+        hero_seconds=max(float(rend['hero_seconds']),apple_headline_seconds+.10+.24+.16+(console_chars/40.0)+console_pause_seconds+.55)
+        scenes=[('hero',hero_seconds,40),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
         for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds']),fps))
         scenes.append(('activity',float(rend['activity_seconds']),max(fps,10)))
         for scene,seconds,scene_fps in scenes:

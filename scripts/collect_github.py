@@ -140,9 +140,7 @@ def collect(username, token):
     }
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--username'); ap.add_argument('--output',default=str(ROOT/'data/runtime.json')); ap.add_argument('--demo',action='store_true'); args=ap.parse_args()
-    if args.demo:
-        src=load_json(ROOT/'data/sample-runtime.json'); write_json(Path(args.output),src); return
+    ap=argparse.ArgumentParser(); ap.add_argument('--username'); ap.add_argument('--output',default=str(ROOT/'data/runtime.json')); args=ap.parse_args()
     cfg=load_json(ROOT/'data/profile.json'); username=args.username or cfg['username']; token=os.getenv('GITHUB_TOKEN') or os.getenv('GH_TOKEN')
     try: payload=collect(username,token)
     except Exception as e:
