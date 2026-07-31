@@ -14,8 +14,29 @@ async def wait_server(port=4173):
     raise RuntimeError('preview server did not start')
 
 def gif_from(frames,out,duration):
-    imgs=[Image.open(x).convert('P',palette=Image.Palette.ADAPTIVE,colors=192) for x in frames]
+    """Encode a deterministic animated GIF.
+
+    Prefer ffmpeg for long/high-FPS scenes: it is substantially faster than
+    per-frame Pillow quantization and produces smoother palette transitions.
+    Pillow remains a portable fallback if ffmpeg is unavailable.
+    """
     out.parent.mkdir(parents=True,exist_ok=True)
+    ffmpeg=shutil.which('ffmpeg')
+    if ffmpeg and frames:
+        import os, tempfile
+        fps=max(1.0,1000.0/float(duration))
+        with tempfile.TemporaryDirectory(prefix='thoth-gif-') as td:
+            td=Path(td)
+            for i,src in enumerate(frames):
+                dst=td/f'frame-{i:04d}.png'
+                try: os.link(src,dst)
+                except OSError: shutil.copy2(src,dst)
+            filt='[0:v]split[s0][s1];[s0]palettegen=max_colors=160:stats_mode=diff[p];[s1][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle'
+            cmd=[ffmpeg,'-hide_banner','-loglevel','error','-y','-framerate',f'{fps:.6f}','-i',str(td/'frame-%04d.png'),'-filter_complex',filt,'-loop','0',str(out)]
+            proc=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            if proc.returncode==0 and out.exists() and out.stat().st_size>0:
+                return
+    imgs=[Image.open(x).convert('P',palette=Image.Palette.ADAPTIVE,colors=160) for x in frames]
     imgs[0].save(out,save_all=True,append_images=imgs[1:],duration=duration,loop=0,optimize=True,disposal=2)
 
 def png_from(frame,out): out.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(frame,out)
@@ -44,7 +65,7 @@ async def capture(runtime):
         # Scene-specific pacing. Hero gets extra temporal resolution for the
         # handwritten/typed reveals; the stats strip intentionally loops much
         # more slowly so it reads as a calm editorial ticker, not a stock tape.
-        scenes=[('hero',float(rend['hero_seconds']),max(fps,12)),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
+        scenes=[('hero',max(float(rend['hero_seconds'])*2.1,10.0),max(fps,24)),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
         for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds']),fps))
         scenes.append(('activity',float(rend['activity_seconds']),max(fps,10)))
         for scene,seconds,scene_fps in scenes:
