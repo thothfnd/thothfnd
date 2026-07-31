@@ -1,4 +1,5 @@
 name: Refresh THOTH FND profile
+
 on:
   workflow_dispatch:
   push:
@@ -11,46 +12,97 @@ on:
       - '.github/workflows/refresh-profile.yml'
   schedule:
     - cron: '17 */6 * * *'
+
+# Only one refresh for a given ref may run at once.
+# A newer run supersedes an older stale run before both can race to push.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+
     steps:
       - uses: actions/checkout@v6
+        with:
+          # Keep branch history available for the final rebase/push safety step.
+          fetch-depth: 0
+
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
           cache: pip
+
       - name: Install Python dependencies
         run: pip install -r requirements.txt
+
       - name: Install Chromium for deterministic raster rendering
         run: python -m playwright install --with-deps chromium
+
       - name: Validate cleanup safety gate
         run: python scripts/cleanup_repo.py
+
       - name: Clean legacy/generated assets safely
         run: python scripts/cleanup_repo.py --apply
+
       - name: Collect live GitHub data and public pins
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/collect_github.py
+
       - name: Build visual source and README
         run: python scripts/build_profile.py
+
       - name: Render GitHub-compatible assets
         run: python scripts/render_assets.py
+
       - name: Validate generated output and motion
         run: python scripts/validate_build.py
+
       - name: Commit meaningful changes only
         shell: bash
         run: |
+          set -euo pipefail
+
           git add -u
           git add README.md assets/generated data/runtime.json
+
           if git diff --cached --quiet; then
             echo "No profile changes."
             exit 0
           fi
+
           git config user.name "thoth-profile-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git commit -m "profile: refresh generated presentation"
-          git push
+
+          # The remote can advance while rendering (manual edit, cleanup commit,
+          # another workflow, etc.). Rebase the generated commit onto the latest
+          # main before pushing instead of failing with "fetch first".
+          git fetch origin main
+          git rebase origin/main
+
+          # Narrow race window protection: if main moves again between fetch and
+          # push, refresh/rebase and retry up to three times.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Profile refresh pushed successfully."
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "Push still failed after 3 attempts."
+              exit 1
+            fi
+
+            echo "Remote moved during push; rebasing and retrying ($attempt/3)..."
+            git fetch origin main
+            git rebase origin/main
+            sleep 2
+          done
