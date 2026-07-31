@@ -1,35 +1,63 @@
 {
-  "display_name": "THOTH /FND",
-  "eyebrow": "nightfox / thothfnd",
-  "about": [
-    "I tend to obsess over privacy, security, anonymity, systems and automation.",
-    "What interests me most is understanding what happens underneath the interface: where identity leaks, trust accumulates, assumptions break and complex systems reveal their real behavior.",
-    "Browsers, networks, cryptography, low-level software and infrastructure are where that curiosity usually ends up."
-  ],
-  "interests": [
-    "privacy", "security", "anonymity", "browser architecture", "networks",
-    "cryptography", "low-level systems", "automation", "infrastructure"
-  ],
-  "projects": [
+  "schema_version": 1,
+  "username": "thothfnd",
+  "identity": {
+    "wordmark": "THOTH /FND",
+    "handle": "@thothfnd",
+    "hero_lines": [
+      "systems",
+      "built different."
+    ],
+    "console": [
+      "I build privacy and security projects around architecture, not slogans.",
+      "I keep looking below interfaces: identity, isolation, networks, trust boundaries, low-level behavior.",
+      "Browsers, cryptography, automation and infrastructure are where curiosity turns into real systems.",
+      "I care more about properties that can be verified than promises that live in a settings page."
+    ]
+  },
+  "global_links": [
     {
-      "name": "THOTH Browser",
-      "status": "private development",
-      "summary": "A browser project built around isolation, anti-correlation thinking and a much higher privacy standard.",
-      "repo_names": ["THOTH-Browser", "Thoth-Browser", "thoth-browser"],
+      "label": "Telegram Channel",
       "url": ""
     },
     {
-      "name": "RelayX",
-      "status": "private development",
-      "summary": "A relay-oriented project built around separation, cleaner routing logic and privacy-minded design.",
-      "repo_names": ["RelayX", "relayx"],
+      "label": "Website",
       "url": ""
     }
   ],
-  "links": [
-    {"id": "github", "label": "GitHub", "url": "AUTO"},
-    {"id": "telegram", "label": "Telegram", "url": ""},
-    {"id": "channel", "label": "Channel", "url": ""},
-    {"id": "website", "label": "Website", "url": ""}
-  ]
+  "project_profile_path": ".github/profile",
+  "max_pinned_projects": 3,
+  "fallback_projects": {
+    "thoth-browser": {
+      "headline": "Privacy as architecture, not a checklist of settings.",
+      "overview": "THOTH Browser treats privacy, anonymity and anti-correlation as architectural constraints. Identity is compartmentalized by context; storage, execution and network boundaries are explicit; routing can be separated; fingerprint resistance is treated as part of the model; and important properties are designed to be testable rather than merely asserted by the interface.",
+      "pillars": [
+        "identity isolation",
+        "network boundaries",
+        "fingerprint resistance",
+        "verification"
+      ],
+      "status": "Active development"
+    },
+    "relayx": {
+      "headline": "Communication without identity becoming the product.",
+      "overview": "RelayX is not just a private messenger. Identity, contacts, messages and files are designed to remain under local control, without a phone number, email address or public profile. Communication is built around Tor-only networking, end-to-end encryption and a blind relay that handles temporary opaque packets. The goal is to reduce metadata and correlation surfaces without sacrificing the fluidity expected from a modern messenger.",
+      "pillars": [
+        "local identity",
+        "Tor-only",
+        "end-to-end encryption",
+        "blind relay"
+      ],
+      "status": "Active development"
+    }
+  },
+  "render": {
+    "width": 1200,
+    "scale": 1,
+    "fps": 8,
+    "hero_seconds": 5,
+    "stats_seconds": 6,
+    "project_seconds": 6,
+    "activity_seconds": 6
+  }
 }

@@ -1,7 +1,4 @@
-<p align="center"><img src="assets/generated/scene-01-hero.gif" width="100%" alt="THOTH /FND"></p>
+<!-- THOTH /FND V3 bootstrap. -->
+<!-- The first source/config push triggers the profile renderer and replaces this bootstrap with the generated profile README. -->
 
-<p align="center"><a href="https://github.com/thothfnd"><img src="assets/generated/link-github.gif" height="40" alt="GitHub"></a></p>
-
-<p align="center"><img src="assets/generated/scene-02-builds.gif" width="100%" alt="Current builds"></p>
-
-<p align="center"><img src="assets/generated/scene-03-profile.gif" width="100%" alt="Profile"></p>
+<p align="center"><sub>THOTH /FND profile renderer is ready. GitHub Actions will generate the live profile from public pins and real GitHub data.</sub></p>
