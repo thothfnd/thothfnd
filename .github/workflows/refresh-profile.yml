@@ -44,6 +44,7 @@ jobs:
       - name: Commit meaningful changes only
         shell: bash
         run: |
+          git add -u
           git add README.md assets/generated data/runtime.json
           if git diff --cached --quiet; then
             echo "No profile changes."
