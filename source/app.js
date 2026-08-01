@@ -91,8 +91,7 @@ function commitPlan(commits){
     const index=String(i+1).padStart(2,'0');
     return `<a class="commit-reader-sheet" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
       <span class="reader-eyebrow"><b>${i===0?'HEAD':'RECENT '+index}</b><em>${esc(commitStamp(c))}</em></span>
-      <span class="reader-repo">${esc(c.repo)}</span>
-      <span class="reader-message">${esc(c.message)}</span>
+      <span class="reader-copy"><span class="reader-repo">${esc(c.repo)}</span><span class="reader-message">${esc(c.message)}</span></span>
       <span class="reader-foot"><code>${esc(c.sha)}</code><i>OPEN COMMIT ↗</i></span>
     </a>`;
   }).join('');
@@ -240,7 +239,7 @@ function setActivity(t){
   const tt=clamp(t); sec.style.setProperty('--at',tt);
 
   $$('.ascii-line',sec).forEach((line,i)=>{
-    const drift=(tt-.5)*(i%2?18:-18)+Math.sin(tt*Math.PI*2+i*.63)*6;
+    const drift=Math.sin(tt*Math.PI*2+i*.63)*8+Math.sin(tt*Math.PI*4+i*.21)*3;
     const rise=Math.sin(tt*Math.PI*2+i*.37)*1.8;
     line.style.transform=`translate3d(${drift.toFixed(2)}px,${rise.toFixed(2)}px,0)`;
     line.style.opacity=String(.045+Math.max(0,Math.sin(tt*Math.PI*2+i*.52))*.04);
@@ -250,7 +249,7 @@ function setActivity(t){
   // survives the scan. Higher real levels produce a stronger confirmation and
   // settle to their exact final tone; zero-level cells return to graphite.
   const search=smoothstep((tt-.035)/.60);
-  const reset=smoothstep((tt-.955)/.045);
+  const reset=smoothstep((tt-.94)/.04);
   const hold=1-reset;
   const weeks=$$('.contrib-week',sec), weekCount=Math.max(1,weeks.length-1);
   sec.style.setProperty('--grid-head',(-5+search*111).toFixed(3)+'%');
@@ -280,28 +279,71 @@ function setActivity(t){
     w.style.setProperty('--week-energy',weekEnergy.toFixed(5));
   });
 
-  // Editorial commit reader. One record is given the page at a time while
-  // the index remains fully visible, avoiding the generic timeline/card look.
+  // Commit reader cycle. The loop begins and ends on HEAD, so the GIF wraps
+  // without a reverse jump. A brief closed-page transition hides the reset to
+  // the oldest record, then each record receives a deliberate reading hold.
   const reader=$('.commit-reader',sec);
-  const commitProgress=smoothstep((tt-.40)/.46)*hold;
   const sheets=$$('.commit-reader-sheet',sec), tabs=$$('.commit-reader-tab',sec);
   const count=Math.max(1,sheets.length);
-  const cursor=(count-1)*(1-commitProgress);
+  const oldest=count-1;
+  const middle=Math.max(0,count-2);
+  let cursor=0, readerVisibility=1, chapterReveal=1;
+
+  if(count>1){
+    if(tt<.10){
+      cursor=0;
+    }else if(tt<.17){
+      const q=smoothstep((tt-.10)/.07);
+      cursor=0; readerVisibility=1-q; chapterReveal=1;
+    }else if(tt<.20){
+      cursor=oldest; readerVisibility=0; chapterReveal=0;
+    }else if(tt<.29){
+      const q=smoothstep((tt-.20)/.09);
+      cursor=oldest; readerVisibility=q; chapterReveal=q;
+    }else if(count===2){
+      if(tt<.58){
+        cursor=oldest;
+      }else if(tt<.72){
+        const q=bezierEaseInOut((tt-.58)/.14);
+        cursor=oldest*(1-q); chapterReveal=.82+.18*Math.sin(q*Math.PI);
+      }else{
+        cursor=0;
+      }
+    }else{
+      if(tt<.47){
+        cursor=oldest;
+      }else if(tt<.58){
+        const q=bezierEaseInOut((tt-.47)/.11);
+        cursor=oldest+(middle-oldest)*q; chapterReveal=.82+.18*Math.sin(q*Math.PI);
+      }else if(tt<.70){
+        cursor=middle;
+      }else if(tt<.82){
+        const q=bezierEaseInOut((tt-.70)/.12);
+        cursor=middle*(1-q); chapterReveal=.82+.18*Math.sin(q*Math.PI);
+      }else{
+        cursor=0;
+      }
+    }
+  }
+
   if(reader){
     reader.style.setProperty('--reader-cursor',cursor.toFixed(5));
-    reader.style.setProperty('--reader-progress',commitProgress.toFixed(5));
+    reader.style.setProperty('--reader-visibility',readerVisibility.toFixed(5));
+    reader.style.setProperty('--reader-reveal',chapterReveal.toFixed(5));
   }
+
+  const readerClosing=tt>=.10&&tt<.17;
   sheets.forEach((sheet,i)=>{
     const distance=Math.abs(i-cursor);
-    const focus=1-smoothstep((distance-.06)/.64);
+    const focus=smoothstep(clamp(1-distance))*readerVisibility;
     const direction=i-cursor;
-    const settle=smoothstep((focus-.18)/.72);
+    const reveal=(readerClosing&&i===0)?1:smoothstep((focus-.08)/.78)*chapterReveal;
     sheet.style.setProperty('--focus',focus.toFixed(5));
-    sheet.style.setProperty('--offset',(direction*18).toFixed(3)+'px');
-    sheet.style.setProperty('--settle',settle.toFixed(5));
+    sheet.style.setProperty('--offset',(direction*11).toFixed(3)+'px');
+    sheet.style.setProperty('--settle',reveal.toFixed(5));
   });
   tabs.forEach((tab,i)=>{
-    const focus=1-smoothstep((Math.abs(i-cursor)-.02)/.55);
+    const focus=smoothstep(clamp(1-Math.abs(i-cursor)))*readerVisibility;
     tab.style.setProperty('--tab-focus',focus.toFixed(5));
   });
 }
