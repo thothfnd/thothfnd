@@ -5,7 +5,7 @@
     "login": "thothfnd",
     "followers": 0,
     "commits_label": "TOTAL COMMITS",
-    "commits": 111,
+    "commits": 112,
     "releases": 0,
     "contributions_12m": 69,
     "active_days_12m": 3
@@ -2456,6 +2456,14 @@
   "recent_commits": [
     {
       "date": "2026-08-01",
+      "timestamp": "2026-08-01T17:31:35Z",
+      "repo": "thothfnd",
+      "sha": "5a622b9",
+      "message": "profile: refresh generated presentation",
+      "url": "https://github.com/thothfnd/thothfnd/commit/5a622b93614419db2355d39d5320d90e1d21d4cc"
+    },
+    {
+      "date": "2026-08-01",
       "timestamp": "2026-08-01T17:25:37Z",
       "repo": "thothfnd",
       "sha": "6f529d0",
@@ -2469,14 +2477,6 @@
       "sha": "c55e72c",
       "message": "profile: refresh generated presentation",
       "url": "https://github.com/thothfnd/thothfnd/commit/c55e72ce43ce794e21d3d66f7d4d1c5bede95925"
-    },
-    {
-      "date": "2026-08-01",
-      "timestamp": "2026-08-01T17:01:28Z",
-      "repo": "thothfnd",
-      "sha": "0fa2a62",
-      "message": "Add files via upload",
-      "url": "https://github.com/thothfnd/thothfnd/commit/0fa2a6285933cbdb28c7e05d3efeb13bc236bbd2"
     }
   ]
 }
