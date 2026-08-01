@@ -61,16 +61,32 @@ function calendarData(){
 }
 function calendarMarkup(){
   const weeks=calendarData(), monthMarks=[]; let lastMonth='';
-  const tones=['#101214','#2d3034','#565b60','#989da1','#ecece8'];
+  const tones=['#101214','#30343a','#5f656b','#a0a5a9','#f0f0ec'];
   weeks.forEach((w,wi)=>{
     const first=(w.days||[]).find(d=>d.date);
     if(!first)return;
     const dt=new Date(first.date+'T00:00:00Z'); const month=dt.toLocaleString('en-US',{month:'short',timeZone:'UTC'}).toUpperCase();
     if(month!==lastMonth){monthMarks.push({wi,month});lastMonth=month}
   });
-  const monthAxis=monthMarks.map(m=>`<span style="--week:${m.wi}">${esc(m.month)}</span>`).join('');
-  const cells=weeks.map((w,wi)=>`<div class="contrib-week" data-week="${wi}">${Array.from({length:7},(_,di)=>{const d=w.days[di]||{date:'',count:0,level:0};const level=Math.max(0,Math.min(4,d.level));return `<i data-week="${wi}" data-day="${di}" style="--level:${level};--tone:${tones[level]}" title="${esc(d.date)}${d.date?' — ':''}${d.count} contributions"></i>`}).join('')}</div>`).join('');
+  const visibleMonths=monthMarks.filter((m,i)=>!(i===0&&monthMarks[1]&&monthMarks[1].wi-m.wi<3));
+  const monthAxis=visibleMonths.map(m=>`<span style="--week:${m.wi}">${esc(m.month)}</span>`).join('');
+  const cells=weeks.map((w,wi)=>`<div class="contrib-week" data-week="${wi}">${Array.from({length:7},(_,di)=>{
+    const d=w.days[di]||{date:'',count:0,level:0};
+    const level=Math.max(0,Math.min(4,Number(d.level)||0));
+    const count=Math.max(0,Number(d.count)||0);
+    return `<i data-week="${wi}" data-day="${di}" data-level="${level}" data-count="${count}" data-active="${level>0?1:0}" style="--level:${level};--strength:${(level/4).toFixed(3)};--tone:${tones[level]}" title="${esc(d.date)}${d.date?' — ':''}${count} contributions"></i>`;
+  }).join('')}</div>`).join('');
   return `<div class="calendar-shell"><div class="month-axis">${monthAxis}</div><div class="weekday-axis"><span style="--day:1">MON</span><span style="--day:3">WED</span><span style="--day:5">FRI</span></div><div class="calendar-grid">${cells}<b class="calendar-search" aria-hidden="true"><i></i></b></div></div>`
+}
+function commitHashBars(sha){
+  const hex=String(sha||'0').toLowerCase().replace(/[^0-9a-f]/g,'')||'0';
+  return [...hex.slice(0,10)].map((ch,i)=>{
+    const value=parseInt(ch,16)||0;
+    return `<i data-bar="${i}" style="--bar-height:${(4+(value/15)*13).toFixed(2)}px"></i>`;
+  }).join('');
+}
+function commitShaChars(sha){
+  return [...String(sha||'')].map((ch,i)=>`<i data-char="${i}">${esc(ch)}</i>`).join('');
 }
 function commitPlan(commits){
   if(!commits.length)return '<div class="activity-empty">No recent public commits available.</div>';
@@ -78,17 +94,22 @@ function commitPlan(commits){
   const rows=commits.map((c,i)=>{
     const sequence=count-1-i;
     const label=i===0?'HEAD':String(i+1).padStart(2,'0');
-    return `<a class="commit-focus" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
-      <span class="commit-focus-index"><b>${label}</b><i aria-hidden="true"></i></span>
-      <span class="commit-focus-body">
-        <span class="commit-focus-top"><strong>${esc(c.repo)}</strong></span>
-        <span class="commit-focus-message">${esc(c.message)}</span>
-        <span class="commit-focus-meta"><span><em>SHA</em><code>${esc(c.sha)}</code></span><time>${esc(c.date)}</time></span>
+    return `<a class="commit-aperture" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
+      <span class="commit-aperture-node"><i aria-hidden="true"></i><b>${label}</b></span>
+      <span class="commit-aperture-copy">
+        <span class="commit-aperture-top"><strong>${esc(c.repo)}</strong></span>
+        <span class="commit-aperture-message">${esc(c.message)}</span>
+        <span class="commit-aperture-signal">
+          <span class="commit-aperture-sha"><em>COMMIT</em><code>${commitShaChars(c.sha)}</code></span>
+          <time>${esc(c.date)}</time>
+          <span class="commit-hash-bars" aria-hidden="true">${commitHashBars(c.sha)}</span>
+        </span>
       </span>
-      <span class="commit-focus-sweep" aria-hidden="true"></span>
+      <span class="commit-aperture-edge" aria-hidden="true"></span>
+      <span class="commit-aperture-scan" aria-hidden="true"></span>
     </a>`;
   }).join('');
-  return `<div class="commit-focus-stack" style="--commit-count:${count}">${rows}</div>`
+  return `<div class="commit-aperture-stack" style="--commit-count:${count}"><span class="commit-spine" aria-hidden="true"><i></i><b></b></span>${rows}</div>`
 }
 function activityAscii(){
   const chars=' ·.:;=+*#01';
@@ -227,7 +248,6 @@ function setActivity(t){
   const sec=$('.activity'); if(!sec)return;
   const tt=clamp(t); sec.style.setProperty('--at',tt);
 
-  // Existing ASCII background remains subtle and independent of the data.
   $$('.ascii-line',sec).forEach((line,i)=>{
     const drift=(tt-.5)*(i%2?18:-18)+Math.sin(tt*Math.PI*2+i*.63)*6;
     const rise=Math.sin(tt*Math.PI*2+i*.37)*1.8;
@@ -235,43 +255,69 @@ function setActivity(t){
     line.style.opacity=String(.045+Math.max(0,Math.sin(tt*Math.PI*2+i*.52))*.04);
   });
 
-  // Loot-search reveal: every square begins neutral, flashes as it is found,
-  // then resolves to its real GitHub contribution level. Deterministic jitter
-  // avoids a mechanical column wipe while preserving a clear left-to-right search.
-  const reveal=smoothstep((tt-.055)/.625);
-  const reset=smoothstep((tt-.94)/.06);
+  // Data-lock reveal. Every cell is searched, but only the real GitHub level
+  // survives the scan. Higher real levels produce a stronger confirmation and
+  // settle to their exact final tone; zero-level cells return to graphite.
+  const search=smoothstep((tt-.035)/.60);
+  const reset=smoothstep((tt-.955)/.045);
+  const hold=1-reset;
   const weeks=$$('.contrib-week',sec), weekCount=Math.max(1,weeks.length-1);
-  sec.style.setProperty('--grid-head',(-4+reveal*108).toFixed(3)+'%');
+  sec.style.setProperty('--grid-head',(-5+search*111).toFixed(3)+'%');
   sec.style.setProperty('--grid-reset',reset.toFixed(5));
 
   weeks.forEach((w,wi)=>{
     let weekEnergy=0;
     $$('i',w).forEach((cell,di)=>{
-      const jitter=((((wi*17+di*31)%13)-6)*.0028)+(di-3)*.0016;
-      const threshold=clamp(wi/weekCount+jitter);
-      const local=clamp((reveal-threshold)/.060);
-      const discovery=Math.sin(Math.PI*clamp(local/.58))*(1-smoothstep((local-.40)/.44));
-      const resolved=smoothstep((local-.32)/.68)*(1-reset);
-      const flash=Math.max(0,discovery)*(1-reset);
-      cell.style.setProperty('--discovery',flash.toFixed(5));
+      const level=Math.max(0,Math.min(4,Number(cell.dataset.level)||0));
+      const count=Math.max(0,Number(cell.dataset.count)||0);
+      const strength=level/4;
+      const seed=((wi*19+di*37+count*3)%17)-8;
+      const jitter=seed*.0022+(di-3)*.0012;
+      const threshold=clamp((wi/weekCount)*.92+jitter);
+      const local=clamp((search-threshold)/.078);
+      const enter=smoothstep(local/.24);
+      const leave=1-smoothstep((local-.38)/.62);
+      const discovery=enter*leave*(.56+strength*.44)*hold;
+      const resolved=smoothstep((local-.24)/.66)*hold;
+      const confirm=smoothstep((local-.43)/.27)*strength*hold;
+
+      cell.style.setProperty('--discovery',discovery.toFixed(5));
       cell.style.setProperty('--resolved',resolved.toFixed(5));
-      weekEnergy=Math.max(weekEnergy,flash);
+      cell.style.setProperty('--confirm',confirm.toFixed(5));
+      weekEnergy=Math.max(weekEnergy,discovery+confirm*.28);
     });
     w.style.setProperty('--week-energy',weekEnergy.toFixed(5));
   });
 
-  // Clean commit sequence. Entries stay readable, then focus from oldest to HEAD.
-  const commitPhase=smoothstep((tt-.38)/.46);
-  const rows=$$('.commit-focus',sec), count=Math.max(1,rows.length);
+  // Commit Aperture: a bottom-to-HEAD execution pass. Each record opens with a
+  // real-data reveal, types its true SHA, resolves a SHA-derived signal, and
+  // remains fully readable once verified.
+  const stack=$('.commit-aperture-stack',sec);
+  const commitProgress=smoothstep((tt-.405)/.455)*hold;
+  if(stack) stack.style.setProperty('--commit-progress',commitProgress.toFixed(5));
+  const rows=$$('.commit-aperture',sec), count=Math.max(1,rows.length);
+
   rows.forEach(row=>{
     const sequence=Number(row.dataset.sequence||0);
     const start=sequence/count;
-    const local=clamp((commitPhase-start)/(1/count));
-    const settled=smoothstep(local)*(1-reset);
-    const focus=Math.sin(Math.PI*local)*(1-reset);
-    row.style.setProperty('--settled',settled.toFixed(5));
-    row.style.setProperty('--focus',Math.max(0,focus).toFixed(5));
-    row.style.setProperty('--sweep-x',(-22+local*144).toFixed(3)+'%');
+    const local=clamp((commitProgress-start)/(1/count));
+    const reveal=smoothstep(local);
+    const pulse=Math.sin(Math.PI*clamp(local/.78))*(1-reset);
+    const headLock=row.dataset.commit==='0' ? smoothstep((commitProgress-.91)/.09)*hold : 0;
+
+    row.style.setProperty('--reveal',reveal.toFixed(5));
+    row.style.setProperty('--pulse',Math.max(0,pulse).toFixed(5));
+    row.style.setProperty('--head-lock',headLock.toFixed(5));
+    row.style.setProperty('--scan-x',(-24+local*148).toFixed(3)+'%');
+
+    $$('.commit-aperture-sha code i',row).forEach((ch,ci)=>{
+      const on=smoothstep((local-.22-ci*.045)/.34);
+      ch.style.setProperty('--char-on',on.toFixed(5));
+    });
+    $$('.commit-hash-bars i',row).forEach((bar,bi)=>{
+      const on=smoothstep((local-.28-bi*.038)/.32);
+      bar.style.setProperty('--bar-on',on.toFixed(5));
+    });
   });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
