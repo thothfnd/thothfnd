@@ -11,7 +11,7 @@ const chars=(text,cls,{breakable=false}={})=>[...String(text??'')].map((ch,i)=>{
   if(ch===' '&&breakable) return `<span class="${cls} console-space" data-char="${i}">&nbsp;</span><wbr>`;
   return `<span class="${cls}" data-char="${i}">${ch===' '?'&nbsp;':esc(ch)}</span>`;
 }).join('');
-function owl(){return `<div class="owl-mark" aria-label="THOTH owl emblem"><span class="owl-orbit"></span><span class="owl-crescent"></span><span class="owl-crest owl-crest-left"></span><span class="owl-crest owl-crest-right"></span><span class="owl-eye owl-eye-left"></span><span class="owl-eye owl-eye-right"></span><span class="owl-beak"></span></div>`}
+function owl(){return `<svg class="owl-sigil" viewBox="0 0 64 64" role="img" aria-label="THOTH owl sigil"><path class="owl-wing owl-wing-left" d="M31.8 20.5 21 8.5 7.5 18.2l7.3 25.1L31.8 56"/><path class="owl-wing owl-wing-right" d="m32.2 20.5 10.8-12 13.5 9.7-7.3 25.1L32.2 56"/><path class="owl-mask" d="M13.5 19.5 25 24.2 32 34.5l7-10.3 11.5-4.7-5.1 18.7L32 48.8 18.6 38.2Z"/><circle class="owl-eye" cx="22.5" cy="29.2" r="4.4"/><circle class="owl-eye" cx="41.5" cy="29.2" r="4.4"/><path class="owl-beak-line" d="m32 33.5-4.2 5.1 4.2 3.1 4.2-3.1Z"/><path class="owl-axis" d="M32 14.5V55.8"/><path class="owl-base" d="M18.5 48.5 32 57l13.5-8.5"/></svg>`}
 function appleHeroLine(text,row){
   const spec=APPLE_HERO[text];
   if(!spec) return `<div class="hello-row hello-fallback" data-row="${row}">${chars(text,'hello-char')}</div>`;
@@ -61,6 +61,7 @@ function calendarData(){
 }
 function calendarMarkup(){
   const weeks=calendarData(), monthMarks=[]; let lastMonth='';
+  const cipher='01#×+·';
   weeks.forEach((w,wi)=>{
     const first=(w.days||[]).find(d=>d.date);
     if(!first)return;
@@ -68,36 +69,70 @@ function calendarMarkup(){
     if(month!==lastMonth){monthMarks.push({wi,month});lastMonth=month}
   });
   const monthAxis=monthMarks.map(m=>`<span style="--week:${m.wi}">${esc(m.month)}</span>`).join('');
-  const cells=weeks.map((w,wi)=>`<div class="contrib-week" data-week="${wi}">${Array.from({length:7},(_,di)=>{const d=w.days[di]||{date:'',count:0,level:0};return `<i data-week="${wi}" data-day="${di}" style="--level:${Math.max(0,Math.min(4,d.level))}" title="${esc(d.date)}${d.date?' — ':''}${d.count} contributions"></i>`}).join('')}</div>`).join('');
+  const cells=weeks.map((w,wi)=>`<div class="contrib-week" data-week="${wi}">${Array.from({length:7},(_,di)=>{const d=w.days[di]||{date:'',count:0,level:0};const level=Math.max(0,Math.min(4,d.level));const mark=cipher[(wi*11+di*7+level*3)%cipher.length];return `<i data-week="${wi}" data-day="${di}" data-cipher="${mark}" style="--level:${level}" title="${esc(d.date)}${d.date?' — ':''}${d.count} contributions"></i>`}).join('')}</div>`).join('');
   return `<div class="calendar-shell"><div class="month-axis">${monthAxis}</div><div class="weekday-axis"><span style="--day:1">MON</span><span style="--day:3">WED</span><span style="--day:5">FRI</span></div><div class="calendar-grid">${cells}<b class="calendar-scan" aria-hidden="true"></b></div></div>`
+}
+function commitGlyph(sha){
+  const hex=String(sha||'0').replace(/[^0-9a-f]/gi,'')||'0';
+  const bits=[];
+  for(let y=0;y<5;y++){
+    const half=[];
+    for(let x=0;x<3;x++){
+      const n=parseInt(hex[(y*3+x)%hex.length],16)||0;
+      half.push(((n>>(x%4))&1)===1?1:0);
+    }
+    bits.push(...half,...half.slice(0,2).reverse());
+  }
+  return `<span class="commit-glyph" aria-hidden="true">${bits.map((bit,i)=>`<i style="--bit:${bit};--gi:${i}"></i>`).join('')}</span>`;
+}
+function cipherLine(seed,length=19){
+  const chars='01#×+·:/'; let out='';
+  for(let i=0;i<length;i++)out+=chars[(seed*7+i*5+(i%3)*seed)%chars.length];
+  return out;
 }
 function commitPlan(commits){
   if(!commits.length)return '<div class="activity-empty">No recent public commits available.</div>';
   const count=commits.length;
   const rows=commits.map((c,i)=>{
-    const chronologicalIndex=count-1-i;
-    const nodeAt=count===1?.50:.06+(chronologicalIndex/(count-1))*.88;
-    return `<a class="ledger-entry" href="${esc(c.url||'#')}" data-commit="${i}" data-node-at="${nodeAt.toFixed(4)}">
-      <span class="ledger-node" aria-hidden="true"><i></i></span>
-      <span class="ledger-connector" aria-hidden="true"></span>
-      <span class="ledger-copy">
-        <span class="ledger-meta">${i===0?'<em class="ledger-head">HEAD</em>':''}<time>${esc(c.date)}</time><strong>${esc(c.repo)}</strong><code>${esc(c.sha)}</code></span>
-        <span class="ledger-message">${esc(c.message)}</span>
+    const sequence=count-1-i;
+    const label=i===0?'HEAD':String(i+1).padStart(2,'0');
+    return `<a class="cipher-commit" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
+      <span class="commit-index">${label}</span>
+      <span class="commit-record">
+        <span class="commit-primary"><strong>${esc(c.repo)}</strong><time>${esc(c.date)}</time></span>
+        <span class="commit-message">${esc(c.message)}</span>
+        <span class="commit-sha"><em>SHA</em><code>${esc(c.sha)}</code></span>
       </span>
+      ${commitGlyph(c.sha)}
+      <span class="commit-progress" aria-hidden="true"></span>
+      <span class="commit-scan-band" aria-hidden="true"><b>${cipherLine(i+3,23)}</b></span>
     </a>`;
   }).join('');
-  return `<div class="commit-ledger" style="--ledger-count:${count}">
-    <span class="ledger-rail ledger-rail-base" aria-hidden="true"></span>
-    <span class="ledger-rail ledger-rail-active" aria-hidden="true"></span>
-    ${rows}
-  </div>`
+  return `<div class="commit-cipher-stack" style="--commit-count:${count}">${rows}</div>`
+}
+function activityAscii(){
+  const chars=' ·.:;=+*#01';
+  const rows=[];
+  for(let r=0;r<18;r++){
+    let line='';
+    for(let c=0;c<176;c++){
+      const wave=Math.sin(c*.125+r*.73)+Math.cos(c*.047-r*.91)+Math.sin((c+r*5)*.025)*.8;
+      const ridge=Math.abs(Math.sin(c*.035+r*.41));
+      const energy=Math.max(0,Math.min(1,(wave+2.8)/5.6))*(.34+ridge*.66);
+      const idx=Math.max(0,Math.min(chars.length-1,Math.floor(Math.pow(energy,.72)*(chars.length-1))));
+      line+=chars[idx];
+    }
+    rows.push(`<span class="ascii-line" style="--row:${r};--dir:${r%2?1:-1}">${line}</span>`);
+  }
+  return `<div class="activity-ascii" aria-hidden="true">${rows.join('')}</div>`;
 }
 function activity(){
   const a=RT.account||{}, commits=(RT.recent_commits||[]).slice(0,3);
   return `<section class="activity capture" data-capture="activity">
+    ${activityAscii()}
     <div class="activity-title"><span>ACTIVITY / 12M</span><h2>Development trace.</h2></div>
     <div class="activity-stats"><div><b>${fmt(a.commits)}</b><span>${esc(a.commits_label||'COMMITS')}</span></div><div><b>${fmt(a.contributions_12m)}</b><span>CONTRIBUTIONS / 12M</span></div><div><b>${fmt(a.active_days_12m)}</b><span>ACTIVE DAYS / 12M</span></div></div>
-    <div class="activity-body"><section class="calendar-panel"><div class="panel-kicker">CONTRIBUTION RHYTHM</div>${calendarMarkup()}<div class="calendar-footer"><span>${fmt(a.active_days_12m)} active days</span><span class="legend">LESS <i style="--level:0"></i><i style="--level:1"></i><i style="--level:2"></i><i style="--level:3"></i><i style="--level:4"></i> MORE</span></div></section><section class="commit-panel"><div class="panel-kicker commit-kicker"><span>RECENT COMMITS</span><em>${String(commits.length).padStart(2,'0')} ENTRIES</em></div>${commitPlan(commits)}</section></div>
+    <div class="activity-body"><section class="calendar-panel"><div class="panel-kicker"><span>CONTRIBUTION CIPHER</span><em>REAL GITHUB DATA</em></div>${calendarMarkup()}<div class="calendar-footer"><span>${fmt(a.active_days_12m)} active days</span><span class="legend">LESS <i style="--level:0"></i><i style="--level:1"></i><i style="--level:2"></i><i style="--level:3"></i><i style="--level:4"></i> MORE</span></div></section><section class="commit-panel"><div class="panel-kicker commit-kicker"><span>RECENT COMMITS</span><em>${String(commits.length).padStart(2,'0')} HASH RECORDS</em></div>${commitPlan(commits)}</section></div>
   </section>`
 }
 $('#app').innerHTML=hero()+stats()+(RT.projects||[]).slice(0,3).map(project).join('')+activity();
@@ -212,36 +247,49 @@ function setActivity(t){
   const sec=$('.activity'); if(!sec)return;
   const tt=clamp(t); sec.style.setProperty('--at',tt);
 
-  // Keep the contribution calendar unchanged: one restrained sweep across the
-  // existing real GitHub weeks.
-  const weeks=$$('.contrib-week',sec), sweep=-2+tt*(weeks.length+4);
-  weeks.forEach((w,wi)=>{
-    const scan=Math.max(0,1-Math.abs(wi-sweep)/2.5);
-    w.style.setProperty('--scan',scan.toFixed(4));
+  // Subtle monochrome ASCII flow. Each line drifts differently so the field
+  // feels alive without competing with the data in front of it.
+  $$('.ascii-line',sec).forEach((line,i)=>{
+    const drift=(tt-.5)*(i%2?22:-22)+Math.sin(tt*Math.PI*2+i*.63)*8;
+    const rise=Math.sin(tt*Math.PI*2+i*.37)*2.2;
+    line.style.transform=`translate3d(${drift.toFixed(2)}px,${rise.toFixed(2)}px,0)`;
+    line.style.opacity=String(.075+Math.max(0,Math.sin(tt*Math.PI*2+i*.52))*.075);
   });
 
-  // Commit Ledger timing (4.3 s loop):
-  // 0.0–0.5 readable baseline, 0.5–2.5 oldest -> HEAD,
-  // 2.5–3.7 complete ledger, 3.7–4.3 soft reset.
-  const begin=.1163, finish=.5814, resetStart=.8605;
-  const progress=smoothstep((tt-begin)/(finish-begin));
-  const reset=smoothstep((tt-resetStart)/(1-resetStart));
-  const ledgerProgress=progress*(1-reset);
-  sec.style.setProperty('--ledger-progress',ledgerProgress.toFixed(5));
+  // Phase 1: a cryptographic scan crosses the real contribution calendar.
+  const calendarPhase=smoothstep((tt-.035)/.44);
+  const sweep=-3+calendarPhase*59;
+  const weeks=$$('.contrib-week',sec);
+  weeks.forEach((w,wi)=>{
+    const scan=Math.max(0,1-Math.abs(wi-sweep)/2.35);
+    w.style.setProperty('--scan',scan.toFixed(4));
+    $$('i',w).forEach((cell,di)=>{
+      const micro=Math.max(0,1-Math.abs(wi+di*.055-sweep)/1.18);
+      const flicker=((wi*13+di*17+Math.floor(tt*92))%7===0)?1:0;
+      cell.style.setProperty('--cipher-on',Math.min(1,micro*.82+flicker*micro*.28).toFixed(4));
+      cell.style.setProperty('--cell-lift',(micro*.8).toFixed(4));
+    });
+  });
 
-  const rows=$$('.ledger-entry',sec);
+  // Phase 2: each SHA-derived commit record is decoded from oldest to HEAD.
+  const commitPhase=smoothstep((tt-.38)/.44);
+  const reset=smoothstep((tt-.90)/.10);
+  const rows=$$('.cipher-commit',sec), count=Math.max(1,rows.length);
   rows.forEach((row,i)=>{
-    const nodeAt=Number(row.dataset.nodeAt||0);
-    const reached=smoothstep((progress-nodeAt)/.075)*(1-reset);
-    const distance=Math.abs(progress-nodeAt);
-    const arrival=Math.max(0,1-distance/.095)*(1-reset);
-    const isHead=i===0;
-    const focus=(isHead?reached:arrival)*(1-reset);
-
-    row.style.setProperty('--entry-reached',reached.toFixed(5));
-    row.style.setProperty('--entry-arrival',arrival.toFixed(5));
-    row.style.setProperty('--entry-focus',focus.toFixed(5));
-    row.style.setProperty('--entry-reset',reset.toFixed(5));
+    const sequence=Number(row.dataset.sequence||0);
+    const start=sequence/count;
+    const local=clamp((commitPhase-start)/(1/count));
+    const decode=smoothstep(local)*(1-reset);
+    const arrival=Math.sin(Math.PI*local)*(1-reset);
+    const remain=Math.max(0,decode-reset);
+    row.style.setProperty('--decode',decode.toFixed(5));
+    row.style.setProperty('--arrival',Math.max(0,arrival).toFixed(5));
+    row.style.setProperty('--remain',remain.toFixed(5));
+    row.style.setProperty('--scan-x',(-18+local*136).toFixed(3)+'%');
+    $$('.commit-glyph i',row).forEach((cell,gi)=>{
+      const stagger=clamp((local-gi/42)/.34);
+      cell.style.setProperty('--glyph-on',(smoothstep(stagger)*(1-reset)).toFixed(5));
+    });
   });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
