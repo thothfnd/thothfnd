@@ -72,22 +72,22 @@ def collect(username, token):
     data=gh.graphql(QUERY,{'login':username})['user']
     if not data: raise RuntimeError(f'GitHub user not found: {username}')
     pins=[x for x in data['pinnedItems']['nodes'] if x and not x.get('isPrivate')][:int(cfg.get('max_pinned_projects',3))]
-    # Public owned repos provide deterministic accessible release/commit aggregation.
+    # Aggregate the default-branch history of every public, non-fork repository owned by the account.
     repos=[]; page=1
     while page<=5:
         batch=gh.rest(f'/users/{username}/repos',per_page=100,page=page,type='owner',sort='updated').json()
         repos.extend([x for x in batch if not x.get('fork') and not x.get('private')])
         if len(batch)<100: break
         page+=1
-    total_releases=0; public_commits=0; recent=[]
+    total_releases=0; total_commits=0; recent=[]
     for repo in repos:
         full=repo['full_name']
         try: total_releases += count_pages(gh.rest(f'/repos/{full}/releases',per_page=1,page=1))
         except requests.HTTPError: pass
-        try: public_commits += count_pages(gh.rest(f'/repos/{full}/commits',per_page=1,page=1,author=username))
+        try: total_commits += count_pages(gh.rest(f'/repos/{full}/commits',per_page=1,page=1))
         except requests.HTTPError: pass
         try:
-            rs=gh.rest(f'/repos/{full}/commits',per_page=3,page=1,author=username).json()
+            rs=gh.rest(f'/repos/{full}/commits',per_page=3,page=1).json()
             for c in rs:
                 dt=((c.get('commit') or {}).get('author') or {}).get('date')
                 if not dt: continue
@@ -135,7 +135,7 @@ def collect(username, token):
         })
     return {
       'mode':'live','generated_at':None,
-      'account':{'login':username,'followers':data['followers']['totalCount'],'commits_label':'PUBLIC COMMITS','commits':public_commits,'releases':total_releases,'contributions_12m':data['contributionsCollection']['contributionCalendar']['totalContributions'],'active_days_12m':active},
+      'account':{'login':username,'followers':data['followers']['totalCount'],'commits_label':'TOTAL COMMITS','commits':total_commits,'releases':total_releases,'contributions_12m':data['contributionsCollection']['contributionCalendar']['totalContributions'],'active_days_12m':active},
       'contribution_levels':levels,'contribution_weeks':contribution_weeks,'projects':projects,'recent_commits':recent
     }
 

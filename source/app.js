@@ -73,16 +73,31 @@ function calendarMarkup(){
 }
 function commitPlan(commits){
   if(!commits.length)return '<div class="activity-empty">No recent public commits available.</div>';
-  const xs=[24,52,34,62,42], ys=commits.map((_,i)=>30+i*60), pts=commits.map((_,i)=>`${xs[i%xs.length]},${ys[i]}`).join(' ');
-  const rows=commits.map((c,i)=>`<a class="commit-row" href="${esc(c.url||'#')}" data-commit="${i}" style="--node-x:${xs[i%xs.length]}px"><span class="route-node" aria-hidden="true"></span><span class="commit-card"><span class="commit-top"><time>${esc(c.date)}</time><strong>${esc(c.repo)}</strong><code>${esc(c.sha)}</code></span><span class="commit-message">${esc(c.message)}</span></span></a>`).join('');
-  return `<div class="commit-plan"><svg class="commit-route" viewBox="0 0 90 ${Math.max(300,commits.length*60)}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}"/><circle class="route-head" cx="${xs[0]}" cy="${ys[0]}" r="4"/></svg>${rows}</div>`
+  const count=commits.length;
+  const rows=commits.map((c,i)=>{
+    const chronologicalIndex=count-1-i;
+    const nodeAt=count===1?.50:.06+(chronologicalIndex/(count-1))*.88;
+    return `<a class="ledger-entry" href="${esc(c.url||'#')}" data-commit="${i}" data-node-at="${nodeAt.toFixed(4)}">
+      <span class="ledger-node" aria-hidden="true"><i></i></span>
+      <span class="ledger-connector" aria-hidden="true"></span>
+      <span class="ledger-copy">
+        <span class="ledger-meta">${i===0?'<em class="ledger-head">HEAD</em>':''}<time>${esc(c.date)}</time><strong>${esc(c.repo)}</strong><code>${esc(c.sha)}</code></span>
+        <span class="ledger-message">${esc(c.message)}</span>
+      </span>
+    </a>`;
+  }).join('');
+  return `<div class="commit-ledger" style="--ledger-count:${count}">
+    <span class="ledger-rail ledger-rail-base" aria-hidden="true"></span>
+    <span class="ledger-rail ledger-rail-active" aria-hidden="true"></span>
+    ${rows}
+  </div>`
 }
 function activity(){
-  const a=RT.account||{}, commits=(RT.recent_commits||[]).slice(0,5);
+  const a=RT.account||{}, commits=(RT.recent_commits||[]).slice(0,3);
   return `<section class="activity capture" data-capture="activity">
     <div class="activity-title"><span>ACTIVITY / 12M</span><h2>Development trace.</h2></div>
     <div class="activity-stats"><div><b>${fmt(a.commits)}</b><span>${esc(a.commits_label||'COMMITS')}</span></div><div><b>${fmt(a.contributions_12m)}</b><span>CONTRIBUTIONS / 12M</span></div><div><b>${fmt(a.active_days_12m)}</b><span>ACTIVE DAYS / 12M</span></div></div>
-    <div class="activity-body"><section class="calendar-panel"><div class="panel-kicker">CONTRIBUTION RHYTHM</div>${calendarMarkup()}<div class="calendar-footer"><span>${fmt(a.active_days_12m)} active days</span><span class="legend">LESS <i style="--level:0"></i><i style="--level:1"></i><i style="--level:2"></i><i style="--level:3"></i><i style="--level:4"></i> MORE</span></div></section><section class="commit-panel"><div class="panel-kicker">RECENT COMMITS</div>${commitPlan(commits)}</section></div>
+    <div class="activity-body"><section class="calendar-panel"><div class="panel-kicker">CONTRIBUTION RHYTHM</div>${calendarMarkup()}<div class="calendar-footer"><span>${fmt(a.active_days_12m)} active days</span><span class="legend">LESS <i style="--level:0"></i><i style="--level:1"></i><i style="--level:2"></i><i style="--level:3"></i><i style="--level:4"></i> MORE</span></div></section><section class="commit-panel"><div class="panel-kicker commit-kicker"><span>RECENT COMMITS</span><em>${String(commits.length).padStart(2,'0')} ENTRIES</em></div>${commitPlan(commits)}</section></div>
   </section>`
 }
 $('#app').innerHTML=hero()+stats()+(RT.projects||[]).slice(0,3).map(project).join('')+activity();
@@ -194,10 +209,40 @@ function setHero(t){
 function setStats(t){const drift=Math.sin(t*Math.PI*2)*26;document.documentElement.style.setProperty('--marquee-x',drift.toFixed(3)+'px')}
 function setProject(slug,t){const sec=document.querySelector(`[data-slug="${CSS.escape(slug)}"]`); if(!sec)return; sec.style.setProperty('--pt',t); const cards=$$('.media-card',sec); if(cards.length){const phase=(t*cards.length)%cards.length,active=Math.floor(phase); cards.forEach((c,i)=>{let pos=(i-active+cards.length)%cards.length;c.style.setProperty('--pos',pos);c.style.setProperty('--frac',phase-active)})}}
 function setActivity(t){
-  const sec=$('.activity'); if(!sec)return; const tt=clamp(t); sec.style.setProperty('--at',tt);
-  const weeks=$$('.contrib-week',sec), sweep=-2+tt*(weeks.length+4); weeks.forEach((w,wi)=>{const scan=Math.max(0,1-Math.abs(wi-sweep)/2.5); w.style.setProperty('--scan',scan.toFixed(4))});
-  const route=$('.commit-route polyline',sec), head=$('.route-head',sec); if(route){const len=route.getTotalLength(); route.style.strokeDasharray=String(len); route.style.strokeDashoffset=String(len*(1-Math.max(.03,tt))); if(head){const p=route.getPointAtLength(len*tt); head.setAttribute('cx',p.x); head.setAttribute('cy',p.y); head.style.opacity=String(.2+.8*Math.sin(Math.PI*tt));}}
-  $$('.commit-row',sec).forEach((row,i)=>{const reveal=clamp((tt-.06-i*.12)/.18);row.style.setProperty('--ci',reveal.toFixed(4))});
+  const sec=$('.activity'); if(!sec)return;
+  const tt=clamp(t); sec.style.setProperty('--at',tt);
+
+  // Keep the contribution calendar unchanged: one restrained sweep across the
+  // existing real GitHub weeks.
+  const weeks=$$('.contrib-week',sec), sweep=-2+tt*(weeks.length+4);
+  weeks.forEach((w,wi)=>{
+    const scan=Math.max(0,1-Math.abs(wi-sweep)/2.5);
+    w.style.setProperty('--scan',scan.toFixed(4));
+  });
+
+  // Commit Ledger timing (4.3 s loop):
+  // 0.0–0.5 readable baseline, 0.5–2.5 oldest -> HEAD,
+  // 2.5–3.7 complete ledger, 3.7–4.3 soft reset.
+  const begin=.1163, finish=.5814, resetStart=.8605;
+  const progress=smoothstep((tt-begin)/(finish-begin));
+  const reset=smoothstep((tt-resetStart)/(1-resetStart));
+  const ledgerProgress=progress*(1-reset);
+  sec.style.setProperty('--ledger-progress',ledgerProgress.toFixed(5));
+
+  const rows=$$('.ledger-entry',sec);
+  rows.forEach((row,i)=>{
+    const nodeAt=Number(row.dataset.nodeAt||0);
+    const reached=smoothstep((progress-nodeAt)/.075)*(1-reset);
+    const distance=Math.abs(progress-nodeAt);
+    const arrival=Math.max(0,1-distance/.095)*(1-reset);
+    const isHead=i===0;
+    const focus=(isHead?reached:arrival)*(1-reset);
+
+    row.style.setProperty('--entry-reached',reached.toFixed(5));
+    row.style.setProperty('--entry-arrival',arrival.toFixed(5));
+    row.style.setProperty('--entry-focus',focus.toFixed(5));
+    row.style.setProperty('--entry-reset',reset.toFixed(5));
+  });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
 window.__THOTH_RENDER_FRAME=(scene,t)=>{frameT=t;if(scene==='hero'||scene==='all')setHero(t);if(scene==='stats'||scene==='all')setStats(t);if(scene.startsWith('project-'))setProject(scene.slice(8),t);if(scene==='all')(RT.projects||[]).forEach(p=>setProject(p.slug,t));if(scene==='activity'||scene==='all')setActivity(t);window.__THOTH_RENDER_CTA(t)};
