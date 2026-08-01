@@ -131,6 +131,7 @@ $('#app').innerHTML=hero()+stats()+(RT.projects||[]).slice(0,3).map(project).joi
 let frameT=.42, ctaT=.2;
 function ease(x){return 1-Math.pow(1-clamp(x),3)}
 function smoothstep(x){x=clamp(x);return x*x*(3-2*x)}
+function smootherstep(x){x=clamp(x);return x*x*x*(x*(x*6-15)+10)}
 function bezierEaseInOut(x){
   // CSS/Motion easeInOut: cubic-bezier(0.42, 0, 0.58, 1).
   // Newton iteration solves x(u), then evaluates y(u).
@@ -279,72 +280,91 @@ function setActivity(t){
     w.style.setProperty('--week-energy',weekEnergy.toFixed(5));
   });
 
-  // Commit reader cycle. The loop begins and ends on HEAD, so the GIF wraps
-  // without a reverse jump. A brief closed-page transition hides the reset to
-  // the oldest record, then each record receives a deliberate reading hold.
+  // Commit reader: continuous double-buffered crossfades.
+  // Text is never hard-cleared, clipped, or reinserted. Every transition keeps
+  // one complete record visible while the next one takes over with a zero-
+  // velocity smootherstep curve. The loop begins and ends on the oldest record.
   const reader=$('.commit-reader',sec);
   const sheets=$$('.commit-reader-sheet',sec), tabs=$$('.commit-reader-tab',sec);
   const count=Math.max(1,sheets.length);
   const oldest=count-1;
   const middle=Math.max(0,count-2);
-  let cursor=0, readerVisibility=1, chapterReveal=1;
+  const weights=Array(count).fill(0);
+  const offsets=Array(count).fill(0);
+  let cursor=oldest, lineOpacity=1;
 
-  if(count>1){
-    if(tt<.10){
-      cursor=0;
-    }else if(tt<.17){
-      const q=smoothstep((tt-.10)/.07);
-      cursor=0; readerVisibility=1-q; chapterReveal=1;
-    }else if(tt<.20){
-      cursor=oldest; readerVisibility=0; chapterReveal=0;
-    }else if(tt<.29){
-      const q=smoothstep((tt-.20)/.09);
-      cursor=oldest; readerVisibility=q; chapterReveal=q;
-    }else if(count===2){
-      if(tt<.58){
-        cursor=oldest;
-      }else if(tt<.72){
-        const q=bezierEaseInOut((tt-.58)/.14);
-        cursor=oldest*(1-q); chapterReveal=.82+.18*Math.sin(q*Math.PI);
+  const holdReader=index=>{
+    weights[index]=1;
+    cursor=index;
+    lineOpacity=1;
+  };
+  const blend=(from,to,value,{wrap=false}={})=>{
+    const q=smootherstep(value);
+    weights[from]=1-q;
+    weights[to]=q;
+    offsets[from]=-5*q;
+    offsets[to]=7*(1-q);
+
+    if(wrap){
+      // The indicator dissolves before changing edge, then reforms at the
+      // destination. This avoids a fast reverse sweep across unrelated tabs.
+      if(q<.5){
+        cursor=from;
+        lineOpacity=1-smootherstep(q*2);
       }else{
-        cursor=0;
+        cursor=to;
+        lineOpacity=smootherstep((q-.5)*2);
       }
     }else{
-      if(tt<.47){
-        cursor=oldest;
-      }else if(tt<.58){
-        const q=bezierEaseInOut((tt-.47)/.11);
-        cursor=oldest+(middle-oldest)*q; chapterReveal=.82+.18*Math.sin(q*Math.PI);
-      }else if(tt<.70){
-        cursor=middle;
-      }else if(tt<.82){
-        const q=bezierEaseInOut((tt-.70)/.12);
-        cursor=middle*(1-q); chapterReveal=.82+.18*Math.sin(q*Math.PI);
-      }else{
-        cursor=0;
-      }
+      cursor=from+(to-from)*q;
+      lineOpacity=1;
+    }
+  };
+
+  if(count===1){
+    holdReader(0);
+  }else if(count===2){
+    if(tt<.18){
+      holdReader(oldest);
+    }else if(tt<.36){
+      blend(oldest,0,(tt-.18)/.18);
+    }else if(tt<.74){
+      holdReader(0);
+    }else if(tt<.95){
+      blend(0,oldest,(tt-.74)/.21,{wrap:true});
+    }else{
+      holdReader(oldest);
+    }
+  }else{
+    if(tt<.16){
+      holdReader(oldest);
+    }else if(tt<.31){
+      blend(oldest,middle,(tt-.16)/.15);
+    }else if(tt<.47){
+      holdReader(middle);
+    }else if(tt<.62){
+      blend(middle,0,(tt-.47)/.15);
+    }else if(tt<.81){
+      holdReader(0);
+    }else if(tt<.97){
+      blend(0,oldest,(tt-.81)/.16,{wrap:true});
+    }else{
+      holdReader(oldest);
     }
   }
 
   if(reader){
     reader.style.setProperty('--reader-cursor',cursor.toFixed(5));
-    reader.style.setProperty('--reader-visibility',readerVisibility.toFixed(5));
-    reader.style.setProperty('--reader-reveal',chapterReveal.toFixed(5));
+    reader.style.setProperty('--reader-line-opacity',lineOpacity.toFixed(5));
   }
 
-  const readerClosing=tt>=.10&&tt<.17;
   sheets.forEach((sheet,i)=>{
-    const distance=Math.abs(i-cursor);
-    const focus=smoothstep(clamp(1-distance))*readerVisibility;
-    const direction=i-cursor;
-    const reveal=(readerClosing&&i===0)?1:smoothstep((focus-.08)/.78)*chapterReveal;
-    sheet.style.setProperty('--focus',focus.toFixed(5));
-    sheet.style.setProperty('--offset',(direction*11).toFixed(3)+'px');
-    sheet.style.setProperty('--settle',reveal.toFixed(5));
+    const focus=weights[i]||0;
+    sheet.style.setProperty('--focus',focus.toFixed(6));
+    sheet.style.setProperty('--offset',(offsets[i]||0).toFixed(3)+'px');
   });
   tabs.forEach((tab,i)=>{
-    const focus=smoothstep(clamp(1-Math.abs(i-cursor)))*readerVisibility;
-    tab.style.setProperty('--tab-focus',focus.toFixed(5));
+    tab.style.setProperty('--tab-focus',(weights[i]||0).toFixed(6));
   });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};

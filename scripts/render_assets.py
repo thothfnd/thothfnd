@@ -73,7 +73,7 @@ async def capture(runtime):
         hero_seconds=max(float(rend['hero_seconds']),apple_headline_seconds+.03+.36+.10+(console_chars/25.0)+console_pause_seconds+.45+.32)
         scenes=[('hero',hero_seconds,25),('stats',float(rend['stats_seconds'])*3.0,min(fps,6))]
         for pr in runtime.get('projects',[])[:3]: scenes.append(('project-'+pr['slug'],float(rend['project_seconds']),fps))
-        scenes.append(('activity',10.4,20))
+        scenes.append(('activity',13.2,30))
         for scene,seconds,scene_fps in scenes:
             if (out/f'{scene}.gif').exists():
                 continue
