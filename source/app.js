@@ -78,38 +78,33 @@ function calendarMarkup(){
   }).join('')}</div>`).join('');
   return `<div class="calendar-shell"><div class="month-axis">${monthAxis}</div><div class="weekday-axis"><span style="--day:1">MON</span><span style="--day:3">WED</span><span style="--day:5">FRI</span></div><div class="calendar-grid">${cells}<b class="calendar-search" aria-hidden="true"><i></i></b></div></div>`
 }
-function commitHashBars(sha){
-  const hex=String(sha||'0').toLowerCase().replace(/[^0-9a-f]/g,'')||'0';
-  return [...hex.slice(0,10)].map((ch,i)=>{
-    const value=parseInt(ch,16)||0;
-    return `<i data-bar="${i}" style="--bar-height:${(4+(value/15)*13).toFixed(2)}px"></i>`;
-  }).join('');
-}
-function commitShaChars(sha){
-  return [...String(sha||'')].map((ch,i)=>`<i data-char="${i}">${esc(ch)}</i>`).join('');
+function commitStamp(c){
+  const date=String(c.date||'');
+  const match=String(c.timestamp||'').match(/T(\d{2}):(\d{2})/);
+  return match?`${date} · ${match[1]}:${match[2]} UTC`:date;
 }
 function commitPlan(commits){
   if(!commits.length)return '<div class="activity-empty">No recent public commits available.</div>';
   const count=commits.length;
   const rows=commits.map((c,i)=>{
     const sequence=count-1-i;
-    const label=i===0?'HEAD':String(i+1).padStart(2,'0');
-    return `<a class="commit-aperture" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
-      <span class="commit-aperture-node"><i aria-hidden="true"></i><b>${label}</b></span>
-      <span class="commit-aperture-copy">
-        <span class="commit-aperture-top"><strong>${esc(c.repo)}</strong></span>
-        <span class="commit-aperture-message">${esc(c.message)}</span>
-        <span class="commit-aperture-signal">
-          <span class="commit-aperture-sha"><em>COMMIT</em><code>${commitShaChars(c.sha)}</code></span>
-          <time>${esc(c.date)}</time>
-          <span class="commit-hash-bars" aria-hidden="true">${commitHashBars(c.sha)}</span>
-        </span>
+    const index=String(i+1).padStart(2,'0');
+    const message=esc(c.message);
+    return `<a class="commit-index" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
+      <span class="commit-index-mark">
+        <b>${index}</b>
+        ${i===0?'<em>HEAD</em>':'<i aria-hidden="true"></i>'}
       </span>
-      <span class="commit-aperture-edge" aria-hidden="true"></span>
-      <span class="commit-aperture-scan" aria-hidden="true"></span>
+      <span class="commit-index-body">
+        <span class="commit-index-meta"><strong>${esc(c.repo)}</strong><time>${esc(commitStamp(c))}</time></span>
+        <span class="commit-index-message"><span class="commit-index-message-base">${message}</span><span class="commit-index-message-reveal">${message}</span></span>
+        <span class="commit-index-foot"><span><em>COMMIT</em><code>${esc(c.sha)}</code></span><i aria-hidden="true"></i></span>
+      </span>
+      <span class="commit-index-line" aria-hidden="true"></span>
+      <span class="commit-index-read" aria-hidden="true"></span>
     </a>`;
   }).join('');
-  return `<div class="commit-aperture-stack" style="--commit-count:${count}"><span class="commit-spine" aria-hidden="true"><i></i><b></b></span>${rows}</div>`
+  return `<div class="commit-index-stack" style="--commit-count:${count}"><span class="commit-index-focus" aria-hidden="true"></span>${rows}</div>`;
 }
 function activityAscii(){
   const chars=' ·.:;=+*#01';
@@ -289,35 +284,35 @@ function setActivity(t){
     w.style.setProperty('--week-energy',weekEnergy.toFixed(5));
   });
 
-  // Commit Aperture: a bottom-to-HEAD execution pass. Each record opens with a
-  // real-data reveal, types its true SHA, resolves a SHA-derived signal, and
-  // remains fully readable once verified.
-  const stack=$('.commit-aperture-stack',sec);
+  // Editorial commit index. A single focus field moves from the oldest
+  // entry to HEAD. Each row remains readable, then receives a masked text
+  // reveal and a one-pixel reading line before settling as a completed record.
+  const stack=$('.commit-index-stack',sec);
   const commitProgress=smoothstep((tt-.405)/.455)*hold;
-  if(stack) stack.style.setProperty('--commit-progress',commitProgress.toFixed(5));
-  const rows=$$('.commit-aperture',sec), count=Math.max(1,rows.length);
+  const rows=$$('.commit-index',sec), count=Math.max(1,rows.length);
+  if(stack){
+    const focusRow=(count-1)*(1-commitProgress);
+    const focusOpacity=smoothstep((tt-.37)/.08)*hold;
+    stack.style.setProperty('--focus-row',focusRow.toFixed(5));
+    stack.style.setProperty('--focus-opacity',focusOpacity.toFixed(5));
+  }
 
   rows.forEach(row=>{
     const sequence=Number(row.dataset.sequence||0);
     const start=sequence/count;
     const local=clamp((commitProgress-start)/(1/count));
-    const reveal=smoothstep(local);
-    const pulse=Math.sin(Math.PI*clamp(local/.78))*(1-reset);
-    const headLock=row.dataset.commit==='0' ? smoothstep((commitProgress-.91)/.09)*hold : 0;
+    const locked=smoothstep((local-.03)/.68);
+    const reveal=smoothstep((local-.10)/.58);
+    const line=smoothstep(local/.62);
+    const active=Math.sin(Math.PI*clamp(local/.84))*hold;
+    const headLock=row.dataset.commit==='0'?smoothstep((commitProgress-.92)/.08)*hold:0;
 
+    row.style.setProperty('--locked',locked.toFixed(5));
     row.style.setProperty('--reveal',reveal.toFixed(5));
-    row.style.setProperty('--pulse',Math.max(0,pulse).toFixed(5));
+    row.style.setProperty('--line',line.toFixed(5));
+    row.style.setProperty('--active',Math.max(0,active).toFixed(5));
     row.style.setProperty('--head-lock',headLock.toFixed(5));
-    row.style.setProperty('--scan-x',(-24+local*148).toFixed(3)+'%');
-
-    $$('.commit-aperture-sha code i',row).forEach((ch,ci)=>{
-      const on=smoothstep((local-.22-ci*.045)/.34);
-      ch.style.setProperty('--char-on',on.toFixed(5));
-    });
-    $$('.commit-hash-bars i',row).forEach((bar,bi)=>{
-      const on=smoothstep((local-.28-bi*.038)/.32);
-      bar.style.setProperty('--bar-on',on.toFixed(5));
-    });
+    row.style.setProperty('--read-x',(-18+local*138).toFixed(3)+'%');
   });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
