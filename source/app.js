@@ -86,26 +86,21 @@ function commitStamp(c){
 function commitPlan(commits){
   if(!commits.length)return '<div class="activity-empty">No recent public commits available.</div>';
   const count=commits.length;
-  const rows=commits.map((c,i)=>{
+  const sheets=commits.map((c,i)=>{
     const sequence=count-1-i;
     const index=String(i+1).padStart(2,'0');
-    const message=esc(c.message);
-    return `<a class="commit-folio-row" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
-      <span class="folio-index">
-        <b>${index}</b>
-        ${i===0?'<em>HEAD</em>':'<i aria-hidden="true"></i>'}
-      </span>
-      <span class="folio-copy">
-        <span class="folio-topline"><strong>${esc(c.repo)}</strong><time>${esc(commitStamp(c))}</time></span>
-        <span class="folio-message"><span class="folio-message-ghost">${message}</span><span class="folio-message-ink">${message}</span></span>
-        <span class="folio-foot"><code>${esc(c.sha)}</code><span>PUBLIC COMMIT</span></span>
-      </span>
-      <span class="folio-hairline" aria-hidden="true"></span>
-      <span class="folio-reading-mark" aria-hidden="true"><i></i></span>
-      <span class="folio-registration" aria-hidden="true"></span>
+    return `<a class="commit-reader-sheet" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
+      <span class="reader-eyebrow"><b>${i===0?'HEAD':'RECENT '+index}</b><em>${esc(commitStamp(c))}</em></span>
+      <span class="reader-repo">${esc(c.repo)}</span>
+      <span class="reader-message">${esc(c.message)}</span>
+      <span class="reader-foot"><code>${esc(c.sha)}</code><i>OPEN COMMIT ↗</i></span>
     </a>`;
   }).join('');
-  return `<div class="commit-folio" style="--commit-count:${count}"><span class="folio-spine" aria-hidden="true"><i></i></span>${rows}</div>`;
+  const tabs=commits.map((c,i)=>`<span class="commit-reader-tab" data-tab="${i}"><b>${String(i+1).padStart(2,'0')}</b><em>${esc(c.repo)}</em></span>`).join('');
+  return `<div class="commit-reader" style="--commit-count:${count}">
+    <div class="commit-reader-stage">${sheets}<span class="reader-shutter" aria-hidden="true"></span></div>
+    <div class="commit-reader-index">${tabs}<span class="reader-index-line" aria-hidden="true"></span></div>
+  </div>`;
 }
 function activityAscii(){
   const chars=' ·.:;=+*#01';
@@ -285,36 +280,29 @@ function setActivity(t){
     w.style.setProperty('--week-energy',weekEnergy.toFixed(5));
   });
 
-  // Editorial proof rail. The movement is intentionally typographic rather
-  // than ornamental: a reading marker travels from the oldest record to HEAD,
-  // while the brighter ink layer registers into place over the quiet proof.
-  const folio=$('.commit-folio',sec);
+  // Editorial commit reader. One record is given the page at a time while
+  // the index remains fully visible, avoiding the generic timeline/card look.
+  const reader=$('.commit-reader',sec);
   const commitProgress=smoothstep((tt-.40)/.46)*hold;
-  const rows=$$('.commit-folio-row',sec), count=Math.max(1,rows.length);
-  if(folio){
-    const runner=(count-1)*(1-commitProgress);
-    const visible=smoothstep((tt-.37)/.08)*hold;
-    folio.style.setProperty('--runner-row',runner.toFixed(5));
-    folio.style.setProperty('--runner-visible',visible.toFixed(5));
+  const sheets=$$('.commit-reader-sheet',sec), tabs=$$('.commit-reader-tab',sec);
+  const count=Math.max(1,sheets.length);
+  const cursor=(count-1)*(1-commitProgress);
+  if(reader){
+    reader.style.setProperty('--reader-cursor',cursor.toFixed(5));
+    reader.style.setProperty('--reader-progress',commitProgress.toFixed(5));
   }
-
-  rows.forEach(row=>{
-    const sequence=Number(row.dataset.sequence||0);
-    const start=sequence/count;
-    const local=clamp((commitProgress-start)/(1/count));
-    const reveal=smoothstep((local-.05)/.66);
-    const register=smoothstep((local-.20)/.58);
-    const rule=smoothstep(local/.72);
-    const active=Math.sin(Math.PI*clamp(local/.96))*hold;
-    const passed=smoothstep((local-.58)/.35);
-    const headLock=row.dataset.commit==='0'?smoothstep((commitProgress-.93)/.07)*hold:0;
-
-    row.style.setProperty('--reveal',reveal.toFixed(5));
-    row.style.setProperty('--register',register.toFixed(5));
-    row.style.setProperty('--rule',rule.toFixed(5));
-    row.style.setProperty('--active',Math.max(0,active).toFixed(5));
-    row.style.setProperty('--passed',passed.toFixed(5));
-    row.style.setProperty('--head-lock',headLock.toFixed(5));
+  sheets.forEach((sheet,i)=>{
+    const distance=Math.abs(i-cursor);
+    const focus=1-smoothstep((distance-.06)/.64);
+    const direction=i-cursor;
+    const settle=smoothstep((focus-.18)/.72);
+    sheet.style.setProperty('--focus',focus.toFixed(5));
+    sheet.style.setProperty('--offset',(direction*18).toFixed(3)+'px');
+    sheet.style.setProperty('--settle',settle.toFixed(5));
+  });
+  tabs.forEach((tab,i)=>{
+    const focus=1-smoothstep((Math.abs(i-cursor)-.02)/.55);
+    tab.style.setProperty('--tab-focus',focus.toFixed(5));
   });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
