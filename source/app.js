@@ -61,7 +61,7 @@ function calendarData(){
 }
 function calendarMarkup(){
   const weeks=calendarData(), monthMarks=[]; let lastMonth='';
-  const cipher='01#×+·';
+  const tones=['#101214','#2d3034','#565b60','#989da1','#ecece8'];
   weeks.forEach((w,wi)=>{
     const first=(w.days||[]).find(d=>d.date);
     if(!first)return;
@@ -69,26 +69,8 @@ function calendarMarkup(){
     if(month!==lastMonth){monthMarks.push({wi,month});lastMonth=month}
   });
   const monthAxis=monthMarks.map(m=>`<span style="--week:${m.wi}">${esc(m.month)}</span>`).join('');
-  const cells=weeks.map((w,wi)=>`<div class="contrib-week" data-week="${wi}">${Array.from({length:7},(_,di)=>{const d=w.days[di]||{date:'',count:0,level:0};const level=Math.max(0,Math.min(4,d.level));const mark=cipher[(wi*11+di*7+level*3)%cipher.length];return `<i data-week="${wi}" data-day="${di}" data-cipher="${mark}" style="--level:${level}" title="${esc(d.date)}${d.date?' — ':''}${d.count} contributions"></i>`}).join('')}</div>`).join('');
-  return `<div class="calendar-shell"><div class="month-axis">${monthAxis}</div><div class="weekday-axis"><span style="--day:1">MON</span><span style="--day:3">WED</span><span style="--day:5">FRI</span></div><div class="calendar-grid">${cells}<b class="calendar-scan" aria-hidden="true"></b></div></div>`
-}
-function commitGlyph(sha){
-  const hex=String(sha||'0').replace(/[^0-9a-f]/gi,'')||'0';
-  const bits=[];
-  for(let y=0;y<5;y++){
-    const half=[];
-    for(let x=0;x<3;x++){
-      const n=parseInt(hex[(y*3+x)%hex.length],16)||0;
-      half.push(((n>>(x%4))&1)===1?1:0);
-    }
-    bits.push(...half,...half.slice(0,2).reverse());
-  }
-  return `<span class="commit-glyph" aria-hidden="true">${bits.map((bit,i)=>`<i style="--bit:${bit};--gi:${i}"></i>`).join('')}</span>`;
-}
-function cipherLine(seed,length=19){
-  const chars='01#×+·:/'; let out='';
-  for(let i=0;i<length;i++)out+=chars[(seed*7+i*5+(i%3)*seed)%chars.length];
-  return out;
+  const cells=weeks.map((w,wi)=>`<div class="contrib-week" data-week="${wi}">${Array.from({length:7},(_,di)=>{const d=w.days[di]||{date:'',count:0,level:0};const level=Math.max(0,Math.min(4,d.level));return `<i data-week="${wi}" data-day="${di}" style="--level:${level};--tone:${tones[level]}" title="${esc(d.date)}${d.date?' — ':''}${d.count} contributions"></i>`}).join('')}</div>`).join('');
+  return `<div class="calendar-shell"><div class="month-axis">${monthAxis}</div><div class="weekday-axis"><span style="--day:1">MON</span><span style="--day:3">WED</span><span style="--day:5">FRI</span></div><div class="calendar-grid">${cells}<b class="calendar-search" aria-hidden="true"><i></i></b></div></div>`
 }
 function commitPlan(commits){
   if(!commits.length)return '<div class="activity-empty">No recent public commits available.</div>';
@@ -96,19 +78,17 @@ function commitPlan(commits){
   const rows=commits.map((c,i)=>{
     const sequence=count-1-i;
     const label=i===0?'HEAD':String(i+1).padStart(2,'0');
-    return `<a class="cipher-commit" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
-      <span class="commit-index">${label}</span>
-      <span class="commit-record">
-        <span class="commit-primary"><strong>${esc(c.repo)}</strong><time>${esc(c.date)}</time></span>
-        <span class="commit-message">${esc(c.message)}</span>
-        <span class="commit-sha"><em>SHA</em><code>${esc(c.sha)}</code></span>
+    return `<a class="commit-focus" href="${esc(c.url||'#')}" data-commit="${i}" data-sequence="${sequence}">
+      <span class="commit-focus-index"><b>${label}</b><i aria-hidden="true"></i></span>
+      <span class="commit-focus-body">
+        <span class="commit-focus-top"><strong>${esc(c.repo)}</strong></span>
+        <span class="commit-focus-message">${esc(c.message)}</span>
+        <span class="commit-focus-meta"><span><em>SHA</em><code>${esc(c.sha)}</code></span><time>${esc(c.date)}</time></span>
       </span>
-      ${commitGlyph(c.sha)}
-      <span class="commit-progress" aria-hidden="true"></span>
-      <span class="commit-scan-band" aria-hidden="true"><b>${cipherLine(i+3,23)}</b></span>
+      <span class="commit-focus-sweep" aria-hidden="true"></span>
     </a>`;
   }).join('');
-  return `<div class="commit-cipher-stack" style="--commit-count:${count}">${rows}</div>`
+  return `<div class="commit-focus-stack" style="--commit-count:${count}">${rows}</div>`
 }
 function activityAscii(){
   const chars=' ·.:;=+*#01';
@@ -132,7 +112,7 @@ function activity(){
     ${activityAscii()}
     <div class="activity-title"><span>ACTIVITY / 12M</span><h2>Development trace.</h2></div>
     <div class="activity-stats"><div><b>${fmt(a.commits)}</b><span>${esc(a.commits_label||'COMMITS')}</span></div><div><b>${fmt(a.contributions_12m)}</b><span>CONTRIBUTIONS / 12M</span></div><div><b>${fmt(a.active_days_12m)}</b><span>ACTIVE DAYS / 12M</span></div></div>
-    <div class="activity-body"><section class="calendar-panel"><div class="panel-kicker"><span>CONTRIBUTION CIPHER</span><em>REAL GITHUB DATA</em></div>${calendarMarkup()}<div class="calendar-footer"><span>${fmt(a.active_days_12m)} active days</span><span class="legend">LESS <i style="--level:0"></i><i style="--level:1"></i><i style="--level:2"></i><i style="--level:3"></i><i style="--level:4"></i> MORE</span></div></section><section class="commit-panel"><div class="panel-kicker commit-kicker"><span>RECENT COMMITS</span><em>${String(commits.length).padStart(2,'0')} HASH RECORDS</em></div>${commitPlan(commits)}</section></div>
+    <div class="activity-body"><section class="calendar-panel"><div class="panel-kicker"><span>CONTRIBUTION FIELD</span><em>REAL GITHUB DATA</em></div>${calendarMarkup()}<div class="calendar-footer"><span>${fmt(a.active_days_12m)} active days</span><span class="legend">LESS <i style="--level:0"></i><i style="--level:1"></i><i style="--level:2"></i><i style="--level:3"></i><i style="--level:4"></i> MORE</span></div></section><section class="commit-panel"><div class="panel-kicker commit-kicker"><span>RECENT COMMITS</span><em>${String(commits.length).padStart(2,'0')} LATEST</em></div>${commitPlan(commits)}</section></div>
   </section>`
 }
 $('#app').innerHTML=hero()+stats()+(RT.projects||[]).slice(0,3).map(project).join('')+activity();
@@ -247,49 +227,51 @@ function setActivity(t){
   const sec=$('.activity'); if(!sec)return;
   const tt=clamp(t); sec.style.setProperty('--at',tt);
 
-  // Subtle monochrome ASCII flow. Each line drifts differently so the field
-  // feels alive without competing with the data in front of it.
+  // Existing ASCII background remains subtle and independent of the data.
   $$('.ascii-line',sec).forEach((line,i)=>{
-    const drift=(tt-.5)*(i%2?22:-22)+Math.sin(tt*Math.PI*2+i*.63)*8;
-    const rise=Math.sin(tt*Math.PI*2+i*.37)*2.2;
+    const drift=(tt-.5)*(i%2?18:-18)+Math.sin(tt*Math.PI*2+i*.63)*6;
+    const rise=Math.sin(tt*Math.PI*2+i*.37)*1.8;
     line.style.transform=`translate3d(${drift.toFixed(2)}px,${rise.toFixed(2)}px,0)`;
-    line.style.opacity=String(.075+Math.max(0,Math.sin(tt*Math.PI*2+i*.52))*.075);
+    line.style.opacity=String(.045+Math.max(0,Math.sin(tt*Math.PI*2+i*.52))*.04);
   });
 
-  // Phase 1: a cryptographic scan crosses the real contribution calendar.
-  const calendarPhase=smoothstep((tt-.035)/.44);
-  const sweep=-3+calendarPhase*59;
-  const weeks=$$('.contrib-week',sec);
+  // Loot-search reveal: every square begins neutral, flashes as it is found,
+  // then resolves to its real GitHub contribution level. Deterministic jitter
+  // avoids a mechanical column wipe while preserving a clear left-to-right search.
+  const reveal=smoothstep((tt-.055)/.625);
+  const reset=smoothstep((tt-.94)/.06);
+  const weeks=$$('.contrib-week',sec), weekCount=Math.max(1,weeks.length-1);
+  sec.style.setProperty('--grid-head',(-4+reveal*108).toFixed(3)+'%');
+  sec.style.setProperty('--grid-reset',reset.toFixed(5));
+
   weeks.forEach((w,wi)=>{
-    const scan=Math.max(0,1-Math.abs(wi-sweep)/2.35);
-    w.style.setProperty('--scan',scan.toFixed(4));
+    let weekEnergy=0;
     $$('i',w).forEach((cell,di)=>{
-      const micro=Math.max(0,1-Math.abs(wi+di*.055-sweep)/1.18);
-      const flicker=((wi*13+di*17+Math.floor(tt*92))%7===0)?1:0;
-      cell.style.setProperty('--cipher-on',Math.min(1,micro*.82+flicker*micro*.28).toFixed(4));
-      cell.style.setProperty('--cell-lift',(micro*.8).toFixed(4));
+      const jitter=((((wi*17+di*31)%13)-6)*.0028)+(di-3)*.0016;
+      const threshold=clamp(wi/weekCount+jitter);
+      const local=clamp((reveal-threshold)/.060);
+      const discovery=Math.sin(Math.PI*clamp(local/.58))*(1-smoothstep((local-.40)/.44));
+      const resolved=smoothstep((local-.32)/.68)*(1-reset);
+      const flash=Math.max(0,discovery)*(1-reset);
+      cell.style.setProperty('--discovery',flash.toFixed(5));
+      cell.style.setProperty('--resolved',resolved.toFixed(5));
+      weekEnergy=Math.max(weekEnergy,flash);
     });
+    w.style.setProperty('--week-energy',weekEnergy.toFixed(5));
   });
 
-  // Phase 2: each SHA-derived commit record is decoded from oldest to HEAD.
-  const commitPhase=smoothstep((tt-.38)/.44);
-  const reset=smoothstep((tt-.90)/.10);
-  const rows=$$('.cipher-commit',sec), count=Math.max(1,rows.length);
-  rows.forEach((row,i)=>{
+  // Clean commit sequence. Entries stay readable, then focus from oldest to HEAD.
+  const commitPhase=smoothstep((tt-.38)/.46);
+  const rows=$$('.commit-focus',sec), count=Math.max(1,rows.length);
+  rows.forEach(row=>{
     const sequence=Number(row.dataset.sequence||0);
     const start=sequence/count;
     const local=clamp((commitPhase-start)/(1/count));
-    const decode=smoothstep(local)*(1-reset);
-    const arrival=Math.sin(Math.PI*local)*(1-reset);
-    const remain=Math.max(0,decode-reset);
-    row.style.setProperty('--decode',decode.toFixed(5));
-    row.style.setProperty('--arrival',Math.max(0,arrival).toFixed(5));
-    row.style.setProperty('--remain',remain.toFixed(5));
-    row.style.setProperty('--scan-x',(-18+local*136).toFixed(3)+'%');
-    $$('.commit-glyph i',row).forEach((cell,gi)=>{
-      const stagger=clamp((local-gi/42)/.34);
-      cell.style.setProperty('--glyph-on',(smoothstep(stagger)*(1-reset)).toFixed(5));
-    });
+    const settled=smoothstep(local)*(1-reset);
+    const focus=Math.sin(Math.PI*local)*(1-reset);
+    row.style.setProperty('--settled',settled.toFixed(5));
+    row.style.setProperty('--focus',Math.max(0,focus).toFixed(5));
+    row.style.setProperty('--sweep-x',(-22+local*144).toFixed(3)+'%');
   });
 }
 window.__THOTH_RENDER_CTA=t=>{ctaT=t;document.documentElement.style.setProperty('--cta-t',t)};
