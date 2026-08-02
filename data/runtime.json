@@ -5,7 +5,7 @@
     "login": "thothfnd",
     "followers": 0,
     "commits_label": "TOTAL COMMITS",
-    "commits": 112,
+    "commits": 113,
     "releases": 0,
     "contributions_12m": 69,
     "active_days_12m": 3
@@ -372,57 +372,12 @@
     0,
     0,
     0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
     4,
     4,
-    4
+    4,
+    0
   ],
   "contribution_weeks": [
-    {
-      "days": [
-        {
-          "date": "2025-07-27",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-07-28",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-07-29",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-07-30",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-07-31",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-01",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-02",
-          "count": 0,
-          "level": 0
-        }
-      ]
-    },
     {
       "days": [
         {
@@ -2450,10 +2405,27 @@
           "level": 4
         }
       ]
+    },
+    {
+      "days": [
+        {
+          "date": "2026-08-02",
+          "count": 0,
+          "level": 0
+        }
+      ]
     }
   ],
   "projects": [],
   "recent_commits": [
+    {
+      "date": "2026-08-01",
+      "timestamp": "2026-08-01T21:21:06Z",
+      "repo": "thothfnd",
+      "sha": "5165e18",
+      "message": "profile: refresh generated presentation",
+      "url": "https://github.com/thothfnd/thothfnd/commit/5165e18882161d4cb2ceef42db113d6c0a0a4170"
+    },
     {
       "date": "2026-08-01",
       "timestamp": "2026-08-01T17:31:35Z",
@@ -2469,14 +2441,6 @@
       "sha": "6f529d0",
       "message": "Add files via upload",
       "url": "https://github.com/thothfnd/thothfnd/commit/6f529d0170b5d396731ca0383853c5491d1fc99c"
-    },
-    {
-      "date": "2026-08-01",
-      "timestamp": "2026-08-01T17:06:37Z",
-      "repo": "thothfnd",
-      "sha": "c55e72c",
-      "message": "profile: refresh generated presentation",
-      "url": "https://github.com/thothfnd/thothfnd/commit/c55e72ce43ce794e21d3d66f7d4d1c5bede95925"
     }
   ]
 }
