@@ -5,7 +5,7 @@
     "login": "thothfnd",
     "followers": 0,
     "commits_label": "TOTAL COMMITS",
-    "commits": 153,
+    "commits": 154,
     "releases": 0,
     "contributions_12m": 69,
     "active_days_12m": 3
@@ -2450,6 +2450,14 @@
   "recent_commits": [
     {
       "date": "2026-08-14",
+      "timestamp": "2026-08-14T09:49:08Z",
+      "repo": "thothfnd",
+      "sha": "9448491",
+      "message": "profile: refresh generated presentation",
+      "url": "https://github.com/thothfnd/thothfnd/commit/94484913e536d2d6bc125cff3b0f97cb1ef6b494"
+    },
+    {
+      "date": "2026-08-14",
       "timestamp": "2026-08-14T05:53:24Z",
       "repo": "thothfnd",
       "sha": "9f50c7f",
@@ -2463,14 +2471,6 @@
       "sha": "1af7852",
       "message": "profile: refresh generated presentation",
       "url": "https://github.com/thothfnd/thothfnd/commit/1af7852be9fe554869d81babff1fde8686ebe8cc"
-    },
-    {
-      "date": "2026-08-13",
-      "timestamp": "2026-08-13T15:39:51Z",
-      "repo": "thothfnd",
-      "sha": "62581dc",
-      "message": "profile: refresh generated presentation",
-      "url": "https://github.com/thothfnd/thothfnd/commit/62581dc3bbe5aae5892785c53c7e21fbdabf4c34"
     }
   ]
 }
