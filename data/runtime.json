@@ -5,10 +5,10 @@
     "login": "thothfnd",
     "followers": 0,
     "commits_label": "TOTAL COMMITS",
-    "commits": 170,
+    "commits": 177,
     "releases": 0,
-    "contributions_12m": 69,
-    "active_days_12m": 3
+    "contributions_12m": 76,
+    "active_days_12m": 4
   },
   "contribution_levels": [
     0,
@@ -377,7 +377,8 @@
     0,
     0,
     0,
-    0
+    0,
+    4
   ],
   "contribution_weeks": [
     {
@@ -2424,12 +2425,76 @@
           "date": "2026-08-18",
           "count": 0,
           "level": 0
+        },
+        {
+          "date": "2026-08-19",
+          "count": 7,
+          "level": 4
         }
       ]
     }
   ],
-  "projects": [],
+  "projects": [
+    {
+      "slug": "thoth-browser",
+      "name": "THOTH-Browser",
+      "url": "https://github.com/thothfnd/THOTH-Browser",
+      "status": "Active development",
+      "headline": "Nothing is global by default.",
+      "overview": "THOTH Browser is a native Gecko browser built around contextual identity, compartmentalized activity and verifiable security. V1 establishes the browser kernel; the longer-term architecture expands that foundation into identity and activity systems, policy-driven security, permanent adversarial research and collective defense. The project is designed to make privacy, anonymity and isolation structural properties rather than settings layered on top of a conventional browser.",
+      "pillars": [
+        "contextual identity",
+        "activity compartmentalization",
+        "privacy & anonymity boundaries",
+        "verifiable security",
+        "adversarial research",
+        "collective defense"
+      ],
+      "language": "",
+      "updated": "2026-08-19",
+      "links": [
+        {
+          "label": "Repository",
+          "url": "https://github.com/thothfnd/THOTH-Browser"
+        }
+      ],
+      "logo": "assets/project-source/thoth-browser/logo.png",
+      "media": []
+    }
+  ],
   "recent_commits": [
+    {
+      "date": "2026-08-19",
+      "timestamp": "2026-08-19T01:03:41Z",
+      "repo": "THOTH-Browser",
+      "sha": "f45305b",
+      "message": "Add files via upload",
+      "url": "https://github.com/thothfnd/THOTH-Browser/commit/f45305bd6a7ea6e1190992922535111f08d7c7fc"
+    },
+    {
+      "date": "2026-08-19",
+      "timestamp": "2026-08-19T01:02:22Z",
+      "repo": "THOTH-Browser",
+      "sha": "27d9e96",
+      "message": "Create desc.md",
+      "url": "https://github.com/thothfnd/THOTH-Browser/commit/27d9e9616612e9ab272f2a43419ce24b1f70f9ad"
+    },
+    {
+      "date": "2026-08-19",
+      "timestamp": "2026-08-19T00:59:58Z",
+      "repo": "THOTH-Browser",
+      "sha": "14013a9",
+      "message": "Delete .github",
+      "url": "https://github.com/thothfnd/THOTH-Browser/commit/14013a9544682eac8fbc6d0e6c1aff95ff90f662"
+    },
+    {
+      "date": "2026-08-18",
+      "timestamp": "2026-08-18T19:45:20Z",
+      "repo": "thothfnd",
+      "sha": "5f250ad",
+      "message": "profile: refresh generated presentation",
+      "url": "https://github.com/thothfnd/thothfnd/commit/5f250ad2da87e514b0ab499ea1c86378b2d3e5e7"
+    },
     {
       "date": "2026-08-18",
       "timestamp": "2026-08-18T14:14:45Z",
@@ -2437,22 +2502,6 @@
       "sha": "0b76396",
       "message": "profile: refresh generated presentation",
       "url": "https://github.com/thothfnd/thothfnd/commit/0b76396a0a75744419b521dde45affb4ac79af0e"
-    },
-    {
-      "date": "2026-08-18",
-      "timestamp": "2026-08-18T08:08:07Z",
-      "repo": "thothfnd",
-      "sha": "d63f181",
-      "message": "profile: refresh generated presentation",
-      "url": "https://github.com/thothfnd/thothfnd/commit/d63f181ea15dc7c9784ea7a5e5d173218d292d7d"
-    },
-    {
-      "date": "2026-08-17",
-      "timestamp": "2026-08-17T19:48:27Z",
-      "repo": "thothfnd",
-      "sha": "9061aa9",
-      "message": "profile: refresh generated presentation",
-      "url": "https://github.com/thothfnd/thothfnd/commit/9061aa950b8415963744b85d9e5e95abca78e9f8"
     }
   ]
 }
