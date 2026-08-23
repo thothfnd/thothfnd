@@ -5,7 +5,7 @@
     "login": "thothfnd",
     "followers": 0,
     "commits_label": "TOTAL COMMITS",
-    "commits": 193,
+    "commits": 194,
     "releases": 0,
     "contributions_12m": 76,
     "active_days_12m": 4
@@ -351,13 +351,6 @@
     0,
     0,
     0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
     4,
     4,
     4,
@@ -379,50 +372,12 @@
     0,
     0,
     4,
+    0,
     0,
     0,
     0
   ],
   "contribution_weeks": [
-    {
-      "days": [
-        {
-          "date": "2025-08-17",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-18",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-19",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-20",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-21",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-22",
-          "count": 0,
-          "level": 0
-        },
-        {
-          "date": "2025-08-23",
-          "count": 0,
-          "level": 0
-        }
-      ]
-    },
     {
       "days": [
         {
@@ -2450,6 +2405,15 @@
           "level": 0
         }
       ]
+    },
+    {
+      "days": [
+        {
+          "date": "2026-08-23",
+          "count": 0,
+          "level": 0
+        }
+      ]
     }
   ],
   "projects": [
@@ -2483,6 +2447,14 @@
   "recent_commits": [
     {
       "date": "2026-08-22",
+      "timestamp": "2026-08-22T19:17:06Z",
+      "repo": "thothfnd",
+      "sha": "acf1621",
+      "message": "profile: refresh generated presentation",
+      "url": "https://github.com/thothfnd/thothfnd/commit/acf1621bca7c57abf1908f0f5dd50f426dd77780"
+    },
+    {
+      "date": "2026-08-22",
       "timestamp": "2026-08-22T13:52:39Z",
       "repo": "thothfnd",
       "sha": "2073bb0",
@@ -2496,14 +2468,6 @@
       "sha": "c50d4b1",
       "message": "profile: refresh generated presentation",
       "url": "https://github.com/thothfnd/thothfnd/commit/c50d4b15a35e916fda2915f7ba487ff12fccc950"
-    },
-    {
-      "date": "2026-08-22",
-      "timestamp": "2026-08-22T03:16:32Z",
-      "repo": "thothfnd",
-      "sha": "b13832c",
-      "message": "profile: refresh generated presentation",
-      "url": "https://github.com/thothfnd/thothfnd/commit/b13832c1c4a1632d9ee1b78f6c6ab58a8b1ddd12"
     },
     {
       "date": "2026-08-19",
